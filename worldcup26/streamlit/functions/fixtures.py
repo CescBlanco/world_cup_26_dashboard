@@ -145,25 +145,50 @@ def create_plot_standings(group_df):
         st.write("")
     with c2:
         st.markdown("""
-            **Team**  
-            <small>(Qualification Status)</small>
+            <span style="font-size:14px; font-weight:bold;">Team</span><br>
+            <small style="font-size:12px;">(Qualification Status)</small>
             """, unsafe_allow_html=True)
+
     with c3:
-        st.write("Played Games")
+        st.markdown(
+            f"<p style='font-size:14px;'>Played Games</p>",
+            unsafe_allow_html=True
+        )
     with c4:
-        st.write("Wins")
+        st.markdown(
+                f"<p style='font-size:14px;'>Wins</p>",
+                unsafe_allow_html=True
+            )
     with c5:
-        st.write("Draws")
+        st.markdown(
+                f"<p style='font-size:14px;'>Draws</p>",
+                unsafe_allow_html=True
+            )
     with c6:
-        st.write("Losses")
+        st.markdown(
+                f"<p style='font-size:14px;'>Losses</p>",
+                unsafe_allow_html=True
+            )
     with c7:
-        st.write("Goals Scored")
+        st.markdown(
+                f"<p style='font-size:14px;'>Goals Scored</p>",
+                unsafe_allow_html=True
+            )
     with c8:
-        st.write("Goals Against")
+        st.markdown(
+                f"<p style='font-size:14px;'>Goals Against</p>",
+                unsafe_allow_html=True
+            )
     with c9:
-        st.write("Goal Diff")
+        st.markdown(
+                f"<p style='font-size:14px;'>Goal Diff</p>",
+                unsafe_allow_html=True
+            )
     with c10:
-        st.write("Points")
+        st.markdown(
+        f"<p style='font-size:14px;'>Points</p>",
+        unsafe_allow_html=True
+        )
 
     st.markdown("<hr style='margin:4px 0 6px 0;'>", unsafe_allow_html=True)
 
@@ -178,11 +203,22 @@ def create_plot_standings(group_df):
             st.image(row["team_logo"], width=40)
 
         with c2:
-            st.markdown(f"**{row['idx']}. {row['name']}**")
+            # st.markdown(f"**{row['idx']}. {row['name']}**")
+            # if pd.notna(row["competition"]):
+            #     st.caption(row["competition"])
+            st.markdown(
+                f"<div style='font-size:13px; font-weight:bold;'>{row['idx']}. {row['name']}</div>",
+                unsafe_allow_html=True
+            )
+
             if pd.notna(row["competition"]):
-                st.caption(row["competition"])
+                st.markdown(
+                    f"<div style='font-size:10px; color: var(--text-color-secondary);opacity:0.6;'>{row['competition']}</div>",
+                    unsafe_allow_html=True
+                )
 
         with c3:
+            
             st.write(str(row["played"]))
 
         with c4:
@@ -207,8 +243,8 @@ def create_plot_standings(group_df):
             st.write(str(row["pts"]))
 
 def table_groups():
+    st.subheader("🥇TABLE GROUPS")  
 
-    st.markdown(f"### 🥇TABLE GROUPS ")
     
     with ThreadPoolExecutor(max_workers=13) as executor:
         groups = list(
@@ -223,56 +259,100 @@ def table_groups():
     with block1:
 
         with st.container(border=True):
-            st.markdown("### GROUP A")
+            
+            st.markdown(
+                "<div style='text-align: center;'><h4>GROUP A</h4></div>",
+                unsafe_allow_html=True
+            )
             create_plot_standings(groups[0])
         
         with st.container(border=True):
-            st.markdown(f"### GROUP C ") 
+            st.markdown(
+                "<div style='text-align: center;'><h4>GROUP C</h4></div>",
+                unsafe_allow_html=True
+            ) 
             create_plot_standings(groups[2])
         
         with st.container(border=True):
-            st.markdown(f"### GROUP E ") 
+            st.markdown(
+                "<div style='text-align: center;'><h4>GROUP E</h4></div>",
+                unsafe_allow_html=True
+            )
             create_plot_standings(groups[4])
 
         with st.container(border=True):
-            st.markdown(f"### GROUP G ") 
+            st.markdown(
+                "<div style='text-align: center;'><h4>GROUP G</h4></div>",
+                unsafe_allow_html=True
+            )
             create_plot_standings(groups[6])
         
         with st.container(border=True):
-            st.markdown(f"### GROUP I ") 
+            st.markdown(
+                "<div style='text-align: center;'><h4>GROUP I</h4></div>",
+                unsafe_allow_html=True
+            )
             create_plot_standings(groups[8])
         
         with st.container(border=True):
-            st.markdown(f"### GROUP K ") 
+            st.markdown(
+                "<div style='text-align: center;'><h4>GROUP K</h4></div>",
+                unsafe_allow_html=True
+            ) 
             create_plot_standings(groups[10])
 
 
     with block2:
         with st.container(border=True):
-            st.markdown("### GROUP B")
+            st.markdown(
+                "<div style='text-align: center;'><h4>GROUP B</h4></div>",
+                unsafe_allow_html=True
+            )
             create_plot_standings(groups[1])
         
         with st.container(border=True):
-            st.markdown(f"### GROUP D ") 
+            st.markdown(
+                "<div style='text-align: center;'><h4>GROUP D</h4></div>",
+                unsafe_allow_html=True
+            ) 
             create_plot_standings(groups[3])
 
-        with st.container(border=True):
-            st.markdown(f"### GROUP F ") 
+        with st.container(border=True): 
+            st.markdown(
+                "<div style='text-align: center;'><h4>GROUP F</h4></div>",
+                unsafe_allow_html=True
+            )
             create_plot_standings(groups[5])
         
         with st.container(border=True):
-            st.markdown(f"### GROUP H ") 
+            st.markdown(
+                "<div style='text-align: center;'><h4>GROUP H</h4></div>",
+                unsafe_allow_html=True
+            )
             create_plot_standings(groups[7])
 
         with st.container(border=True):
-            st.markdown(f"### GROUP J ") 
+            st.markdown(
+                "<div style='text-align: center;'><h4>GROUP J</h4></div>",
+                unsafe_allow_html=True
+            )
             create_plot_standings(groups[9])
         
         with st.container(border=True):
-            st.markdown(f"### GROUP L ") 
+            st.markdown(
+                "<div style='text-align: center;'><h4>GROUP L</h4></div>",
+                unsafe_allow_html=True
+            )
             create_plot_standings(groups[11])
     st.divider()
-    with st.container(border=True):
-            st.markdown(f"### BEST 3RD PLACE TEAMS") 
+    
+    #st.markdown(f"#### BEST 3RD PLACE TEAMS")
+    st.markdown(
+        "<div style='text-align: center;'><h4>BEST 3RD PLACE TEAMS</h4></div>",
+        unsafe_allow_html=True
+    )
+    col2, col3, col4= st.columns([1,5,1])
+    with col3: 
+        with st.container(border=True): 
             create_plot_standings(groups[12])
 
