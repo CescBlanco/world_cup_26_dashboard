@@ -12,6 +12,7 @@ from services.transform_data import build_teams_dataset
 
 from pages.teams import render_teams
 from pages.team_detail import render_team_detail
+from pages.team_roster import render_team_roster
 
 
 # =========================================================
@@ -144,3 +145,15 @@ elif st.session_state.page == "team_detail":
     
 
     render_team_detail(team_data)
+
+# =========================================================
+# PAGE: Team rosters
+# =========================================================
+elif st.session_state.page == "rosters":
+
+    selected = st.selectbox( "Select Team",sorted(df_teams_dataset["team"].dropna().unique()))
+
+    df_all_players = load_all_players_fotmob()
+    players_team = df_all_players[df_all_players["team_name"] == selected]
+
+    render_team_roster(players_team)
