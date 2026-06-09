@@ -13,6 +13,7 @@ from services.transform_data import build_teams_dataset
 from pages.teams import render_teams
 from pages.team_detail import render_team_detail
 from pages.team_roster import render_team_roster
+from pages.venues import render_venues
 
 
 # =========================================================
@@ -157,3 +158,14 @@ elif st.session_state.page == "rosters":
     players_team = df_all_players[df_all_players["team_name"] == selected]
 
     render_team_roster(players_team)
+
+# =========================================================
+# PAGE: VENUES
+# =========================================================
+elif st.session_state.page == "venues":
+    
+    st.title("🏟️ World Cup Stadiums")
+    df_venues= load_venues()
+    
+    render_venues(df_venues)
+
