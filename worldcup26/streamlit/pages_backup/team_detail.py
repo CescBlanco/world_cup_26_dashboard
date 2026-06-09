@@ -17,10 +17,10 @@ def render_team_detail(df):
     with bloc2:
         team_details_bloc2(team_data)
 
+    st.divider()
     #----------------------------------------------------------------------------------
     
     st.subheader("👕 Team Roster")
-    st.info('Working to integrated rating data for players...')
     df_all_players = load_all_players_fotmob()
     players_team = df_all_players[df_all_players["team_name"] == team]
      

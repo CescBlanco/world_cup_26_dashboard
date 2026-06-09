@@ -283,7 +283,7 @@ def team_details_bloc2(df):
 
             st.plotly_chart(fig,use_container_width=True)
 
-    st.divider()
+
 
 def team_header(players_team):
     team_name = players_team["team_name"].iloc[0]
