@@ -10,6 +10,8 @@ from services.load_data import load_teams, load_fifa, load_elo, load_all_players
 from assets.styles import apply_styles, calendar_styles
 from services.transform_data import build_teams_dataset
 
+from pages.teams import render_teams
+
 
 # =========================================================
 # CONFIG
@@ -20,7 +22,6 @@ st.set_page_config(page_title="World Cup 2026", page_icon="⚽", layout="wide")
 # STYLE
 # =========================================================
 apply_styles()
-
 
 # =========================================================
 # DATA
@@ -127,3 +128,9 @@ with st.sidebar:
     else:
         st.error("❌ No data files found")
 
+# =========================================================
+# PAGE: TEAMS
+# =========================================================
+if st.session_state.page == "teams":
+
+    render_teams(df_teams_dataset)
