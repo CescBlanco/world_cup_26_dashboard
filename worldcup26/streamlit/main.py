@@ -11,6 +11,7 @@ from assets.styles import apply_styles, calendar_styles
 from services.transform_data import build_teams_dataset
 
 from pages.teams import render_teams
+from pages.team_detail import render_team_detail
 
 
 # =========================================================
@@ -48,10 +49,7 @@ if "selected_team" not in st.session_state:
 col1, col2 = st.columns([1, 8])
 
 with col1:
-    st.image(
-        "https://images.fotmob.com/image_resources/logo/leaguelogo/dark/77.png",
-        width=150
-    )
+    st.image("https://images.fotmob.com/image_resources/logo/leaguelogo/dark/77.png",width=150)
 
 with col2:
     st.title("WORLD CUP 2026")
@@ -134,3 +132,15 @@ with st.sidebar:
 if st.session_state.page == "teams":
 
     render_teams(df_teams_dataset)
+
+# =========================================================
+# PAGE: TEAM DETAIL
+# =========================================================
+elif st.session_state.page == "team_detail":
+    
+    team = st.session_state.selected_team
+
+    team_data = df_teams_dataset[df_teams_dataset["team"] == team]
+    
+
+    render_team_detail(team_data)
