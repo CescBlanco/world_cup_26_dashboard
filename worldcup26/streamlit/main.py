@@ -10,10 +10,11 @@ from services.load_data import load_teams, load_fifa, load_elo, load_all_players
 from assets.styles import apply_styles, calendar_styles
 from services.transform_data import build_teams_dataset
 
-from pages.teams import render_teams
-from pages.team_detail import render_team_detail
-from pages.team_roster import render_team_roster
-from pages.venues import render_venues
+from pages_backup.teams import render_teams
+from pages_backup.team_detail import render_team_detail
+from pages_backup.team_roster import render_team_roster
+from pages_backup.venues import render_venues
+from pages_backup.fixtures import render_fixtures
 
 
 # =========================================================
@@ -169,3 +170,16 @@ elif st.session_state.page == "venues":
     
     render_venues(df_venues)
 
+# =========================================================
+# PAGE: FIXTURES
+# =========================================================
+elif st.session_state.page == "fixtures":
+
+    st.subheader("📅 World Cup Calendar")   
+
+    #change de file upload and functions when the wc26 startet
+    df_matches_stages = load_fixtures()
+
+    calendar_styles()
+
+    render_fixtures(df_matches_stages)
