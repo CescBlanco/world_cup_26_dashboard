@@ -2,7 +2,7 @@ import pandas as pd
 from functions.results import * 
 from functions.plots import *
 
-from services.load_data import load_all_matches_wc26_fotmob
+from services.load_data import load_all_matches_fotmob
 
 def render_results(df):
 
@@ -25,7 +25,7 @@ def render_results(df):
                 homeTeamPhoto = partido_detalle["homeTeamPhoto"]
                 awayTeamPhoto = partido_detalle["awayTeamPhoto"]
 
-                df_all_matches_fotmob=  load_all_matches_wc26_fotmob()
+                df_all_matches_fotmob=  load_all_matches_fotmob()
                 st.dataframe(df_all_matches_fotmob)
                 
                 
