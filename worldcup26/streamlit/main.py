@@ -6,7 +6,7 @@ import os
 import glob
 import datetime
 
-from services.load_data import load_teams, load_fifa, load_elo, load_all_players_fotmob, load_venues, load_fixtures
+from services.load_data import load_teams, load_fifa, load_elo, load_all_players_fotmob, load_venues, load_fixtures, load_fixtures_pruebas, load_all_matches_fotmob
 from assets.styles import apply_styles, calendar_styles
 from services.transform_data import build_teams_dataset
 
@@ -15,6 +15,7 @@ from pages_backup.team_detail import render_team_detail
 from pages_backup.team_roster import render_team_roster
 from pages_backup.venues import render_venues
 from pages_backup.fixtures import render_fixtures
+from pages_backup.results import render_results
 
 
 # =========================================================
@@ -177,9 +178,25 @@ elif st.session_state.page == "fixtures":
 
     st.subheader("📅 World Cup Calendar")   
 
-    #change de file upload and functions when the wc26 startet
+    
     df_matches_stages = load_fixtures()
 
     calendar_styles()
 
     render_fixtures(df_matches_stages)
+
+
+# =========================================================
+# PAGE: RESULTS
+# =========================================================
+elif st.session_state.page == "results":
+
+    st.subheader("Results")
+    #CAMBIAR TEMA DE FILTROS Y EL DATAFRAME DE PUEBA (change de file upload and functions when the wc26 startet)
+    df_fixtures_copaam = load_fixtures_pruebas()
+    st.dataframe(df_fixtures_copaam)
+
+    df_fixtures_wc26 = load_all_matches_fotmob()
+    st.dataframe(df_fixtures_wc26)
+
+    render_results(df_fixtures_copaam)
