@@ -3,7 +3,6 @@ import pandas as pd
 from datetime import time
 
 import os
-os.system("patchright install")
 import glob
 import datetime
 
@@ -23,7 +22,6 @@ from pages_backup.results import render_results
 # CONFIG
 # =========================================================
 st.set_page_config(page_title="World Cup 2026", page_icon="⚽", layout="wide")
-
 # =========================================================
 # STYLE
 # =========================================================
@@ -166,7 +164,7 @@ elif st.session_state.page == "rosters":
 # PAGE: VENUES
 # =========================================================
 elif st.session_state.page == "venues":
-    
+
     st.title("🏟️ World Cup Stadiums")
     df_venues= load_venues()
     
@@ -197,7 +195,7 @@ elif st.session_state.page == "results":
     df_fixtures_copaam = load_fixtures_pruebas()
     st.dataframe(df_fixtures_copaam)
 
-    df_fixtures_wc26 = load_all_matches_fotmob()
+    df_fixtures_wc26 = load_fixtures()
     st.dataframe(df_fixtures_wc26)
 
     render_results(df_fixtures_copaam)

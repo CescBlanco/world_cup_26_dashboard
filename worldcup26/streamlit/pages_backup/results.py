@@ -41,7 +41,10 @@ def render_results(df):
                 df_all_matches_fotmob=  load_all_matches_fotmob()
                 st.dataframe(df_all_matches_fotmob)
                 
-                
+                # def extract_round_name_fotmob(df, home_team_whoscored, away_team_whoscored):
+                #     url_match_fotmob= df[(df['home.name'] == home_team_whoscored) & (df['away.name'] == away_team_whoscored) & (df['roundName'] ==round)]['pageUrl'].iloc[0]
+                #     return url_match_fotmob
+                # round_name= df_all_matches_fotmob[df_all_matches_fotmob['roundName']==]
 
                 url_match_fotmob= extract_url_fotmob(df_all_matches_fotmob, selected_home_team, selected_away_team, round='Quarter-Finals')
            
@@ -51,11 +54,17 @@ def render_results(df):
                     st.success(f"🟢 Data loaded from CACHE MATCHES FOTMOB (match {match_id_fotmob})")
                     data = cache_data_fotmob["data"]
                 else:
-                    with st.spinner("🟡 No cache in matches fotmob. Scraping match data..."):
-                        with open(f"data/json_matches_fotmob/{match_id_fotmob}.json") as f:
-                            data = json.load(f)
-                    save_match_cache_fotmob(match_id_fotmob, data)
-                    st.success(f"🔵 Cache created successfully for match {match_id_fotmob}")
+                    json_path = Path(f"data/json_matches_fotmob/{match_id_fotmob}.json")
+                    if json_path.exists():
+                        with st.spinner("🟡 Loading match data from JSON..."):
+                            with open(json_path) as f:
+                                data = json.load(f)
+                            save_match_cache_fotmob(match_id_fotmob, data)
+                            st.success(f"🔵 Cache created successfully for match {match_id_fotmob}")
+                    else:
+                        st.warning("📭 No data available for this match yet. Data is pending update from the provider.")
+                        st.stop()
+                        
 
                 color_home, color_away,name_home_fotmob, name_away_fotmob, id_home_fotmob, id_away_fotmob, team_dict_fotmob = prepare_data_fotmob_cache(data)
                 formation_mappings, event_types_json, matchdict, players_dict = prepare_data_whoscored_cache(url_match_preview)

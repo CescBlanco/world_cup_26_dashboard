@@ -6,7 +6,7 @@ from selenium import webdriver
 from bs4 import BeautifulSoup
 
 #------------------------------------MANAGMENT SCRAPER WHOSCORED-------------------------------------------------
-CACHE_DIR_MATCHES = "worldcup26/data_matches"
+CACHE_DIR_MATCHES = "worldcup26/json_matches_whoscored"
 os.makedirs(CACHE_DIR_MATCHES, exist_ok=True)
 
 def extract_match_id(url):

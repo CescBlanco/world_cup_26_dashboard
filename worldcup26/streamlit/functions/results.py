@@ -755,7 +755,7 @@ def prepare_data_whoscored_cache(url_match_preview):
 
     cache_data = load_match_cache_whoscored(match_id_whoscored)
     if cache_data:
-        st.success(f"🟢 Data loaded from CACHE (match {match_id_whoscored})")
+        st.success(f"🟢 Data loaded from CACHE WHOSCORED (match {match_id_whoscored})")
 
         formation_mappings = cache_data["formation_mappings"]
         event_types_json = cache_data["event_types_json"]
