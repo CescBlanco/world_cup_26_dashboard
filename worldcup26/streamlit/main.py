@@ -1,12 +1,9 @@
 import streamlit as st
-import pandas as pd
-from datetime import time
-
 import os
 import glob
 import datetime
 
-from services.load_data import load_teams, load_fifa, load_elo, load_all_players_fotmob, load_venues, load_fixtures, load_fixtures_pruebas, load_all_matches_fotmob
+from services.load_data import load_teams, load_fifa, load_elo, load_all_players_fotmob, load_venues, load_fixtures, load_fixtures_pruebas
 from assets.styles import apply_styles, calendar_styles
 from services.transform_data import build_teams_dataset
 
@@ -144,8 +141,6 @@ elif st.session_state.page == "team_detail":
     team = st.session_state.selected_team
 
     team_data = df_teams_dataset[df_teams_dataset["team"] == team]
-    
-
     render_team_detail(team_data)
 
 # =========================================================
@@ -165,7 +160,7 @@ elif st.session_state.page == "rosters":
 # =========================================================
 elif st.session_state.page == "venues":
 
-    st.title("🏟️ World Cup Stadiums")
+    st.subheader("🏟️ World Cup Stadiums")
     df_venues= load_venues()
     
     render_venues(df_venues)
@@ -181,7 +176,6 @@ elif st.session_state.page == "fixtures":
     df_matches_stages = load_fixtures()
 
     calendar_styles()
-
     render_fixtures(df_matches_stages)
 
 
@@ -190,12 +184,9 @@ elif st.session_state.page == "fixtures":
 # =========================================================
 elif st.session_state.page == "results":
 
-    st.subheader("Results")
+    st.subheader("📊 Results")
     #CAMBIAR TEMA DE FILTROS Y EL DATAFRAME DE PUEBA (change de file upload and functions when the wc26 startet)
     df_fixtures_copaam = load_fixtures_pruebas()
-    st.dataframe(df_fixtures_copaam)
 
     df_fixtures_wc26 = load_fixtures()
-    st.dataframe(df_fixtures_wc26)
-
     render_results(df_fixtures_copaam)

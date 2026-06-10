@@ -20,10 +20,7 @@ from mplsoccer import Pitch
 import matplotlib.patches as patches
 import matplotlib.pyplot as plt
 from matplotlib.offsetbox import OffsetImage, AnnotationBbox
-
 import streamlit as st
-
-
 
 background_color = '#0C0D0E'
 text_color = 'white'
@@ -31,6 +28,7 @@ line_color = 'white'
 path_eff = [path_effects.Stroke(linewidth=1.5, foreground=line_color), 
                 path_effects.Normal()]
 
+@st.cache_data
 def extract_formation_data(df, name_team, formation_mappings, players_dict):
     formationset = df[df['type']== 'FormationSet'].copy()
 
@@ -66,7 +64,7 @@ def extract_formation_data(df, name_team, formation_mappings, players_dict):
     lineup['team'] = name_team
     return lineup
 
-@st.cache_resource
+
 def plot_initial_formation(df, home_team, away_team, formation_mappings, players_dict,color_home,color_away ,nombre_jugador_partido=None,ax=None):
     pitch = Pitch( pitch_type='statsbomb', pitch_color=background_color, line_color='white', linewidth=2)
 
@@ -158,6 +156,7 @@ def is_big_chance(qualifiers):
 def is_own_goal(qualifiers):
     return 'OwnGoal' in str(qualifiers)
 
+@st.cache_data
 # Calculate stats
 def team_stats(df):
     goals = np.sum((df['eventType'] == 'Goal') & (~df['is_own_goal']))
@@ -171,6 +170,7 @@ def team_stats(df):
     avg_dist = np.round(np.sqrt((df['x'] - 105)**2 + (df['y'] - 34)**2).mean(), 2)
     return [goals, xg, xgot, shots, on_target, big_chances, big_chance_miss, xg_per_shot, avg_dist]
 
+@st.cache_data
 def prepare_dataframe_shots(df, data,team_dict_fotmob, id_home_fotmob , id_away_fotmob):
     shots_df= pd.DataFrame(data['content']['shotmap']['shots'])
     shots_df = shots_df[shots_df['period']!='PenaltyShootout']
@@ -197,7 +197,7 @@ def prepare_dataframe_shots(df, data,team_dict_fotmob, id_home_fotmob , id_away_
 
     return shots_merged, home_stats, away_stats    
 
-@st.cache_resource
+
 def plot_shot_map_with_stats(shots_merged, home_stats, away_stats, 
                            home_id, away_id, home_name, away_name, 
                            home_color, away_color, bg_color='#0C0D0E',
@@ -350,9 +350,7 @@ def plot_shot_map_with_stats(shots_merged, home_stats, away_stats,
     
     return fig, ax
 
-
-
-
+@st.cache_data
 def preparar_xg_flows(shots_df, id_local):
     """
     Prepara los DataFrames necesarios para el flujo de xG acumulado de un partido.
@@ -425,6 +423,7 @@ def preparar_xg_flows(shots_df, id_local):
         'h_total': h_total
     }
 
+@st.cache_data
 def get_data_xg(datos_xg):
     #Obtener los datos
     local_xg = datos_xg['local_xg']
@@ -435,7 +434,6 @@ def get_data_xg(datos_xg):
     xg_away= datos_xg['a_total']
     return local_xg,  visit_xg,   goles_local_xg,goles_visit_xg, xg_home,  xg_away
 
-@st.cache_resource
 def plot_xg_flow_streamlit(
     local_xg,     visit_xg,     goles_local_xg,     goles_visit_xg,     nombre_local, 
     nombre_visitante,     color_local,     color_visit,    imagen_pelota_normal, imagen_pelota_roja,ax=None):
@@ -545,8 +543,6 @@ xT_grid = pd.read_csv('https://media.githubusercontent.com/media/ricardoherediaj
 xT_grid = xT_grid.values
 
 
-
-@st.cache_resource
 def plot_xt_momentum(df_events: pd.DataFrame,xT_grid: np.ndarray,team_dict: dict,home_team_id: int,away_team_id: int,window_size: int = 4,decay_rate: float = 0.25,
                     sigma: float = 1.0, home_color: str = '#43A1D5', away_color: str = '#FF4C4C', bg_color: str = '#0C0D0E', 
                     line_color: str = 'white', figsize: tuple = (12, 6), ax=None):
@@ -666,12 +662,14 @@ def plot_xt_momentum(df_events: pd.DataFrame,xT_grid: np.ndarray,team_dict: dict
     return fig, ax
 
 #----------------------------------------POSITION MEDIAN PLAYERS------------------------------------------
+@st.cache_data
 def prepare_positional_events(df, players_dict):
     df_pos= df[(df['x'] != 0) | (df['y'] != 0)].copy()
     avg_pos = (df_pos.groupby(['playerId', 'nameTeam']).agg(x=('x','mean'), y=('y','mean'), n=('type','count')).reset_index())
     avg_pos['playerName'] = avg_pos['playerId'].astype(int).astype(str).map(players_dict)
     return avg_pos
 
+@st.cache_data
 def create_dataframe_median_positions(df,avg_pos, home_team, away_team, teams_dict ,players_dict,is_home= True):
     
     if is_home ==True:
@@ -710,7 +708,6 @@ def create_dataframe_median_positions(df,avg_pos, home_team, away_team, teams_di
     av_players = av_players.merge(player_df,on='playerId',how='left')
     return av_players
 
-@st.cache_resource
 def plot_player_position_median(df, background_color, color, is_home= True, ax=None):
 
     df = df.copy()
@@ -798,7 +795,6 @@ def plot_heatmap_team(df, team_name , color_team, is_home= True):
     return fig
 
 #------------------------------------HEATMAP TOUCHES---------------------------------------
-@st.cache_resource
 def plot_heatmap_touches(df, team_name ,color_team, is_home= True, ax= None):
     # Create KDE heatmap - 
     from matplotlib.colors import LinearSegmentedColormap
@@ -840,6 +836,7 @@ def plot_heatmap_touches(df, team_name ,color_team, is_home= True, ax= None):
     return fig, ax
 
 #-------------------------------------------NETWORK PASS-------------------------------------
+@st.cache_data
 def prepare_enhanced_passes(df_events):
     """Prepare passes with angle calculations"""
     passes = df_events[
@@ -865,6 +862,7 @@ def prepare_enhanced_passes(df_events):
     
     return passes
 
+@st.cache_data
 def get_pass_combinations(passes_df, team_id):
     """Calculate bidirectional pass combinations"""
     team_passes = passes_df[passes_df['teamId'] == team_id].copy()
@@ -878,6 +876,7 @@ def get_pass_combinations(passes_df, team_id):
     
     return pass_combinations
 
+@st.cache_data
 def get_enhanced_positions(passes_df, team_id, team_players, player_names_dict):
     """Get average positions with player info"""
     team_passes = passes_df[passes_df['teamId'] == team_id]
@@ -908,6 +907,7 @@ def get_enhanced_positions(passes_df, team_id, team_players, player_names_dict):
     
     return avg_locs
 
+@st.cache_data
 def calculate_team_metrics(passes_df, avg_locs, team_id):
     """Calculate tactical metrics"""
     team_passes = passes_df[passes_df['teamId'] == team_id]
@@ -938,7 +938,6 @@ def calculate_team_metrics(passes_df, avg_locs, team_id):
         'team_median': team_median
     }
 
-@st.cache_resource
 def plot_enhanced_network(passes_df, avg_locs, pass_combinations, team_metrics, 
                          team_name, color='blue', is_home=True, bg_color='#0C0D0E', ax=None, show_title=True):
     """Plot enhanced passing network with The Athletic styling"""
@@ -1042,7 +1041,6 @@ def plot_enhanced_network(passes_df, avg_locs, pass_combinations, team_metrics,
     #ax.set_title(f"{team_name} - Passing Network", fontsize=14, color='white')
 
 #------------------------------------------------DEFENSIVE ACTIONS----------------------------------------------
-@st.cache_resource
 def draw_progressive_pass_map(df, team_id, team_name, team_color, is_away_team=False, ax=None, show_title=True):
     """
     Draw progressive pass map with defensive block aesthetic
@@ -1149,6 +1147,7 @@ def draw_progressive_pass_map(df, team_id, team_name, team_color, is_away_team=F
     }
 
 #-------------------------------------------MATCH STATS---------------------------------------
+@st.cache_data
 def calculate_match_stats(df, hteam_id, ateam_id):
     """
     Calculate match statistics from event data.
@@ -1261,7 +1260,6 @@ def calculate_match_stats(df, hteam_id, ateam_id):
     
     return stats
 
-@st.cache_resource
 def plot_match_stats_styled(stats, color_home, color_away, home_team_name="Home", away_team_name="Away", ax=None , show_title=False):
     """
     Plot match statistics with your signature dark aesthetic style
@@ -1376,6 +1374,7 @@ def plot_match_stats_styled(stats, color_home, color_away, home_team_name="Home"
     return fig,  ax
 
 #------------------------------------------------DEFESNIVE ACTIONS----------------------------------------------
+@st.cache_data
 def filter_defensive_actions(df_events: pd.DataFrame) -> pd.DataFrame:
     """
     Filter events to get only defensive actions using type.
@@ -1402,6 +1401,7 @@ def filter_defensive_actions(df_events: pd.DataFrame) -> pd.DataFrame:
     
     return defensive_actions
 
+@st.cache_data
 def create_player_info(player: dict) -> dict:
     """Create standardized player info from team data."""
     return {
@@ -1412,7 +1412,7 @@ def create_player_info(player: dict) -> dict:
         'is_starter': player.get('isFirstEleven', False)
     }
 
-
+@st.cache_data
 def calculate_player_defensive_positions(defensive_actions: pd.DataFrame, 
                                        team_id: int, 
                                        team_players: list) -> dict:
@@ -1456,7 +1456,6 @@ def calculate_player_defensive_positions(defensive_actions: pd.DataFrame,
     
     return positions
 
-@st.cache_resource
 def defensive_block(team_positions: dict, team_actions: pd.DataFrame, 
                    team_name: str, team_color: str, is_away_team: bool = False, ax=None, title=None):
     """
@@ -1599,6 +1598,7 @@ def defensive_block(team_positions: dict, team_actions: pd.DataFrame,
         'Compactness': compactness
     }
 
+@st.cache_data
 def create_defensive_heatmap_analysis(df_events: pd.DataFrame, home_team: dict,  away_team: dict) -> tuple:
     """
     Complete defensive heatmap analysis 
@@ -1620,8 +1620,6 @@ def create_defensive_heatmap_analysis(df_events: pd.DataFrame, home_team: dict, 
 
 
 #----------------------------------------------------Team's Dominating Zone---------------------------------
-
-@st.cache_resource
 def plot_congestion( df, home_team,away_team, color_home, color_away,  ax=None, show_title=False):
     bg_color= '#0C0D0E'
 
@@ -1711,7 +1709,6 @@ def plot_congestion( df, home_team,away_team, color_home, color_away,  ax=None, 
 
 
 #-----------------------------PASS END ZONES------------------------------------------------
-@st.cache_resource
 def Pass_end_zone( df,  team_name,  cm, ax=None,show_title=False):
     bg_color= '#0C0D0E'
     path_eff = [path_effects.Stroke(linewidth=3, foreground='white'), path_effects.Normal()]
@@ -1748,7 +1745,6 @@ def Pass_end_zone( df,  team_name,  cm, ax=None,show_title=False):
     #   ax.set_title(f"{team_name}\nPass End Zone", color=color_away, fontsize=25, fontweight='bold')
 
 #------------------------------------------------zone14hs---------------------------------------------------------
-@st.cache_resource
 def zone14hs(ax, df, team_name, col):
     bg_color= '#0C0D0E'
     dfhp = df[(df['nameTeam']==team_name) & (df['type']=='Pass') & (df['outcomeType']=='Successful') & 
@@ -1827,6 +1823,7 @@ def zone14hs(ax, df, team_name, col):
     }
 
 #-------------------------------------------GOALS POST (GK------------------------------------------------------
+@st.cache_data
 def prepare_df_shotsgoal(df, name_home , name_away):
     hShotsdf = df[df['teamName']==name_home].reset_index(drop=True).copy()
     aShotsdf = df[df['teamName']==name_away].reset_index(drop=True).copy() 
@@ -1851,7 +1848,6 @@ def prepare_df_shotsgoal(df, name_home , name_away):
 
     return df_tiros_coord_home, df_tiros_coord_away
 
-@st.cache_resource
 def draw_goal( df, title, color, imagen_pelota_path, ax=None):
     
 

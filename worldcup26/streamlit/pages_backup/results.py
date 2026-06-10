@@ -28,7 +28,6 @@ def render_results(df):
             if not partido_filtrado.empty:
                 partido_detalle = partido_filtrado.iloc[0]
 
-
                 selected_home_team = partido_detalle["homeTeamName"]
                 selected_away_team = partido_detalle["awayTeamName"]
 
@@ -39,7 +38,6 @@ def render_results(df):
                 awayTeamPhoto = partido_detalle["awayTeamPhoto"]
 
                 df_all_matches_fotmob=  load_all_matches_fotmob()
-                st.dataframe(df_all_matches_fotmob)
                 
                 # def extract_round_name_fotmob(df, home_team_whoscored, away_team_whoscored):
                 #     url_match_fotmob= df[(df['home.name'] == home_team_whoscored) & (df['away.name'] == away_team_whoscored) & (df['roundName'] ==round)]['pageUrl'].iloc[0]
@@ -73,7 +71,6 @@ def render_results(df):
 
                 team_info = [parse_team(matchdict.get('home', {})), parse_team(matchdict.get('away', {}))]
                 team_info = pd.DataFrame(team_info)
-                st.dataframe(team_info)
 
                 (home_team, away_team,homeScore, awayScore, et_score_home, et_score_away, penalty_score_home, penalty_score_away, manager_name_home,
                         manager_name_away,initial_formation_home, initial_formation_away, average_age_home, average_age_away, 
@@ -332,6 +329,7 @@ def render_results(df):
                                 fig_pp, axs = plt.subplots(1, 2, figsize=(20, 10), facecolor='none')
                                 axs[0].set_facecolor('none')
                                 axs[1].set_facecolor('none')
+                                
                                 
                                 draw_progressive_pass_map(df, matchdict['home']['teamId'], matchdict['home']['name'],color_home, is_away_team=False, ax= axs[0],show_title= False)
                                 axs[0].text(0,  -3, 'Attacking Direction--->', color=color_home, fontsize=13, ha='left', va='center')

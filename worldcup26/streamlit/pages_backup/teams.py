@@ -2,7 +2,7 @@ import streamlit as st
 
 def render_teams(df):
 
-    st.subheader("Participating Teams")
+    st.subheader("🌍 Participating Teams")
 
     cols = st.columns(4)
 
