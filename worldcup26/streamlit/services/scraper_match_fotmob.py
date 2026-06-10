@@ -71,7 +71,7 @@ async def fetch_match_json( url):
     
         async with async_playwright() as p:
             try:
-                browser = await p.chromium.launch( headless=False, channel="chrome")
+                browser = await p.chromium.launch( headless=True)
 
             except Exception as e:
                 raise RuntimeError(f"Failed to launch browser: {e}")
