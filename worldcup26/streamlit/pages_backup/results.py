@@ -7,11 +7,15 @@ from services.load_data import load_all_matches_fotmob
 from pathlib import Path
 import matplotlib.image as mpimg
 
-IMG_PATH_PELOTA = Path(__file__).resolve().parent / ".." / "data" / "sport-ball-football-free-png.webp"
-IMG_PATH_PELOTA_ROJA = Path(__file__).resolve().parent / ".." / "data" / "pelota_roja.png"
+BASE_DIR = Path(__file__).resolve()
 
-IMAGEN_PELOTA = mpimg.imread(IMG_PATH_PELOTA)
-IMAGEN_PELOTA_ROJA =mpimg.imread(IMG_PATH_PELOTA_ROJA)
+IMG_DIR = BASE_DIR.parents[1] / "assets" / "images"
+
+IMG_PELOTA = IMG_DIR / "sport-ball-football-free-png.webp"
+IMG_PELOTA_ROJA = IMG_DIR / "pelota_roja.png"
+
+IMAGEN_PELOTA = mpimg.imread(IMG_PELOTA)
+IMAGEN_PELOTA_ROJA = mpimg.imread(IMG_PELOTA_ROJA)
 
 def render_results(df):
 
