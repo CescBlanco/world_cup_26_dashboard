@@ -39,7 +39,8 @@ def render_results(df):
                     data = cache_data_fotmob["data"]
                 else:
                     with st.spinner("🟡 No cache in matches fotmob. Scraping match data..."):
-                        data = asyncio.run(fetch_match_json(url_match_fotmob))
+                        with open(f"data/json_matches_fotmob/{match_id_fotmob}.json") as f:
+                            data = json.load(f)
                     save_match_cache_fotmob(match_id_fotmob, data)
                     st.success(f"🔵 Cache created successfully for match {match_id_fotmob}")
 
