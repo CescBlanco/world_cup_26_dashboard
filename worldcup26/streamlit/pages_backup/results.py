@@ -4,6 +4,15 @@ from functions.plots import *
 
 from services.load_data import load_all_matches_fotmob
 
+from pathlib import Path
+import matplotlib.image as mpimg
+
+IMG_PATH_PELOTA = Path(__file__).resolve().parent / ".." / "data" / "sport-ball-football-free-png.webp"
+IMG_PATH_PELOTA_ROJA = Path(__file__).resolve().parent / ".." / "data" / "pelota_roja.png"
+
+IMAGEN_PELOTA = mpimg.imread(IMG_PATH_PELOTA)
+IMAGEN_PELOTA_ROJA =mpimg.imread(IMG_PATH_PELOTA_ROJA)
+
 def render_results(df):
 
     partidos, stage_selected, group_selected, fecha_elegida= results_filtres(df)
@@ -236,8 +245,7 @@ def render_results(df):
                                 
                             with overview_tabs[1]:
                                 write_subtitle("EVOLUTIVE EXPECTED GOAL (xG)")
-                                IMAGEN_PELOTA = mpimg.imread('worldcup26/data/sport-ball-football-free-png.webp')
-                                IMAGEN_PELOTA_ROJA =mpimg.imread('worldcup26/data/pelota_roja.png')
+                                
 
                                 col1, col2, col3= st.columns([1, 3, 1])
 
