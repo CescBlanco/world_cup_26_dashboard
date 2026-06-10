@@ -3,6 +3,7 @@ import pandas as pd
 from datetime import time
 
 import os
+os.system("patchright install")
 import glob
 import datetime
 
