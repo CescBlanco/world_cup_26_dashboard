@@ -2282,7 +2282,7 @@ def create_match_report2_plot(referee_html,group_round, stage_selected, id_home_
 
         fig_text(0.5, 0.95, texto_estado, color='white', fontsize=40, fontweight='bold', ha='center', va='center', ax=header_ax)
 
-        fig_text(0.5, 0.92, f"{group_round} - {stage_selected}, World Cup 2026 | Post Match Report-1", color='white', fontsize=30, ha='center',
+        fig_text(0.5, 0.92, f"{group_round} - {stage_selected}, World Cup 2026 | Post Match Report-2", color='white', fontsize=30, ha='center',
                     va='center', ax=header_ax)
 
         fig_text(0.5, 0.90, f"Venue: {match_info['venue_name']} (Attendance: {match_info['attendance']}) | {referee_html}",

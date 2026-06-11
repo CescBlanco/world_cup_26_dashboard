@@ -5,7 +5,23 @@ from concurrent.futures import ThreadPoolExecutor
 import requests
 from utils.mapping import NAME_MAPPING2
 
+def safe_str(val):
+    return "" if pd.isna(val) else str(val)
 
+def safe_int(x):
+    try:
+        if pd.isna(x):
+            return None
+        return int(float(x))
+    except:
+        return None
+    
+def safe_image(url):
+    if url and url != "None" and url != "":
+        st.image(url, width=90)
+    else:
+        st.write("📷  Photo not available")
+    
 def match_status(row: pd.Series) -> str:
     """
     Determine the status of a match based on score availability.
@@ -25,7 +41,11 @@ def match_status(row: pd.Series) -> str:
     """
 
     # 🔹 Match already played if both scores exist
-    return ("played" if pd.notna(row["homeScore"]) and pd.notna(row["awayScore"]) else "scheduled" )
+    return (
+        "played"
+        if pd.notna(row["homeScore"]) and pd.notna(row["awayScore"])
+        else "scheduled"
+    )
 
 def build_event(row: pd.Series) -> dict:
     """
@@ -62,18 +82,25 @@ def build_event(row: pd.Series) -> dict:
     away = row["awayTeamName"]
     dt = row["match_datetime"]
 
+    st.write("DEBUG dt:", row["match_datetime"])
+
+    h_score = safe_int(row["homeScore"])
+    a_score = safe_int(row["awayScore"])
     # =========================
     # EVENT TITLE
     # =========================
     # 🔹 Scheduled match (no score yet)
-    if status == "scheduled":
-        title = f"⚽ {home} vs {away}"
-
-    # 🔹 Completed match (show score)
+    if status == "played" and h_score is not None and a_score is not None:
+        title = f"⚽ {home} {int(h_score)}-{int(a_score)} {away}"
     else:
-        title =  f"⚽ {home} {int(row['homeScore'])}-{int(row['awayScore'])} {away}"
+        title = f"⚽ {home} vs {away}"
         
-
+    round_value = row["matchround"]
+    round_value = (
+    int(round_value)
+    if pd.notna(round_value)
+    else None
+)
     # =========================
     # EVENT STRUCTURE
     # =========================
@@ -87,24 +114,24 @@ def build_event(row: pd.Series) -> dict:
 
         # 🔹 Extra metadata for tooltips / UI rendering
         "extendedProps": {
-            "home": home,
-            "away": away,
-            "home_logo": row["homeTeamPhoto"],
-            "away_logo": row["awayTeamPhoto"],
-            "status": status,
+        "home": safe_str(home),
+        "away": safe_str(away),
+        "home_logo": safe_str(row["homeTeamPhoto"]),
+        "away_logo": safe_str(row["awayTeamPhoto"]),
+        "status": status,
 
-            # 🔹 Score only for played matches
-            "score": (
-                f"{int(row['homeScore'])}-{int(row['awayScore'])}"
-                if status == "played"
-                else None
-            ),
+        "score": (
+            f"{int(row['homeScore'])}-{int(row['awayScore'])}"
+            if status == "played"
+            else None
+        ),
 
-            "time": dt.strftime("%H:%M"),
-            "stage": row["stageName"],
-            "round": row["matchround"]
-        }
+        "time": dt.strftime("%H:%M"),
+        "stage": safe_str(row["stageName"]),
+        "round": safe_int(row.get("round_id")),
+        
     }
+}
 
 def calendar_function(df: list[dict] | pd.DataFrame) -> dict:
     """
@@ -199,7 +226,8 @@ def click_event_and_info(state: dict) -> None:
             # HOME TEAM
             # =========================
             with col1:
-                st.image(props.get("home_logo"), width=90)
+
+                safe_image(props.get("home_logo"))
                 st.write(props.get("home"))
 
             # =========================
@@ -220,7 +248,7 @@ def click_event_and_info(state: dict) -> None:
             # AWAY TEAM
             # =========================
             with col3:
-                st.image(props.get("away_logo"), width=90)
+                safe_image(props.get("away_logo"))
                 st.write(props.get("away"))
 
         st.divider()

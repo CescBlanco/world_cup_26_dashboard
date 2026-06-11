@@ -43,11 +43,16 @@ def render_fixtures(df: pd.DataFrame) -> None:
         # =========================
         df = df.copy()
         df["match_datetime"] = pd.to_datetime(df["match_datetime"])
+        df["homeScore"] = pd.to_numeric(df["homeScore"], errors="coerce")
+        df["awayScore"] = pd.to_numeric(df["awayScore"], errors="coerce")
 
+        df["matchround"] = pd.to_numeric(df["matchround"], errors="coerce")
+        df = df.replace({pd.NA: None})
+        
         # =========================
         # BUILD CALENDAR EVENTS
         # =========================
-        events = [ build_event(row) for row in df.to_dict("records")]
+        events = df.apply(build_event, axis=1).tolist()
 
         # =========================
         # CALENDAR RENDERING
