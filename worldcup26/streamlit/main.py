@@ -414,7 +414,8 @@ st.html("""
 <br><br>
 
 📬 Contact: cesc.blanco@gmail.com |
-🔗 <a href="https://github.com/CescBlanco" target="_blank">GitHub</a> 
+🔗 <a href="https://github.com/CescBlanco" target="_blank">GitHub</a> |
+💼 <a href="https://www.linkedin.com/in/cescblanco" target="_blank">LinkedIn</a> 
 <br><br>
 
 📊 Data sources:
