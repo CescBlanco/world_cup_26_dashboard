@@ -1,0 +1,33 @@
+round,roundName,pageUrl,id,home.name,home.id,away.name,away.id
+1,1,https://www.fotmob.com/matches/canada-vs-argentina/1an224#4407860,4407860,Argentina,6706,Canada,5810
+1,1,https://www.fotmob.com/matches/peru-vs-chile/2031k6#4377170,4377170,Peru,5798,Chile,9762
+1,1,https://www.fotmob.com/matches/venezuela-vs-ecuador/1akn65#4377176,4377176,Ecuador,6707,Venezuela,5800
+1,1,https://www.fotmob.com/matches/jamaica-vs-mexico/1an228#4377175,4377175,Mexico,6710,Jamaica,5806
+1,1,https://www.fotmob.com/matches/bolivia-vs-usa/1alg4q#4377205,4377205,United States,6713,Bolivia,5797
+1,1,https://www.fotmob.com/matches/uruguay-vs-panama/14vs7r#4377204,4377204,Uruguay,5796,Panama,5922
+1,1,https://www.fotmob.com/matches/paraguay-vs-colombia/1utthz#4377210,4377210,Colombia,8258,Paraguay,6724
+1,1,https://www.fotmob.com/matches/costa-rica-vs-brazil/1un2w9#4407876,4407876,Brazil,8256,Costa Rica,6705
+2,2,https://www.fotmob.com/matches/peru-vs-canada/144a66#4407861,4407861,Peru,5798,Canada,5810
+2,2,https://www.fotmob.com/matches/argentina-vs-chile/28qplg#4377171,4377171,Chile,9762,Argentina,6706
+2,2,https://www.fotmob.com/matches/jamaica-vs-ecuador/1am938#4377177,4377177,Ecuador,6707,Jamaica,5806
+2,2,https://www.fotmob.com/matches/venezuela-vs-mexico/1alg4n#4377178,4377178,Venezuela,5800,Mexico,6710
+2,2,https://www.fotmob.com/matches/panama-vs-usa/1bj4sz#4377207,4377207,Panama,5922,United States,6713
+2,2,https://www.fotmob.com/matches/uruguay-vs-bolivia/140jw2#4377206,4377206,Uruguay,5796,Bolivia,5797
+2,2,https://www.fotmob.com/matches/costa-rica-vs-colombia/1unpzk#4407877,4407877,Colombia,8258,Costa Rica,6705
+2,2,https://www.fotmob.com/matches/paraguay-vs-brazil/1ut6dm#4377211,4377211,Paraguay,6724,Brazil,8256
+3,3,https://www.fotmob.com/matches/peru-vs-argentina/1aju7y#4377172,4377172,Argentina,6706,Peru,5798
+3,3,https://www.fotmob.com/matches/canada-vs-chile/2071p0#4407862,4407862,Canada,5810,Chile,9762
+3,3,https://www.fotmob.com/matches/venezuela-vs-jamaica/143s97#4377179,4377179,Jamaica,5806,Venezuela,5800
+3,3,https://www.fotmob.com/matches/ecuador-vs-mexico/1hlgxf#4377180,4377180,Mexico,6710,Ecuador,6707
+3,3,https://www.fotmob.com/matches/bolivia-vs-panama/14w19a#4377208,4377208,Bolivia,5797,Panama,5922
+3,3,https://www.fotmob.com/matches/uruguay-vs-usa/1al6h8#4377209,4377209,United States,6713,Uruguay,5796
+3,3,https://www.fotmob.com/matches/brazil-vs-colombia/296xs5#4377212,4377212,Brazil,8256,Colombia,8258
+3,3,https://www.fotmob.com/matches/costa-rica-vs-paraguay/1hox8b#4407878,4407878,Costa Rica,6705,Paraguay,6724
+1/4,Quarter-Finals,https://www.fotmob.com/matches/argentina-vs-ecuador/1hkbiq#4407868,4407868,Argentina,6706,Ecuador,6707
+1/4,Quarter-Finals,https://www.fotmob.com/matches/venezuela-vs-canada/144s35#4407869,4407869,Venezuela,5800,Canada,5810
+1/4,Quarter-Finals,https://www.fotmob.com/matches/panama-vs-colombia/1nv62k#4407871,4407871,Colombia,8258,Panama,5922
+1/4,Quarter-Finals,https://www.fotmob.com/matches/uruguay-vs-brazil/1msfui#4407870,4407870,Uruguay,5796,Brazil,8256
+1/2,Semi-Finals,https://www.fotmob.com/matches/canada-vs-argentina/1an224#4407872,4407872,Argentina,6706,Canada,5810
+1/2,Semi-Finals,https://www.fotmob.com/matches/uruguay-vs-colombia/1mt1jb#4407873,4407873,Uruguay,5796,Colombia,8258
+bronze,Bronze Final,https://www.fotmob.com/matches/uruguay-vs-canada/143s9b#4407874,4407874,Canada,5810,Uruguay,5796
+final,Final,https://www.fotmob.com/matches/argentina-vs-colombia/1uo1j8#4407875,4407875,Argentina,6706,Colombia,8258

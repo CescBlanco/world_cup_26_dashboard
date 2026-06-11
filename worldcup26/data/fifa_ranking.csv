@@ -1,0 +1,212 @@
+rank,prev_rank,team,team_photo,latest_results,points
+1,+2,Argentina,https://api.fifa.com/api/v3/picture/flags-sq-2/ARG,"['W', 'W', 'W', 'W', 'W']",1877.27
+2,+0,Spain,https://api.fifa.com/api/v3/picture/flags-sq-2/ESP,"['D', 'W', 'D', 'D', 'W']",1874.71
+3,-2,France,https://api.fifa.com/api/v3/picture/flags-sq-2/FRA,"['W', 'W', 'W', 'L', 'W']",1870.7
+4,+0,England,https://api.fifa.com/api/v3/picture/flags-sq-2/ENG,"['W', 'D', 'L', 'W', 'W']",1828.02
+5,+0,Portugal,https://api.fifa.com/api/v3/picture/flags-sq-2/POR,"['W', 'D', 'W', 'W', 'W']",1767.85
+6,+0,Brazil,https://api.fifa.com/api/v3/picture/flags-sq-2/BRA,"['D', 'L', 'W', 'W', 'W']",1765.86
+7,+1,Morocco,https://api.fifa.com/api/v3/picture/flags-sq-2/MAR,"['W', 'D', 'W', 'W', 'D']",1755.1
+8,-1,Netherlands,https://api.fifa.com/api/v3/picture/flags-sq-2/NED,"['W', 'W', 'D', 'L', 'W']",1753.57
+9,+0,Belgium,https://api.fifa.com/api/v3/picture/flags-sq-2/BEL,"['W', 'W', 'D', 'W', 'W']",1742.24
+10,+0,Germany,https://api.fifa.com/api/v3/picture/flags-sq-2/GER,"['W', 'W', 'W', 'W', 'W']",1735.77
+11,+0,Croatia,https://api.fifa.com/api/v3/picture/flags-sq-2/CRO,"['W', 'W', 'L', 'L', 'W']",1714.87
+12,+0,Italy,https://api.fifa.com/api/v3/picture/flags-sq-2/ITA,"['L', 'W', 'L', 'W', 'W']",1704.73
+13,+0,Colombia,https://api.fifa.com/api/v3/picture/flags-sq-2/COL,"['W', 'L', 'L', 'W', 'W']",1698.35
+14,+1,Mexico,https://api.fifa.com/api/v3/picture/flags-sq-2/MEX,"['D', 'D', 'W', 'W', 'W']",1687.48
+15,-1,Senegal,https://api.fifa.com/api/v3/picture/flags-sq-2/SEN,"['L', 'W', 'W', 'L', 'D']",1684.07
+16,+1,Uruguay,https://api.fifa.com/api/v3/picture/flags-sq-2/URU,"['W', 'D', 'L', 'D', 'D']",1673.07
+17,-1,United States,https://api.fifa.com/api/v3/picture/flags-sq-2/USA,"['W', 'L', 'L', 'W', 'L']",1671.23
+18,+0,Japan,https://api.fifa.com/api/v3/picture/flags-sq-2/JPN,"['W', 'W', 'W', 'W', 'W']",1661.58
+19,+0,Switzerland,https://api.fifa.com/api/v3/picture/flags-sq-2/SUI,"['D', 'L', 'D', 'W', 'D']",1650.06
+20,+1,Iran,https://api.fifa.com/api/v3/picture/flags-sq-2/IRN,"['L', 'L', 'W', 'W', 'W']",1619.58
+21,-1,Denmark,https://api.fifa.com/api/v3/picture/flags-sq-2/DEN,"['D', 'L', 'W', 'L', 'D']",1619.47
+22,+0,Turkey,https://api.fifa.com/api/v3/picture/flags-sq-2/TUR,"['D', 'W', 'W', 'W', 'W']",1605.73
+23,+0,Ecuador,https://api.fifa.com/api/v3/picture/flags-sq-2/ECU,"['W', 'D', 'D', 'W', 'W']",1598.52
+24,+0,Austria,https://api.fifa.com/api/v3/picture/flags-sq-2/AUT,"['W', 'D', 'W', 'W', 'W']",1597.4
+25,+0,South Korea,https://api.fifa.com/api/v3/picture/flags-sq-2/KOR,"['W', 'L', 'L', 'W', 'W']",1591.63
+26,+0,Nigeria,https://api.fifa.com/api/v3/picture/flags-sq-2/NGA,"['D', 'W', 'W', 'D', 'L']",1585.02
+27,+0,Australia,https://api.fifa.com/api/v3/picture/flags-sq-2/AUS,"['L', 'W', 'W', 'L', 'D']",1579.34
+28,+0,Algeria,https://api.fifa.com/api/v3/picture/flags-sq-2/ALG,"['W', 'L', 'W', 'D', 'W']",1571.03
+29,+0,Egypt,https://api.fifa.com/api/v3/picture/flags-sq-2/EGY,"['L', 'W', 'D', 'W', 'L']",1562.37
+30,+0,Canada,https://api.fifa.com/api/v3/picture/flags-sq-2/CAN,"['W', 'D', 'D', 'W', 'D']",1559.48
+31,+0,Norway,https://api.fifa.com/api/v3/picture/flags-sq-2/NOR,"['W', 'L', 'D', 'W', 'D']",1557.44
+32,+0,Ukraine,https://api.fifa.com/api/v3/picture/flags-sq-2/UKR,"['L', 'W', 'L', 'W', 'W']",1549.29
+33,+1,Ivory Coast,https://api.fifa.com/api/v3/picture/flags-sq-2/CIV,"['W', 'L', 'W', 'W', 'W']",1540.87
+34,-1,Panama,https://api.fifa.com/api/v3/picture/flags-sq-2/PAN,"['D', 'W', 'L', 'W', 'D']",1539.16
+35,+1,Russia,https://api.fifa.com/api/v3/picture/flags-sq-2/RUS,"['W', 'D', 'L', 'W', 'W']",1529.6
+36,-1,Poland,https://api.fifa.com/api/v3/picture/flags-sq-2/POL,"['W', 'W', 'L', 'L', 'D']",1526.18
+37,+0,Wales,https://api.fifa.com/api/v3/picture/flags-sq-2/WAL,"['W', 'L', 'D', 'D', 'L']",1516.95
+38,+0,Sweden,https://api.fifa.com/api/v3/picture/flags-sq-2/SWE,"['D', 'W', 'W', 'L', 'D']",1509.79
+39,+3,Hungary,https://api.fifa.com/api/v3/picture/flags-sq-2/HUN,"['L', 'W', 'D', 'W', 'W']",1506.39
+40,+1,Czechia,https://api.fifa.com/api/v3/picture/flags-sq-2/CZE,"['W', 'W', 'W', 'W', 'W']",1505.74
+41,-1,Paraguay,https://api.fifa.com/api/v3/picture/flags-sq-2/PAR,"['L', 'W', 'W', 'L', 'W']",1505.35
+42,+1,Scotland,https://api.fifa.com/api/v3/picture/flags-sq-2/SCO,"['W', 'L', 'L', 'W', 'W']",1503.34
+43,-4,Serbia,https://api.fifa.com/api/v3/picture/flags-sq-2/SRB,"['W', 'L', 'W', 'L', 'L']",1502.13
+44,+1,Cameroon,https://api.fifa.com/api/v3/picture/flags-sq-2/CMR,"['W', 'W', 'L', 'L', 'W']",1481.24
+45,-1,Tunisia,https://api.fifa.com/api/v3/picture/flags-sq-2/TUN,"['L', 'W', 'D', 'L', 'L']",1476.41
+46,+0,DR Congo,https://api.fifa.com/api/v3/picture/flags-sq-2/COD,"['W', 'L', 'W', 'D', 'L']",1474.43
+47,+1,Slovakia,https://api.fifa.com/api/v3/picture/flags-sq-2/SVK,"['L', 'L', 'W', 'W', 'D']",1473.66
+48,-1,Greece,https://api.fifa.com/api/v3/picture/flags-sq-2/GRE,"['D', 'L', 'D', 'D', 'L']",1473.19
+49,+0,Venezuela,https://api.fifa.com/api/v3/picture/flags-sq-2/VEN,"['L', 'W', 'D', 'L', 'W']",1469.18
+50,+0,Uzbekistan,https://api.fifa.com/api/v3/picture/flags-sq-2/UZB,"['W', 'W', 'D', 'L', 'L']",1458.73
+51,+3,Chile,https://api.fifa.com/api/v3/picture/flags-sq-2/CHI,"['W', 'W', 'L', 'L', 'W']",1458.2
+52,+1,Peru,https://api.fifa.com/api/v3/picture/flags-sq-2/PER,"['L', 'L', 'D', 'W', 'L']",1457.69
+53,-2,Costa Rica,https://api.fifa.com/api/v3/picture/flags-sq-2/CRC,"['D', 'D', 'L', 'L', 'L']",1456.03
+54,+2,Romania,https://api.fifa.com/api/v3/picture/flags-sq-2/ROU,"['W', 'L', 'L', 'D', 'W']",1455.89
+55,-3,Mali,https://api.fifa.com/api/v3/picture/flags-sq-2/MLI,"['D', 'W', 'L', 'D', 'L']",1455.59
+56,-1,Qatar,https://api.fifa.com/api/v3/picture/flags-sq-2/QAT,"['L', 'D', 'L', 'L', 'D']",1450.31
+57,+0,Iraq,https://api.fifa.com/api/v3/picture/flags-sq-2/IRQ,"['L', 'W', 'W', 'D', 'L']",1446.28
+58,+1,Ireland,https://api.fifa.com/api/v3/picture/flags-sq-2/IRL,"['L', 'D', 'W', 'W', 'D']",1441.1
+59,-1,Slovenia,https://api.fifa.com/api/v3/picture/flags-sq-2/SVN,"['D', 'L', 'W', 'D', 'L']",1441.09
+60,+0,South Africa,https://api.fifa.com/api/v3/picture/flags-sq-2/RSA,"['W', 'L', 'D', 'L', 'D']",1428.38
+61,+0,Saudi Arabia,https://api.fifa.com/api/v3/picture/flags-sq-2/KSA,"['L', 'L', 'L', 'W', 'D']",1423.88
+62,+0,Burkina Faso,https://api.fifa.com/api/v3/picture/flags-sq-2/BFA,"['L', 'W', 'D', 'L', 'D']",1406.99
+63,+0,Jordan,https://api.fifa.com/api/v3/picture/flags-sq-2/JOR,"['L', 'D', 'D', 'L', 'L']",1387.74
+64,+1,Bosnia and Herzegovina,https://api.fifa.com/api/v3/picture/flags-sq-2/BIH,"['D', 'W', 'W', 'D', 'D']",1387.22
+65,+1,Honduras,https://api.fifa.com/api/v3/picture/flags-sq-2/HON,"['W', 'L', 'D', 'D', 'L']",1378.97
+66,-2,Albania,https://api.fifa.com/api/v3/picture/flags-sq-2/ALB,"['L', 'L', 'L', 'L', 'L']",1376.03
+67,+2,Cape Verde,https://api.fifa.com/api/v3/picture/flags-sq-2/CPV,"['L', 'L', 'D', 'W', 'W']",1371.11
+68,+0,United Arab Emirates,https://api.fifa.com/api/v3/picture/flags-sq-2/UAE,"['D', 'W', 'W', 'L', 'D']",1370.47
+69,-2,North Macedonia,https://api.fifa.com/api/v3/picture/flags-sq-2/MKD,"['L', 'L', 'D', 'D', 'L']",1369.16
+70,+0,Northern Ireland,https://api.fifa.com/api/v3/picture/flags-sq-2/NIR,"['W', 'L', 'D', 'W', 'L']",1365.3
+71,+0,Jamaica,https://api.fifa.com/api/v3/picture/flags-sq-2/JAM,"['D', 'W', 'L', 'W', 'L']",1357.84
+72,+0,Georgia,https://api.fifa.com/api/v3/picture/flags-sq-2/GEO,"['L', 'D', 'W', 'D', 'W']",1355.26
+73,+1,Ghana,https://api.fifa.com/api/v3/picture/flags-sq-2/GHA,"['L', 'L', 'L', 'L', 'D']",1346.88
+74,+1,Iceland,https://api.fifa.com/api/v3/picture/flags-sq-2/ISL,"['L', 'D', 'D', 'L', 'L']",1342.77
+75,-2,Finland,https://api.fifa.com/api/v3/picture/flags-sq-2/FIN,"['W', 'W', 'D', 'L', 'L']",1341.92
+76,+1,Israel,https://api.fifa.com/api/v3/picture/flags-sq-2/ISR,"['L', 'D', 'W', 'D', 'W']",1333.9
+77,-1,Bolivia,https://api.fifa.com/api/v3/picture/flags-sq-2/BOL,"['L', 'W', 'W', 'L', 'L']",1326.0
+78,+0,Kosovo,https://api.fifa.com/api/v3/picture/flags-sq-2/KOS,"['D', 'W', 'L', 'L', 'W']",1319.12
+79,+0,Oman,https://api.fifa.com/api/v3/picture/flags-sq-2/OMA,"['W', 'L', 'D', 'W', 'L']",1306.9
+80,+1,Montenegro,https://api.fifa.com/api/v3/picture/flags-sq-2/MNE,"['L', 'W', 'L', 'W', 'D']",1301.98
+81,-1,Guinea,https://api.fifa.com/api/v3/picture/flags-sq-2/GUI,"['W', 'D', 'D', 'L', 'L']",1295.6
+82,+0,Curaçao,https://api.fifa.com/api/v3/picture/flags-sq-2/CUW,"['D', 'L', 'L', 'L', 'W']",1294.77
+83,+0,Haiti,https://api.fifa.com/api/v3/picture/flags-sq-2/HAI,"['W', 'L', 'D', 'W', 'L']",1293.1
+84,+0,Syria,https://api.fifa.com/api/v3/picture/flags-sq-2/SYR,"['D', 'D', 'L', 'W', 'L']",1283.05
+85,+0,New Zealand,https://api.fifa.com/api/v3/picture/flags-sq-2/NZL,"['L', 'L', 'W', 'L', 'L']",1275.58
+86,+1,Gabon,https://api.fifa.com/api/v3/picture/flags-sq-2/GAB,"['L', 'L', 'L', 'L', 'D']",1272.51
+87,-1,Bulgaria,https://api.fifa.com/api/v3/picture/flags-sq-2/BUL,"['W', 'W', 'W', 'L', 'D']",1271.68
+88,+1,Angola,https://api.fifa.com/api/v3/picture/flags-sq-2/ANG,"['L', 'D', 'D', 'D', 'W']",1265.58
+89,-1,Uganda,https://api.fifa.com/api/v3/picture/flags-sq-2/UGA,"['W', 'L', 'L', 'D', 'L']",1264.09
+90,+2,Zambia,https://api.fifa.com/api/v3/picture/flags-sq-2/ZAM,"['L', 'D', 'D', 'L', 'L']",1255.82
+91,+3,China,https://api.fifa.com/api/v3/picture/flags-sq-2/CHN,"['W', 'W', 'L', 'W', 'D']",1254.81
+92,-1,Bahrain,https://api.fifa.com/api/v3/picture/flags-sq-2/BHR,"['W', 'L', 'L', 'W', 'L']",1254.41
+93,-3,Benin,https://api.fifa.com/api/v3/picture/flags-sq-2/BEN,"['L', 'W', 'W', 'D', 'L']",1252.17
+94,-1,Thailand,https://api.fifa.com/api/v3/picture/flags-sq-2/THA,"['W', 'W', 'W', 'D', 'D']",1250.8
+95,+0,Palestine,https://api.fifa.com/api/v3/picture/flags-sq-2/PLE,"['D', 'D', 'L', 'D', 'D']",1243.71
+96,+1,Belarus,https://api.fifa.com/api/v3/picture/flags-sq-2/BLR,"['D', 'W', 'W', 'W', 'D']",1242.88
+97,-1,Guatemala,https://api.fifa.com/api/v3/picture/flags-sq-2/GUA,"['L', 'W', 'L', 'L', 'L']",1238.74
+98,+0,Luxembourg,https://api.fifa.com/api/v3/picture/flags-sq-2/LUX,"['L', 'W', 'W', 'L', 'W']",1232.82
+99,+0,Vietnam,https://api.fifa.com/api/v3/picture/flags-sq-2/VIE,"['W', 'W', 'W', 'W', 'W']",1225.68
+100,+0,El Salvador,https://api.fifa.com/api/v3/picture/flags-sq-2/SLV,"['L', 'L', 'D', 'L', 'D']",1225.34
+101,+2,Tajikistan,https://api.fifa.com/api/v3/picture/flags-sq-2/TJK,"['W', 'W', 'D', 'W', 'D']",1224.19
+102,+0,Trinidad and Tobago,https://api.fifa.com/api/v3/picture/flags-sq-2/TRI,"['L', 'L', 'D', 'L', 'L']",1219.59
+103,-2,Mozambique,https://api.fifa.com/api/v3/picture/flags-sq-2/MOZ,"['L', 'W', 'L', 'L', 'L']",1218.62
+104,+0,Madagascar,https://api.fifa.com/api/v3/picture/flags-sq-2/MAD,"['L', 'W', 'W', 'D', 'L']",1202.69
+105,+0,Equatorial Guinea,https://api.fifa.com/api/v3/picture/flags-sq-2/EQG,"['L', 'L', 'L', 'W', 'D']",1195.2
+106,+1,Kyrgyzstan,https://api.fifa.com/api/v3/picture/flags-sq-2/KGZ,"['L', 'L', 'L', 'D', 'D']",1192.16
+107,-1,Armenia,https://api.fifa.com/api/v3/picture/flags-sq-2/ARM,"['L', 'L', 'L', 'D', 'D']",1189.63
+108,+1,Comoros,https://api.fifa.com/api/v3/picture/flags-sq-2/COM,"['L', 'D', 'D', 'D', 'L']",1187.91
+109,+2,Kenya,https://api.fifa.com/api/v3/picture/flags-sq-2/KEN,"['L', 'L', 'W', 'D', 'W']",1185.08
+110,+2,Libya,https://api.fifa.com/api/v3/picture/flags-sq-2/LBY,"['D', 'W', 'L', 'D', 'D']",1182.08
+111,-1,Kazakhstan,https://api.fifa.com/api/v3/picture/flags-sq-2/KAZ,"['L', 'W', 'W', 'D', 'L']",1180.78
+112,+1,Tanzania,https://api.fifa.com/api/v3/picture/flags-sq-2/TAN,"['D', 'D', 'L', 'L', 'W']",1180.27
+113,+2,Mauritania,https://api.fifa.com/api/v3/picture/flags-sq-2/MTN,"['L', 'L', 'L', 'D', 'W']",1176.68
+114,+0,Niger,https://api.fifa.com/api/v3/picture/flags-sq-2/NIG,"['D', 'D', 'L', 'D', 'L']",1175.33
+115,-7,Lebanon,https://api.fifa.com/api/v3/picture/flags-sq-2/LBN,"['W', 'W', 'W', 'L', 'L']",1172.22
+116,+0,Gambia,https://api.fifa.com/api/v3/picture/flags-sq-2/GAM,"['L', 'W', 'D', 'L', 'L']",1159.64
+117,+0,Sudan,https://api.fifa.com/api/v3/picture/flags-sq-2/SDN,"['L', 'L', 'W', 'L', 'L']",1157.22
+118,+4,Indonesia,https://api.fifa.com/api/v3/picture/flags-sq-2/IDN,"['L', 'W', 'L', 'W', 'W']",1157.14
+119,+2,Togo,https://api.fifa.com/api/v3/picture/flags-sq-2/TOG,"['D', 'D', 'W', 'D', 'W']",1152.76
+120,-2,North Korea,https://api.fifa.com/api/v3/picture/flags-sq-2/PRK,"['W', 'L', 'L', 'D', 'L']",1151.05
+121,-1,Namibia,https://api.fifa.com/api/v3/picture/flags-sq-2/NAM,"['L', 'L', 'L', 'L', 'D']",1148.84
+122,-3,Sierra Leone,https://api.fifa.com/api/v3/picture/flags-sq-2/SLE,"['L', 'W', 'D', 'W', 'L']",1147.56
+123,+0,Faroe Islands,https://api.fifa.com/api/v3/picture/flags-sq-2/FRO,"['L', 'W', 'W', 'L', 'W']",1136.59
+124,+2,Cyprus,https://api.fifa.com/api/v3/picture/flags-sq-2/CYP,"['L', 'L', 'W', 'D', 'W']",1133.25
+125,+0,Suriname,https://api.fifa.com/api/v3/picture/flags-sq-2/SUR,"['D', 'D', 'W', 'L', 'L']",1132.43
+126,-2,Azerbaijan,https://api.fifa.com/api/v3/picture/flags-sq-2/AZE,"['L', 'W', 'D', 'L', 'W']",1132.0
+127,+2,Estonia,https://api.fifa.com/api/v3/picture/flags-sq-2/EST,"['W', 'W', 'L', 'W', 'W']",1130.64
+128,+0,Rwanda,https://api.fifa.com/api/v3/picture/flags-sq-2/RWA,"['W', 'L', 'L', 'W', 'W']",1126.62
+129,-2,Malawi,https://api.fifa.com/api/v3/picture/flags-sq-2/MWI,"['D', 'W', 'L', 'L', 'D']",1122.05
+130,+0,Zimbabwe,https://api.fifa.com/api/v3/picture/flags-sq-2/ZIM,"['D', 'L', 'W', 'L', 'W']",1119.78
+131,+0,Nicaragua,https://api.fifa.com/api/v3/picture/flags-sq-2/NCA,"['W', 'L', 'L', 'D', 'L']",1114.63
+132,+0,Guinea-Bissau,https://api.fifa.com/api/v3/picture/flags-sq-2/GNB,"['W', 'L', 'L', 'L', 'D']",1108.38
+133,+1,Kuwait,https://api.fifa.com/api/v3/picture/flags-sq-2/KUW,"['W', 'D', 'L', 'L', 'D']",1106.47
+134,-1,Congo,https://api.fifa.com/api/v3/picture/flags-sq-2/CGO,"['D', 'L', 'D', 'L', 'L']",1105.96
+135,+0,Philippines,https://api.fifa.com/api/v3/picture/flags-sq-2/PHI,"['W', 'W', 'D', 'W', 'W']",1100.95
+136,+2,Malaysia,https://api.fifa.com/api/v3/picture/flags-sq-2/MAS,"['L', 'W', 'W', 'W', 'L']",1086.22
+137,+0,Latvia,https://api.fifa.com/api/v3/picture/flags-sq-2/LVA,"['L', 'W', 'W', 'L', 'L']",1085.66
+138,-2,India,https://api.fifa.com/api/v3/picture/flags-sq-2/IND,"['W', 'L', 'L', 'L', 'D']",1084.93
+139,+0,Central African Republic,https://api.fifa.com/api/v3/picture/flags-sq-2/CTA,"['L', 'L', 'W', 'D', 'L']",1080.82
+140,+0,Liberia,https://api.fifa.com/api/v3/picture/flags-sq-2/LBR,"['L', 'L', 'D', 'L', 'W']",1080.44
+141,+0,Turkmenistan,https://api.fifa.com/api/v3/picture/flags-sq-2/TKM,"['L', 'L', 'W', 'W', 'L']",1078.65
+142,+0,Burundi,https://api.fifa.com/api/v3/picture/flags-sq-2/BDI,"['L', 'L', 'L', 'W', 'W']",1078.01
+143,+1,Ethiopia,https://api.fifa.com/api/v3/picture/flags-sq-2/ETH,"['L', 'W', 'W', 'W', 'D']",1077.52
+144,-1,Dominican Republic,https://api.fifa.com/api/v3/picture/flags-sq-2/DOM,"['L', 'W', 'D', 'D', 'L']",1076.5
+145,+4,Yemen,https://api.fifa.com/api/v3/picture/flags-sq-2/YEM,"['W', 'W', 'W', 'L', 'W']",1065.24
+146,-1,Lesotho,https://api.fifa.com/api/v3/picture/flags-sq-2/LES,"['L', 'D', 'W', 'D', 'L']",1064.29
+147,-1,Botswana,https://api.fifa.com/api/v3/picture/flags-sq-2/BOT,"['L', 'L', 'L', 'L', 'W']",1063.63
+148,-1,Singapore,https://api.fifa.com/api/v3/picture/flags-sq-2/SGP,"['L', 'W', 'W', 'W', 'L']",1057.95
+149,-1,Lithuania,https://api.fifa.com/api/v3/picture/flags-sq-2/LTU,"['L', 'W', 'L', 'W', 'L']",1056.85
+150,+0,Guyana,https://api.fifa.com/api/v3/picture/flags-sq-2/GUY,"['L', 'W', 'W', 'W', 'W']",1049.32
+151,+0,New Caledonia,https://api.fifa.com/api/v3/picture/flags-sq-2/NCL,"['D', 'W', 'L', 'W', 'L']",1036.95
+152,+0,Saint Kitts and Nevis,https://api.fifa.com/api/v3/picture/flags-sq-2/SKN,"['L', 'L', 'L', 'L', 'W']",1036.33
+153,+0,Solomon Islands,https://api.fifa.com/api/v3/picture/flags-sq-2/SOL,"['L', 'L', 'L', 'L', 'L']",1031.89
+154,+2,Puerto Rico,https://api.fifa.com/api/v3/picture/flags-sq-2/PUR,"['W', 'L', 'W', 'W', 'L']",1024.3
+155,-1,Fiji,https://api.fifa.com/api/v3/picture/flags-sq-2/FIJ,"['L', 'L', 'L', 'L', 'D']",1024.17
+156,-1,Hong Kong,https://api.fifa.com/api/v3/picture/flags-sq-2/HKG,"['D', 'L', 'L', 'W', 'L']",1024.16
+157,+0,Tahiti,https://api.fifa.com/api/v3/picture/flags-sq-2/TAH,"['W', 'L', 'W', 'W', 'L']",1019.04
+158,+0,Myanmar,https://api.fifa.com/api/v3/picture/flags-sq-2/MYA,"['L', 'W', 'W', 'W', 'L']",1010.91
+159,+0,Moldova,https://api.fifa.com/api/v3/picture/flags-sq-2/MDA,"['L', 'L', 'L', 'D', 'D']",1008.24
+160,+0,Vanuatu,https://api.fifa.com/api/v3/picture/flags-sq-2/VAN,"['D', 'L', 'W', 'W', 'D']",1002.53
+161,+0,Malta,https://api.fifa.com/api/v3/picture/flags-sq-2/MLT,"['L', 'L', 'L', 'L', 'W']",992.79
+162,+0,Antigua and Barbuda,https://api.fifa.com/api/v3/picture/flags-sq-2/ATG,"['D', 'L', 'L', 'D', 'L']",986.58
+163,+0,Grenada,https://api.fifa.com/api/v3/picture/flags-sq-2/GRN,"['W', 'W', 'L', 'L', 'L']",981.82
+164,+0,Cuba,https://api.fifa.com/api/v3/picture/flags-sq-2/CUB,"['W', 'L', 'L', 'W', 'D']",981.42
+165,+0,Eswatini,https://api.fifa.com/api/v3/picture/flags-sq-2/SWZ,"['L', 'D', 'L', 'L', 'L']",979.01
+166,+1,Saint Lucia,https://api.fifa.com/api/v3/picture/flags-sq-2/LCA,"['L', 'W', 'L', 'L', 'L']",976.71
+167,-1,Bermuda,https://api.fifa.com/api/v3/picture/flags-sq-2/BER,"['L', 'L', 'L', 'D', 'L']",975.05
+168,+0,Papua New Guinea,https://api.fifa.com/api/v3/picture/flags-sq-2/PNG,"['L', 'D', 'W', 'W', 'W']",974.9
+169,+1,South Sudan,https://api.fifa.com/api/v3/picture/flags-sq-2/SSD,"['L', 'D', 'L', 'W', 'L']",970.94
+170,+1,St Vincent & Grenadines,https://api.fifa.com/api/v3/picture/flags-sq-2/VIN,"['W', 'L', 'L', 'W', 'W']",968.27
+171,-2,Afghanistan,https://api.fifa.com/api/v3/picture/flags-sq-2/AFG,"['L', 'L', 'W', 'L', 'L']",968.07
+172,+1,Andorra,https://api.fifa.com/api/v3/picture/flags-sq-2/AND,"['L', 'D', 'L', 'W', 'L']",946.43
+173,-1,Maldives,https://api.fifa.com/api/v3/picture/flags-sq-2/MDV,"['L', 'L', 'W', 'L', 'L']",943.92
+174,+0,Taiwan,https://api.fifa.com/api/v3/picture/flags-sq-2/TPE,"['L', 'L', 'L', 'L', 'L']",923.78
+175,+2,Cambodia,https://api.fifa.com/api/v3/picture/flags-sq-2/CAM,"['L', 'L', 'D', 'W', 'W']",922.32
+176,-1,Montserrat,https://api.fifa.com/api/v3/picture/flags-sq-2/MSR,"['L', 'L', 'L', 'W', 'L']",916.75
+177,-1,Nepal,https://api.fifa.com/api/v3/picture/flags-sq-2/NEP,"['L', 'L', 'D', 'L', 'L']",914.54
+178,+0,Mauritius,https://api.fifa.com/api/v3/picture/flags-sq-2/MRI,"['L', 'L', 'D', 'D', 'L']",911.49
+179,+0,Barbados,https://api.fifa.com/api/v3/picture/flags-sq-2/BRB,"['D', 'D', 'L', 'L', 'L']",909.89
+180,+0,Belize,https://api.fifa.com/api/v3/picture/flags-sq-2/BLZ,"['L', 'L', 'L', 'W', 'L']",907.0
+181,+0,Bangladesh,https://api.fifa.com/api/v3/picture/flags-sq-2/BAN,"['D', 'W', 'L', 'L', 'W']",902.93
+182,+0,Dominica,https://api.fifa.com/api/v3/picture/flags-sq-2/DMA,"['D', 'D', 'W', 'L', 'L']",897.69
+183,+0,Chad,https://api.fifa.com/api/v3/picture/flags-sq-2/CHA,"['L', 'L', 'D', 'L', 'L']",896.85
+184,+0,Eritrea,https://api.fifa.com/api/v3/picture/flags-sq-2/ERI,"['L', 'L', 'L', 'W', 'W']",887.06
+185,+0,Laos,https://api.fifa.com/api/v3/picture/flags-sq-2/LAO,"['W', 'L', 'L', 'L', 'W']",885.03
+186,+2,Cook Islands,https://api.fifa.com/api/v3/picture/flags-sq-2/COK,"['L', 'L', 'W', 'L', 'L']",877.53
+187,+4,Sri Lanka,https://api.fifa.com/api/v3/picture/flags-sq-2/SRI,"['W', 'L', 'L', 'W', 'W']",876.86
+188,+2,Samoa,https://api.fifa.com/api/v3/picture/flags-sq-2/SAM,"['W', 'W', 'L', 'L', 'L']",876.41
+189,+0,Aruba,https://api.fifa.com/api/v3/picture/flags-sq-2/ARU,"['D', 'W', 'W', 'W', 'L']",875.61
+190,-3,Mongolia,https://api.fifa.com/api/v3/picture/flags-sq-2/MNG,"['W', 'L', 'L', 'L', 'L']",874.47
+191,+1,Eastern Samoa,https://api.fifa.com/api/v3/picture/flags-sq-2/ASA,"['L', 'L', 'W', 'L', 'L']",871.61
+192,-6,Bhutan,https://api.fifa.com/api/v3/picture/flags-sq-2/BHU,"['L', 'L', 'W', 'L', 'L']",870.81
+193,+1,Macao,https://api.fifa.com/api/v3/picture/flags-sq-2/MAC,"['L', 'L', 'L', 'L', 'L']",858.03
+194,-1,Brunei,https://api.fifa.com/api/v3/picture/flags-sq-2/BRU,"['L', 'L', 'L', 'L', 'L']",857.73
+195,+1,Sao Tome and Principe,https://api.fifa.com/api/v3/picture/flags-sq-2/STP,"['L', 'L', 'W', 'L', 'L']",855.44
+196,+1,Djibouti,https://api.fifa.com/api/v3/picture/flags-sq-2/DJI,"['L', 'L', 'L', 'L', 'W']",853.58
+197,-2,Cayman Islands,https://api.fifa.com/api/v3/picture/flags-sq-2/CAY,"['L', 'W', 'D', 'W', 'L']",850.06
+198,+4,Pakistan,https://api.fifa.com/api/v3/picture/flags-sq-2/PAK,"['L', 'L', 'W', 'W', 'W']",840.28
+199,-1,Somalia,https://api.fifa.com/api/v3/picture/flags-sq-2/SOM,"['L', 'W', 'L', 'D', 'W']",839.17
+200,-1,Tonga,https://api.fifa.com/api/v3/picture/flags-sq-2/TGA,"['W', 'L', 'L', 'W', 'L']",835.64
+201,-1,East Timor,https://api.fifa.com/api/v3/picture/flags-sq-2/TLS,"['L', 'L', 'L', 'L', 'W']",831.0
+202,+1,Gibraltar,https://api.fifa.com/api/v3/picture/flags-sq-2/GIB,"['L', 'L', 'L', 'W', 'W']",820.26
+203,-2,Guam,https://api.fifa.com/api/v3/picture/flags-sq-2/GUM,"['L', 'L', 'W', 'L', 'L']",819.54
+204,+0,Seychelles,https://api.fifa.com/api/v3/picture/flags-sq-2/SEY,"['L', 'L', 'L', 'D', 'L']",804.16
+205,+0,Turks and Caicos Islands,https://api.fifa.com/api/v3/picture/flags-sq-2/TCA,"['L', 'L', 'L', 'W', 'L']",803.98
+206,+0,Liechtenstein,https://api.fifa.com/api/v3/picture/flags-sq-2/LIE,"['L', 'W', 'L', 'L', 'L']",797.7
+207,+0,Bahamas,https://api.fifa.com/api/v3/picture/flags-sq-2/BAH,"['L', 'L', 'L', 'L', 'L']",786.82
+208,+1,US Virgin Islands,https://api.fifa.com/api/v3/picture/flags-sq-2/VIR,"['L', 'L', 'L', 'W', 'L']",779.76
+209,-1,British Virgin Islands,https://api.fifa.com/api/v3/picture/flags-sq-2/VGB,"['W', 'W', 'D', 'W', 'L']",777.41
+210,+0,Anguilla,https://api.fifa.com/api/v3/picture/flags-sq-2/AIA,"['L', 'W', 'L', 'W', 'L']",760.25
+211,+0,San Marino,https://api.fifa.com/api/v3/picture/flags-sq-2/SMR,"['L', 'L', 'D', 'L', 'L']",721.2
