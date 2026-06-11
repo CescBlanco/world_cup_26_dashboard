@@ -41,9 +41,10 @@ def render_results(df: pd.DataFrame):
     # - Team logos
     # - Match URLs
     #
-
+    
     match_list_post_filter(partidos, stage_selected, group_selected, fecha_elegida, id_stage)
 
+    st.dataframe(partidos)
     if "partido_mostrado" in st.session_state:
             partido_filtrado = df[df["url_match"] == st.session_state["partido_mostrado"]].reset_index(drop=True)
             if not partido_filtrado.empty:
@@ -54,7 +55,10 @@ def render_results(df: pd.DataFrame):
 
                 url_match_preview= partido_filtrado['url_match'].values[0]
                 estado = partido_filtrado['elapsed'][0]
-   
+                round_name_whoscored = str(partido_filtrado['round_id'][0])
+
+                group_round= partido_filtrado['stageName'][0].split('Cup')[1].strip()
+                
                 homeTeamPhoto = partido_detalle["homeTeamPhoto"]
                 awayTeamPhoto = partido_detalle["awayTeamPhoto"]
 
@@ -75,13 +79,9 @@ def render_results(df: pd.DataFrame):
                 #     3. Stop execution if unavailable
 
                 df_all_matches_fotmob=  load_all_matches_fotmob()
-                
-                # def extract_round_name_fotmob(df, home_team_whoscored, away_team_whoscored):
-                #     url_match_fotmob= df[(df['home.name'] == home_team_whoscored) & (df['away.name'] == away_team_whoscored) & (df['roundName'] ==round)]['pageUrl'].iloc[0]
-                #     return url_match_fotmob
-                # round_name= df_all_matches_fotmob[df_all_matches_fotmob['roundName']==]
+            
 
-                url_match_fotmob= extract_url_fotmob(df_all_matches_fotmob, selected_home_team, selected_away_team, round='Quarter-Finals')
+                url_match_fotmob= extract_url_fotmob(df_all_matches_fotmob, selected_home_team, selected_away_team, round=round_name_whoscored)
                 match_id_fotmob= extract_match_id_fotmob(url_match_fotmob)
                 cache_data_fotmob= load_match_cache_fotmob(match_id_fotmob)
                 if cache_data_fotmob:
@@ -267,11 +267,18 @@ def render_results(df: pd.DataFrame):
                             jugador_partido = player_away.loc[player_away["isManOfTheMatch"]]
                         nombre_jugador_partido = jugador_partido["name"].iloc[0]
 
+                        referee_html = ""
+
+                        if match_info.get('referee') and match_info['referee'].get('name'):
+                            referee_html = f"Referee: {match_info['referee']['name']}"
+                        else:
+                            referee_html = "Referee: No data available"
+
                         st.markdown(
                                 f"""
                                 <p style='text-align:center; font-size:15px; margin:0.5; line-height:1.4;'>
                                     Ubicación: {match_info['venue_name']} (Attendance: {match_info['attendance']})<br>
-                                    Referee: {match_info['referee']['name']}<br>
+                                    {referee_html} <br>
                                     ⭐ Match: {nombre_jugador_partido}
                                 </p>
                                 """,
@@ -772,7 +779,7 @@ def render_results(df: pd.DataFrame):
                                     st.badge("❌ Not generated", color="red")
                                     if st.button("Generate Report 1"):
                                         with st.spinner("⏳ Generating tactical report 1..."):
-                                                fig_bytes = create_match_report1_plot(id_home_fotmob,id_away_fotmob,name_home_fotmob,name_away_fotmob,homeScore,awayScore,texto_estado,
+                                                fig_bytes = create_match_report1_plot(referee_html,group_round, stage_selected, id_home_fotmob,id_away_fotmob,name_home_fotmob,name_away_fotmob,homeScore,awayScore,texto_estado,
                                                                         match_info, nombre_jugador_partido, av_players_home, av_players_away, df, passes_df,
                                                                         home_avg_locs,away_avg_locs,home_combinations,away_combinations,   home_metrics,   away_metrics,
                                                                     home_team_dict, away_team_dict, color_home, color_away, background_color, stats,
@@ -806,7 +813,7 @@ def render_results(df: pd.DataFrame):
                                     st.badge("❌ Not generated", color="red")
                                     if st.button("Generate Report 2"):
                                         with st.spinner("⏳ Generating tactical report 2..."):
-                                                fig_bytes_2 = create_match_report2_plot(id_home_fotmob,id_away_fotmob,name_home_fotmob,name_away_fotmob,homeScore,awayScore,texto_estado,
+                                                fig_bytes_2 = create_match_report2_plot(referee_html,group_round, stage_selected, id_home_fotmob,id_away_fotmob,name_home_fotmob,name_away_fotmob,homeScore,awayScore,texto_estado,
                                                                 match_info, nombre_jugador_partido, df, matchdict, color_home, color_away, home_team, away_team,
                                                                 local_xg, visit_xg, goles_local_xg, goles_visit_xg, df_tiros_coord_home, df_tiros_coord_away, pearl_earring_cmaph,
                                                                 pearl_earring_cmapa,IMAGEN_PELOTA,IMAGEN_PELOTA_ROJA)

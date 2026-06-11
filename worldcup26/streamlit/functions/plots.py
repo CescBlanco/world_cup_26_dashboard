@@ -2162,12 +2162,12 @@ def Final_third_entry(df, team_name, col, color_home, color_away, ax=None, show_
 
     return fig, ax
 
-def create_match_report1_plot(id_home_fotmob,id_away_fotmob,name_home_fotmob,name_away_fotmob,homeScore,awayScore,texto_estado,
-                                                            match_info, nombre_jugador_partido, av_players_home, av_players_away, df, passes_df,
-                                                            home_avg_locs,away_avg_locs,home_combinations,away_combinations,   home_metrics,   away_metrics,
-                                                        home_team_dict, away_team_dict, color_home, color_away, background_color, stats,
-                                                        xT_grid, teams_dict_id_name_whoscored, matchdict, home_positions, home_actions, away_positions,
-                                                        away_actions, data, team_dict_fotmob, formation_mappings, players_dict):
+def create_match_report1_plot(referee_html,group_round, stage_selected, id_home_fotmob,id_away_fotmob,name_home_fotmob,name_away_fotmob,homeScore,awayScore,texto_estado,
+                                match_info, nombre_jugador_partido, av_players_home, av_players_away, df, passes_df,
+                                home_avg_locs,away_avg_locs,home_combinations,away_combinations,   home_metrics,   away_metrics,
+                            home_team_dict, away_team_dict, color_home, color_away, background_color, stats,
+                            xT_grid, teams_dict_id_name_whoscored, matchdict, home_positions, home_actions, away_positions,
+                            away_actions, data, team_dict_fotmob, formation_mappings, players_dict):
                                     
     fig, axs = plt.subplots( 5, 3, figsize=(35, 35), gridspec_kw={'height_ratios': [0.2, 1, 1, 1, 1]}, facecolor='black')
     fig.patch.set_facecolor('black')
@@ -2195,10 +2195,10 @@ def create_match_report1_plot(id_home_fotmob,id_away_fotmob,name_home_fotmob,nam
 
     fig_text(0.5, 0.95, texto_estado, color='white', fontsize=40, fontweight='bold', ha='center', va='center', ax=header_ax)
 
-    fig_text(0.5, 0.92, "Group Stage A - Round 1, World Cup 2026 | Post Match Report-1", color='white', fontsize=30, ha='center',
+    fig_text(0.5, 0.92, f"{group_round} - {stage_selected}, World Cup 2026 | Post Match Report-1", color='white', fontsize=30, ha='center',
                     va='center', ax=header_ax)
 
-    fig_text(0.5, 0.90, f"Venue: {match_info['venue_name']} (Attendance: {match_info['attendance']}) | Referee: {match_info['referee']['name']}",
+    fig_text(0.5, 0.90, f"Venue: {match_info['venue_name']} (Attendance: {match_info['attendance']}) | {referee_html}",
             color='white', fontsize=22.5, ha='center', va='center', ax=header_ax)
 
     fig_text(0.5, 0.88, f"Player of the Match: {nombre_jugador_partido}",color='white', fontsize=22.5, ha='center', va='center', ax=header_ax)
@@ -2250,7 +2250,7 @@ def create_match_report1_plot(id_home_fotmob,id_away_fotmob,name_home_fotmob,nam
 
     return buffer.getvalue()
                     
-def create_match_report2_plot(id_home_fotmob,id_away_fotmob,name_home_fotmob,name_away_fotmob,homeScore,awayScore,texto_estado,
+def create_match_report2_plot(referee_html,group_round, stage_selected, id_home_fotmob,id_away_fotmob,name_home_fotmob,name_away_fotmob,homeScore,awayScore,texto_estado,
                             match_info, nombre_jugador_partido, df, matchdict, color_home, color_away, home_team, away_team,
                             local_xg, visit_xg, goles_local_xg, goles_visit_xg, df_tiros_coord_home, df_tiros_coord_away, pearl_earring_cmaph,
                             pearl_earring_cmapa,IMAGEN_PELOTA,IMAGEN_PELOTA_ROJA):
@@ -2282,10 +2282,10 @@ def create_match_report2_plot(id_home_fotmob,id_away_fotmob,name_home_fotmob,nam
 
         fig_text(0.5, 0.95, texto_estado, color='white', fontsize=40, fontweight='bold', ha='center', va='center', ax=header_ax)
 
-        fig_text(0.5, 0.92, "Group Stage A - Round 1, World Cup 2026 | Post Match Report-1", color='white', fontsize=30, ha='center',
+        fig_text(0.5, 0.92, f"{group_round} - {stage_selected}, World Cup 2026 | Post Match Report-1", color='white', fontsize=30, ha='center',
                     va='center', ax=header_ax)
 
-        fig_text(0.5, 0.90, f"Venue: {match_info['venue_name']} (Attendance: {match_info['attendance']}) | Referee: {match_info['referee']['name']}",
+        fig_text(0.5, 0.90, f"Venue: {match_info['venue_name']} (Attendance: {match_info['attendance']}) | {referee_html}",
                 color='white', fontsize=22.5, ha='center', va='center', ax=header_ax)
 
         fig_text(0.5, 0.88, f"Player of the Match: {nombre_jugador_partido}",color='white', fontsize=22.5, ha='center', va='center', ax=header_ax)

@@ -1255,9 +1255,6 @@ def results_filtres(df: pd.DataFrame) -> tuple[pd.DataFrame, str, str | None, An
             # The current implementation stores the selected stage
             # but does not directly filter the dataframe using it.
 
-            # Filtrar DF por stage
-            #df_stage = df[df["matchround"] == stage_selected]
-            #id_stage= df["stageName"].iloc[0] if not df.empty else None
             id_stage= df["round_id"].iloc[0]
             # ---------------------------
             # Group filter
@@ -1373,7 +1370,7 @@ def match_list_post_filter(partidos: pd.DataFrame,stage_selected: str,group_sele
             # ---------------------------
             # Match score
             # ---------------------------
-            resultado = ( f"{row.get('homeScore')}-{row.get('awayScore')}"if pd.notna(row.get('homeScore'))
+            resultado = ( f"{int(row.get('homeScore'))}-{int(row.get('awayScore'))}"if pd.notna(row.get('homeScore'))
                             and pd.notna(row.get('awayScore'))else "vs")
             home_team = row.get('homeTeamName', '')
             away_team = row.get('awayTeamName', '')
