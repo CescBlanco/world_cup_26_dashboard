@@ -44,7 +44,6 @@ def render_results(df: pd.DataFrame):
     
     match_list_post_filter(partidos, stage_selected, group_selected, fecha_elegida, id_stage)
 
-    st.dataframe(partidos)
     if "partido_mostrado" in st.session_state:
             partido_filtrado = df[df["url_match"] == st.session_state["partido_mostrado"]].reset_index(drop=True)
             if not partido_filtrado.empty:
@@ -56,9 +55,8 @@ def render_results(df: pd.DataFrame):
                 url_match_preview= partido_filtrado['url_match'].values[0]
                 estado = partido_filtrado['elapsed'][0]
                 round_name_whoscored = str(partido_filtrado['round_id'][0])
-
                 group_round= partido_filtrado['stageName'][0].split('Cup')[1].strip()
-                
+
                 homeTeamPhoto = partido_detalle["homeTeamPhoto"]
                 awayTeamPhoto = partido_detalle["awayTeamPhoto"]
 
