@@ -9,7 +9,7 @@ A comprehensive football analytics platform built with Streamlit, designed to ex
 This project simulates a professional football intelligence dashboard, combining event data, tactical analysis, and advanced metrics such as xG, xT, possession structures, and defensive behavior.
 
 🌐 **Live Application:**  
-👉 [Access the World Cup 2026 Analytics Platform](https://worldcup26dashboard-develop.streamlit.app/)
+👉 [Access the World Cup 2026 Analytics Platform](https://worldcup26dashboard.streamlit.app/)
 
 Explore live football analytics, tactical visualizations, and advanced match insights.
 
