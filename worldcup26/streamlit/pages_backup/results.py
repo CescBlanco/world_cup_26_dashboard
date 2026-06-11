@@ -17,11 +17,32 @@ IMG_PELOTA_ROJA = IMG_DIR / "pelota_roja.png"
 IMAGEN_PELOTA = mpimg.imread(IMG_PELOTA)
 IMAGEN_PELOTA_ROJA = mpimg.imread(IMG_PELOTA_ROJA)
 
-def render_results(df):
+def render_results(df: pd.DataFrame):
 
-    partidos, stage_selected, group_selected, fecha_elegida= results_filtres(df)
+    # =============================================================================
+    # MATCH SELECTION
+    # =============================================================================
+    #
+    # Apply stage/group/date filters and display the list of available matches.
+    # Users can select a completed match to open the detailed analysis dashboard.
+    #
 
-    match_list_post_filter(partidos, stage_selected, group_selected, fecha_elegida)
+    partidos, stage_selected, group_selected, fecha_elegida, id_stage= results_filtres(df)
+
+    # =============================================================================
+    # LOAD SELECTED MATCH
+    # =============================================================================
+    #
+    # Once a match is selected, retrieve the basic metadata required for the
+    # analysis workflow:
+    #
+    # - Teams
+    # - Match status
+    # - Team logos
+    # - Match URLs
+    #
+
+    match_list_post_filter(partidos, stage_selected, group_selected, fecha_elegida, id_stage)
 
     if "partido_mostrado" in st.session_state:
             partido_filtrado = df[df["url_match"] == st.session_state["partido_mostrado"]].reset_index(drop=True)
@@ -37,6 +58,22 @@ def render_results(df):
                 homeTeamPhoto = partido_detalle["homeTeamPhoto"]
                 awayTeamPhoto = partido_detalle["awayTeamPhoto"]
 
+                # =============================================================================
+                # LOAD FOTMOB MATCH DATA
+                # =============================================================================
+                #
+                # Retrieve FotMob data used for:
+                #
+                # - Team colors
+                # - Shot maps
+                # - xG models
+                # - Attack momentum visualizations
+                #
+                # Priority:
+                #     1. Memory cache
+                #     2. Local JSON files
+                #     3. Stop execution if unavailable
+
                 df_all_matches_fotmob=  load_all_matches_fotmob()
                 
                 # def extract_round_name_fotmob(df, home_team_whoscored, away_team_whoscored):
@@ -45,11 +82,10 @@ def render_results(df):
                 # round_name= df_all_matches_fotmob[df_all_matches_fotmob['roundName']==]
 
                 url_match_fotmob= extract_url_fotmob(df_all_matches_fotmob, selected_home_team, selected_away_team, round='Quarter-Finals')
-           
                 match_id_fotmob= extract_match_id_fotmob(url_match_fotmob)
                 cache_data_fotmob= load_match_cache_fotmob(match_id_fotmob)
                 if cache_data_fotmob:
-                    st.success(f"🟢 Data loaded from CACHE MATCHES FOTMOB (match {match_id_fotmob})")
+                    st.badge(f"🟢 Data loaded from CACHE MATCHES FOTMOB (match {match_id_fotmob})",  color="green")
                     data = cache_data_fotmob["data"]
                 else:
                     json_path = Path(f"data/json_matches_fotmob/{match_id_fotmob}.json")
@@ -58,13 +94,44 @@ def render_results(df):
                             with open(json_path) as f:
                                 data = json.load(f)
                             save_match_cache_fotmob(match_id_fotmob, data)
-                            st.success(f"🔵 Cache created successfully for match {match_id_fotmob}")
+                            st.badge(f"🔵 Cache created successfully for match {match_id_fotmob}",  color="blue")
                     else:
-                        st.warning("📭 No data available for this match yet. Data is pending update from the provider.")
+                        st.badge("📭 No data available for this match yet. Data is pending update from the provider.", color= 'yellow')
                         st.stop()
                         
 
                 color_home, color_away,name_home_fotmob, name_away_fotmob, id_home_fotmob, id_away_fotmob, team_dict_fotmob = prepare_data_fotmob_cache(data)
+                
+                 # =============================================================================
+                # LOAD WHOSCORED EVENT DATA
+                # =============================================================================
+                #
+                # Retrieve event-level match data from cache or scrape if necessary.
+                #
+                # This dataset powers:
+                #
+                # - Passing analysis
+                # - Defensive actions
+                # - Formations
+                # - Positional analysis
+                # - Event timelines
+                # - Tactical reports
+
+                # =============================================================================
+                # DATA PREPARATION
+                # =============================================================================
+                #
+                # Transform raw provider data into structured objects required by the
+                # visualization modules.
+                #
+                # Generated structures:
+                #
+                # - Team information
+                # - Match metadata
+                # - Event dataframe
+                # - Player mappings
+                # - Team dictionaries
+                
                 formation_mappings, event_types_json, matchdict, players_dict = prepare_data_whoscored_cache(url_match_preview)
 
                 #formation_mappings, event_types_json, matchdict,players_dict = extract_match_dict_url(url_match_preview)
@@ -91,10 +158,22 @@ def render_results(df):
                     'players': matchdict['away']['players']
                 }
 
-                #dataframes de los eventos del partido
                 df = prepare_df_events(matchdict, teams_dict_id_name_whoscored)
 
                 match_info= extract_match_info_details(matchdict)
+
+                # =============================================================================
+                # MATCH STATUS INTERPRETATION
+                # =============================================================================
+                #
+                # Convert provider-specific match status values into user-friendly labels
+                # for display in the match overview card.
+                #
+                # Examples:
+                #
+                # FT  -> Full Time
+                # AET -> After Extra Time
+                # PEN -> Penalty Shootout
                 
                 if estado == "PEN":
                     texto_estado = f"PEN ({penalty_score_home}-{penalty_score_away})"
@@ -111,22 +190,47 @@ def render_results(df):
                 st.write("---") 
 
                 with st.expander("📝 Show match details", expanded=False):
+                    # =============================================================================
+                    # MATCH DETAILS DASHBOARD
+                    # =============================================================================
+                    #
+                    # Main interactive dashboard containing:
+                    #
+                    # - Team information
+                    # - Match overview
+                    # - Key events timeline
+                    # - Formations
+                    # - Tactical analysis
+                    #
+                    # Layout:
+                    #
+                    # Left Column   -> Home Team
+                    # Center Column -> Match Analysis
+                    # Right Column  -> Away Team
 
-                    # Marcador principal con escudos y nombres
+            
                     col1, col_space1, col2, col_space2, col3 = st.columns([2,0.3, 4,0.3, 2])
 
                     player_home, player_away = extract_players_team(matchdict)
 
                     with col1:
+                        # =============================================================================
+                        # HOME TEAM PANEL
+                        # =============================================================================
+                        #
+                        # Displays:
+                        #
+                        # - Team logo
+                        # - Manager
+                        # - Formation
+                        # - Average age
+                        # - Starting XI
+                        # - Substitutes
+                        # - Substitution timeline
                         principal_card_team(homeTeamPhoto,manager_name_home, initial_formation_home, average_age_home )       
 
                         st.write('')
-                        alineacion_home = st.segmented_control(
-                            " ",
-                            ["Starting XI", "Substitutes"],
-                            default="Starting XI", key="home_squad_selector"
-                        )                 
-                        #st.markdown("<div style='padding-left:500px'>", unsafe_allow_html=True)  
+                        alineacion_home = st.segmented_control(" ", ["Starting XI", "Substitutes"], default="Starting XI", key="home_squad_selector")                 
                         
                         first_eleven_home= card_formations_subs(player_home, initial_captain_id_home, alineacion_home)
 
@@ -140,7 +244,21 @@ def render_results(df):
                         st.write('')
 
                     with col2:
-
+                        # =============================================================================
+                        # MATCH CENTER PANEL
+                        # =============================================================================
+                        #
+                        # Core match information and tactical visualizations.
+                        #
+                        # Includes:
+                        #
+                        # - Match scoreboard
+                        # - Venue information
+                        # - Referee
+                        # - Player of the Match
+                        # - Key events timeline
+                        # - Penalty shootout details
+                        # - Initial formations
                         card_match_overview(home_team,away_team,homeScore, awayScore, color_home, color_away ,texto_estado)
                         st.write('')
         
@@ -160,6 +278,18 @@ def render_results(df):
                                 unsafe_allow_html=True
                             )
                         st.write('----')
+
+                        # =============================================================================
+                        # MATCH EVENT TIMELINE
+                        # =============================================================================
+                        #
+                        # Build a chronological timeline of relevant match incidents:
+                        #
+                        # - Goals
+                        # - Assists
+                        # - Cards
+                        # - Penalties
+                        # - Shootout events
 
                         write_subtitle("EVENT KEYS")
 
@@ -187,6 +317,13 @@ def render_results(df):
 
                         st.write('----')
                         
+                        # =============================================================================
+                        # INITIAL FORMATIONS VISUALIZATION
+                        # =============================================================================
+                        #
+                        # Plot both starting formations using event-derived player
+                        # positions and formation mappings.
+
                         write_subtitle("INITIAL FORMATIONS")
                         fig, ax= plot_initial_formation(df, home_team, away_team, formation_mappings, players_dict,color_home,color_away ,nombre_jugador_partido)
                         st.pyplot(fig)
@@ -195,18 +332,25 @@ def render_results(df):
                         st.write('')
 
                     with col3:
+
+                        # =============================================================================
+                        # AWAY TEAM PANEL
+                        # =============================================================================
+                        #
+                        # Mirrors the home team panel and provides:
+                        #
+                        # - Team information
+                        # - Squad selection
+                        # - Starting XI
+                        # - Bench players
+                        # - Substitution activity
+
                         principal_card_team(awayTeamPhoto,manager_name_away, initial_formation_away, average_age_away)    
                         
                         
                         st.write('')
-                        alineacion_away = st.segmented_control(
-                            " ",
-                            ["Starting XI", "Substitutes"],
-                            default="Starting XI",key="away_squad_selector"
-                        )  
+                        alineacion_away = st.segmented_control( " ", ["Starting XI", "Substitutes"], default="Starting XI",key="away_squad_selector")  
                         
-                        #st.markdown("<div style='padding-left:500px'>", unsafe_allow_html=True)  
-
                         first_eleven_away= card_formations_subs(player_away, initial_captain_id_away, alineacion_away)
 
                         st.write("---") 
@@ -216,6 +360,28 @@ def render_results(df):
                         
                     
                     st.write('---')
+                    
+                    # =============================================================================
+                    # ADVANCED MATCH ANALYSIS
+                    # =============================================================================
+                    #
+                    # Comprehensive tactical analysis module combining event data
+                    # (WhoScored) and shot data (FotMob).
+                    #
+                    # Analysis modes:
+                    #
+                    # • Team Analysis
+                    # • Player of the Match (future implementation)
+                    #
+                    # The dashboard is divided into:
+                    #
+                    # - Overview
+                    # - Attack
+                    # - Possession
+                    # - Defense
+                    # - Goalkeeper
+                    # - Report Generation
+                
 
                     option = st.segmented_control('Analysis type:\n\n', 
                                           ['Team Analysis', 'Player of the Match'])
@@ -239,7 +405,7 @@ def render_results(df):
                             overview_tabs = st.tabs([
                                 "Match Stats",
                                 "xG Flow",
-                                "Attack Momentu",
+                                "Attack Momentum",
                                 "Dominating Zone"
                             ])
                             with overview_tabs[0]:

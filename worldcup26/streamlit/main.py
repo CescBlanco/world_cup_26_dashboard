@@ -14,37 +14,112 @@ from pages_backup.venues import render_venues
 from pages_backup.fixtures import render_fixtures
 from pages_backup.results import render_results
 
+# =============================================================================
+# WORLD CUP 2026 ANALYTICS PLATFORM
+# =============================================================================
+#
+# Interactive football analytics application built with Streamlit.
+#
+# Main modules:
+#
+# - Teams
+# - Team Profiles
+# - Rosters
+# - Venues
+# - Fixtures
+# - Results & Match Analysis
+#
+# The platform combines multiple data providers to deliver
+# tournament information, match insights and advanced tactical
+# visualizations.
+#
+# =============================================================================
 
-# =========================================================
-# CONFIG
-# =========================================================
+
+# =============================================================================
+# APPLICATION CONFIGURATION
+# =============================================================================
+#
+# Configure Streamlit page settings:
+#
+# - Browser title
+# - Application icon
+# - Layout mode
+#
+# =============================================================================
+
 st.set_page_config(page_title="World Cup 2026", page_icon="⚽", layout="wide")
-# =========================================================
-# STYLE
-# =========================================================
+
+# =============================================================================
+# GLOBAL STYLING
+# =============================================================================
+#
+# Load and apply the custom visual theme used across the application.
+#
+# Includes:
+#
+# - Colors
+# - Typography
+# - Containers
+# - Buttons
+# - Layout adjustments
+#
+# =============================================================================
 apply_styles()
 
-# =========================================================
-# DATA
-# =========================================================
+# =============================================================================
+# DATA LOADING
+# =============================================================================
+#
+# Load all datasets required by the platform.
+#
+# Sources:
+#
+# - Team information
+# - FIFA rankings
+# - Elo ratings
+#
+# These datasets are merged into a single enriched dataframe used
+# throughout the application.
+#
+# =============================================================================
 df_teams = load_teams()
 df_fifa = load_fifa()
 df_elo = load_elo()
 
 df_teams_dataset = build_teams_dataset(df_teams, df_fifa, df_elo)
 
-# =========================================================
-# SESSION STATE
-# =========================================================
+# =============================================================================
+# SESSION STATE INITIALIZATION
+# =============================================================================
+#
+# Initialize navigation state and selected entities.
+#
+# Stored values:
+#
+# - Current page
+# - Selected team
+#
+# Session state allows navigation between views without losing context.
+#
+# =============================================================================
 if "page" not in st.session_state:
     st.session_state.page = "teams"
 
 if "selected_team" not in st.session_state:
     st.session_state.selected_team = None
 
-# =========================================================
-# HEADER
-# =========================================================
+# =============================================================================
+# APPLICATION HEADER
+# =============================================================================
+#
+# Render the main application header:
+#
+# - FIFA World Cup logo
+# - Platform title
+# - Application subtitle
+#
+# =============================================================================
 
 col1, col2 = st.columns([1, 8])
 
@@ -56,6 +131,21 @@ with col2:
     st.caption("Football Analytics Platform")
 
 st.divider()
+
+# =============================================================================
+# GLOBAL BUTTON STYLING
+# =============================================================================
+#
+# Inject custom CSS for all Streamlit buttons.
+#
+# Goals:
+#
+# - Consistent dark theme
+# - Hover effects
+# - Rounded corners
+# - Improved visual hierarchy
+#
+# =============================================================================
 
 st.markdown("""
     <style>
@@ -75,9 +165,23 @@ st.markdown("""
     </style>
     """, unsafe_allow_html=True)
 
-# =========================================================
-# SIDEBAR
-# =========================================================
+# =============================================================================
+# SIDEBAR NAVIGATION
+# =============================================================================
+#
+# Main application navigation panel.
+#
+# Available sections:
+#
+# - Teams
+# - Team Rosters
+# - Venues
+# - Match schedule
+# - Results
+#
+# Navigation is managed through Streamlit session state.
+#
+# =============================================================================
 
 with st.sidebar:
 
@@ -94,7 +198,7 @@ with st.sidebar:
     if st.button("🏟️ Venues"):
         st.session_state.page = "venues"
 
-    if st.button("📅 Fixtures"):
+    if st.button("📅 Match schedule"):
         st.session_state.page = "fixtures"
 
     if st.button("📊 Results"):
@@ -103,7 +207,20 @@ with st.sidebar:
     st.info(f"**Current page:** {st.session_state.page.title()}")
     st.divider()
     
-    
+# =============================================================================
+# DATA STATUS MONITOR
+# =============================================================================
+#
+# Check the freshness of local datasets by inspecting the latest
+# modification timestamp.
+#
+# Status indicators:
+#
+# - Up to date
+# - Outdated (> 4 days)
+# - Missing files
+#
+# =============================================================================
     st.markdown("### Data Status")
 
     files = glob.glob("worldcup26/data/*.csv")
@@ -126,16 +243,62 @@ with st.sidebar:
     else:
         st.error("❌ No data files found")
 
-# =========================================================
-# PAGE: TEAMS
-# =========================================================
+
+
+# =============================================================================
+# PAGE ROUTER
+# =============================================================================
+#
+# Main application router.
+#
+# Dynamically renders the selected page according to the current
+# navigation state.
+#
+# Available views:
+#
+# - Teams
+# - Team Detail
+# - Team Rosters
+# - Venues
+# - Fixtures
+# - Results
+#
+# =============================================================================
+
+
+# =============================================================================
+# TEAMS PAGE
+# =============================================================================
+#
+# Display all qualified teams participating in the tournament.
+#
+# Includes:
+#
+# - Team cards
+# - Rankings
+# - Qualification information
+# - Navigation to detailed team profiles
+#
+# =============================================================================
+
 if st.session_state.page == "teams":
 
     render_teams(df_teams_dataset)
 
-# =========================================================
-# PAGE: TEAM DETAIL
-# =========================================================
+# =============================================================================
+# TEAM DETAIL PAGE
+# =============================================================================
+#
+# Display an in-depth profile of the selected national team.
+#
+# Includes:
+#
+# - Team overview
+# - Squad information
+# - Historical performance
+# - Tournament metrics
+#
+# =============================================================================
 elif st.session_state.page == "team_detail":
     
     team = st.session_state.selected_team
@@ -143,9 +306,19 @@ elif st.session_state.page == "team_detail":
     team_data = df_teams_dataset[df_teams_dataset["team"] == team]
     render_team_detail(team_data)
 
-# =========================================================
-# PAGE: Team rosters
-# =========================================================
+# =============================================================================
+# TEAM ROSTERS PAGE
+# =============================================================================
+#
+# Display the player roster of a selected national team.
+#
+# Workflow:
+#
+# 1. User selects a team.
+# 2. Player data is filtered.
+# 3. Squad information is rendered.
+#
+# =============================================================================
 elif st.session_state.page == "rosters":
 
     selected = st.selectbox( "Select Team",sorted(df_teams_dataset["team"].dropna().unique()))
@@ -155,9 +328,20 @@ elif st.session_state.page == "rosters":
 
     render_team_roster(players_team)
 
-# =========================================================
-# PAGE: VENUES
-# =========================================================
+# =============================================================================
+# VENUES PAGE
+# =============================================================================
+#
+# Display all World Cup stadiums and host venues.
+#
+# Includes:
+#
+# - Stadium information
+# - Capacity
+# - Location
+# - Venue visualizations
+#
+# =============================================================================
 elif st.session_state.page == "venues":
 
     st.subheader("🏟️ World Cup Stadiums")
@@ -165,9 +349,20 @@ elif st.session_state.page == "venues":
     
     render_venues(df_venues)
 
-# =========================================================
-# PAGE: FIXTURES
-# =========================================================
+# =============================================================================
+# FIXTURES PAGE
+# =============================================================================
+#
+# Interactive tournament calendar.
+#
+# Includes:
+#
+# - Match schedule
+# - Group stage fixtures
+# - Knockout rounds
+# - Standings integration
+#
+# =============================================================================
 elif st.session_state.page == "fixtures":
 
     st.subheader("📅 World Cup Calendar")   
@@ -179,14 +374,52 @@ elif st.session_state.page == "fixtures":
     render_fixtures(df_matches_stages)
 
 
-# =========================================================
-# PAGE: RESULTS
-# =========================================================
+# =============================================================================
+# RESULTS PAGE
+# =============================================================================
+#
+# Match results and advanced post-match analysis.
+#
+# Features:
+#
+# - Match filtering
+# - Detailed event timeline
+# - Tactical dashboards
+# - Team analytics
+# - Report generation
+#
+# Note:
+# Current implementation uses a temporary dataset until the official
+# World Cup 2026 competition data becomes available.
+#
+# =============================================================================
 elif st.session_state.page == "results":
 
     st.subheader("📊 Results")
-    #CAMBIAR TEMA DE FILTROS Y EL DATAFRAME DE PUEBA (change de file upload and functions when the wc26 startet)
     df_fixtures_copaam = load_fixtures_pruebas()
 
     df_fixtures_wc26 = load_fixtures()
-    render_results(df_fixtures_copaam)
+    render_results(df_fixtures_wc26)
+
+# =========================================================
+# FOOTER
+# =========================================================
+
+st.divider()
+
+st.html("""
+<div style="text-align:center; margin-top:40px; font-size:14px; color:#aaa;">
+
+⚽ <b>World Cup 2026 Analytics Platform</b>
+<br><br>
+
+📬 Contact: cesc.blanco@gmail.com |
+🔗 <a href="https://github.com/CescBlanco" target="_blank">GitHub</a> 
+<br><br>
+
+📊 Data sources:
+<a href="https://www.fotmob.com" target="_blank">FotMob</a> |
+<a href="https://www.whoscored.com" target="_blank">WhoScored</a>
+
+</div>
+""")
