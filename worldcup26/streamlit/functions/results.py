@@ -1410,8 +1410,13 @@ def match_list_post_filter(partidos: pd.DataFrame,stage_selected: str,group_sele
                 st.markdown(partido_html, unsafe_allow_html=True)
 
             with col2:
+
+                partido_jugado = (
+                    pd.notna(row.get('homeScore')) and
+                    pd.notna(row.get('awayScore'))
+                )
                 # Match details are only available once a winner field exists.
-                if pd.notna(row.get('winnerField')):
+                if partido_jugado:
                     if st.button("🔍 View match details", key=clave):
                         if st.session_state.get("partido_mostrado") == partido_url:
                             del st.session_state["partido_mostrado"]

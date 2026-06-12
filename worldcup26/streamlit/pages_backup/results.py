@@ -48,6 +48,7 @@ def render_results(df: pd.DataFrame):
             partido_filtrado = df[df["url_match"] == st.session_state["partido_mostrado"]].reset_index(drop=True)
             if not partido_filtrado.empty:
                 partido_detalle = partido_filtrado.iloc[0]
+                st.dataframe(partido_detalle)
 
                 selected_home_team = partido_detalle["homeTeamName"]
                 selected_away_team = partido_detalle["awayTeamName"]
@@ -59,6 +60,10 @@ def render_results(df: pd.DataFrame):
 
                 homeTeamPhoto = partido_detalle["homeTeamPhoto"]
                 awayTeamPhoto = partido_detalle["awayTeamPhoto"]
+
+                match_round_good= partido_detalle["matchround"]
+                st.write(match_round_good)
+
 
                 # =============================================================================
                 # LOAD FOTMOB MATCH DATA
@@ -774,7 +779,7 @@ def render_results(df: pd.DataFrame):
                                     st.badge("❌ Not generated", color="red")
                                     if st.button("Generate Report 1"):
                                         with st.spinner("⏳ Generating tactical report 1..."):
-                                                fig_bytes = create_match_report1_plot(referee_html,group_round, stage_selected, id_home_fotmob,id_away_fotmob,name_home_fotmob,name_away_fotmob,homeScore,awayScore,texto_estado,
+                                                fig_bytes = create_match_report1_plot(referee_html,group_round, match_round_good, id_home_fotmob,id_away_fotmob,name_home_fotmob,name_away_fotmob,homeScore,awayScore,texto_estado,
                                                                         match_info, nombre_jugador_partido, av_players_home, av_players_away, df, passes_df,
                                                                         home_avg_locs,away_avg_locs,home_combinations,away_combinations,   home_metrics,   away_metrics,
                                                                     home_team_dict, away_team_dict, color_home, color_away, background_color, stats,
@@ -808,7 +813,7 @@ def render_results(df: pd.DataFrame):
                                     st.badge("❌ Not generated", color="red")
                                     if st.button("Generate Report 2"):
                                         with st.spinner("⏳ Generating tactical report 2..."):
-                                                fig_bytes_2 = create_match_report2_plot(referee_html,group_round, stage_selected, id_home_fotmob,id_away_fotmob,name_home_fotmob,name_away_fotmob,homeScore,awayScore,texto_estado,
+                                                fig_bytes_2 = create_match_report2_plot(referee_html,group_round, match_round_good, id_home_fotmob,id_away_fotmob,name_home_fotmob,name_away_fotmob,homeScore,awayScore,texto_estado,
                                                                 match_info, nombre_jugador_partido, df, matchdict, color_home, color_away, home_team, away_team,
                                                                 local_xg, visit_xg, goles_local_xg, goles_visit_xg, df_tiros_coord_home, df_tiros_coord_away, pearl_earring_cmaph,
                                                                 pearl_earring_cmapa,IMAGEN_PELOTA,IMAGEN_PELOTA_ROJA)

@@ -47,7 +47,6 @@ from pages_backup.results import render_results
 # - Layout mode
 #
 # =============================================================================
-
 st.set_page_config(page_title="World Cup 2026", page_icon="⚽", layout="wide")
 
 st.markdown("""
