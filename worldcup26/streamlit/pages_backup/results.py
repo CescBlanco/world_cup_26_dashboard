@@ -77,8 +77,6 @@ def render_results(df: pd.DataFrame):
                 #     3. Stop execution if unavailable
 
                 df_all_matches_fotmob=  load_all_matches_fotmob()
-            
-
                 url_match_fotmob= extract_url_fotmob(df_all_matches_fotmob, selected_home_team, selected_away_team, round=round_name_whoscored)
                 match_id_fotmob= extract_match_id_fotmob(url_match_fotmob)
                 cache_data_fotmob= load_match_cache_fotmob(match_id_fotmob)
