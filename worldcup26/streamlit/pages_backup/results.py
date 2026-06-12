@@ -62,9 +62,7 @@ def render_results(df: pd.DataFrame):
                 awayTeamPhoto = partido_detalle["awayTeamPhoto"]
 
                 match_round_good= partido_detalle["matchround"]
-                st.write(match_round_good)
-
-
+              
                 # =============================================================================
                 # LOAD FOTMOB MATCH DATA
                 # =============================================================================
