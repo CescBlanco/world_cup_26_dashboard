@@ -391,7 +391,8 @@ def create_inicidents_for_teams(matchdict: dict,teams_dict_id_name: dict,players
 
     # 🔹 Extract incident events
     df = pd.DataFrame(  matchdict[side]["incidentEvents"])
-
+    if 'cardType' not in df.columns:
+        df['cardType'] = None
     # 🔹 Map team names
     df['nameTeam'] = df['teamId'].map(teams_dict_id_name)
     df['type'] = df['type'].apply(lambda x: x['displayName'] if isinstance(x, dict) else None)

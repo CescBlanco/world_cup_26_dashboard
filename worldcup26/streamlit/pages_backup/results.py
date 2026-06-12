@@ -296,8 +296,7 @@ def render_results(df: pd.DataFrame):
 
                         write_subtitle("EVENT KEYS")
 
-                        df_match, df_shootout = create_events_keys(matchdict, teams_dict_id_name_whoscored, players_dict, 'home', 'away')
-                                                
+                        df_match, df_shootout = create_events_keys(matchdict, teams_dict_id_name_whoscored, players_dict, 'home', 'away')                                    
                         card_events_key_match(df_match, home_team,away_team)
                         
                         st.write(" ")
