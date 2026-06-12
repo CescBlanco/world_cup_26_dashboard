@@ -276,7 +276,7 @@ def card_substitutions(df: pd.DataFrame,player_team: pd.DataFrame) -> None:
         raise TypeError("player_team must be a pandas DataFrame")
     
     # 🔹 Extract substitution events
-    substitutions = df[df['subbedInPlayerId'].notna()]
+    substitutions = df[df['subbedInPlayerId'].notna()].sort_values(by='subbedOutExpandedMinute', ascending=True)
 
     # 🔹 Normalize player identifiers
     player_team["playerId"] = player_team["playerId"].astype(int)
