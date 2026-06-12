@@ -48,7 +48,6 @@ def render_results(df: pd.DataFrame):
             partido_filtrado = df[df["url_match"] == st.session_state["partido_mostrado"]].reset_index(drop=True)
             if not partido_filtrado.empty:
                 partido_detalle = partido_filtrado.iloc[0]
-                st.dataframe(partido_detalle)
 
                 selected_home_team = partido_detalle["homeTeamName"]
                 selected_away_team = partido_detalle["awayTeamName"]
