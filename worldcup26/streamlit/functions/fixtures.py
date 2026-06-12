@@ -82,8 +82,6 @@ def build_event(row: pd.Series) -> dict:
     away = row["awayTeamName"]
     dt = row["match_datetime"]
 
-    st.write("DEBUG dt:", row["match_datetime"])
-
     h_score = safe_int(row["homeScore"])
     a_score = safe_int(row["awayScore"])
     # =========================
