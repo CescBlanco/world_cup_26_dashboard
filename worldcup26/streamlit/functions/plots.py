@@ -2277,7 +2277,7 @@ def create_match_report2_plot(referee_html,group_round, stage_selected, id_home_
 
         highlight_text = [{'color': color_home}, {'color': color_away}]
 
-        fig_text(0.5, 0.98,f"<{name_home_fotmob} {homeScore}> - <{awayScore} {name_away_fotmob}>",color='white', fontsize=70, fontweight='bold',
+        fig_text(0.5, 0.98,f"<{name_home_fotmob} {homeScore}> - <{awayScore} {name_away_fotmob}>",color='white', fontsize=50, fontweight='bold',
                 highlight_textprops=highlight_text,ha='center', va='center',ax=header_ax)
 
         fig_text(0.5, 0.95, texto_estado, color='white', fontsize=40, fontweight='bold', ha='center', va='center', ax=header_ax)
