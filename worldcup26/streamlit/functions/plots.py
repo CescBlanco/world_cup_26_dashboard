@@ -159,7 +159,7 @@ def is_own_goal(qualifiers):
 @st.cache_data
 # Calculate stats
 def team_stats(df):
-    goals = np.sum((df['eventType'] == 'Goal') & (~df['is_own_goal']))
+    goals = np.sum((df['eventType'] == 'Goal'))
     xg = np.round(df['expectedGoals'].sum(), 2)
     xgot = np.round(df['expectedGoalsOnTarget'].sum(), 2)
     shots = len(df)
@@ -171,7 +171,7 @@ def team_stats(df):
     return [goals, xg, xgot, shots, on_target, big_chances, big_chance_miss, xg_per_shot, avg_dist]
 
 @st.cache_data
-def prepare_dataframe_shots(df, data,team_dict_fotmob, id_home_fotmob , id_away_fotmob):
+def prepare_dataframe_shots(df, data,team_dict_fotmob,  name_home_fotmob , name_away_fotmob):
     shots_df= pd.DataFrame(data['content']['shotmap']['shots'])
     shots_df = shots_df[shots_df['period']!='PenaltyShootout']
     shots_df['teamName'] = shots_df['teamId'].map(team_dict_fotmob)
@@ -182,15 +182,24 @@ def prepare_dataframe_shots(df, data,team_dict_fotmob, id_home_fotmob , id_away_
 
     shots_merged = pd.merge(shots_df, df_events_shots, left_on='id', right_on='id', how='left')
 
-    
     # Add flags
     shots_merged['is_big_chance'] = shots_merged['qualifiers'].apply(is_big_chance)
     shots_merged['is_own_goal'] = shots_merged['qualifiers'].apply(is_own_goal)
 
-    # Split by team
-    home_shots = shots_merged[shots_merged['teamId'] == id_home_fotmob]
-    away_shots = shots_merged[shots_merged['teamId'] == id_away_fotmob]
+    shots_merged['render_team'] = shots_merged['teamName']
 
+    mask = shots_merged['isOwnGoal'].eq(True)
+
+    home= name_home_fotmob
+    away= name_away_fotmob
+    
+    team_swap = { home: away, away: home}
+
+    shots_merged.loc[mask, 'render_team'] = ( shots_merged.loc[mask, 'teamName'].map(team_swap))
+    
+    # Split by team
+    home_shots = shots_merged[shots_merged['render_team'] == name_home_fotmob]
+    away_shots = shots_merged[shots_merged['render_team'] == name_away_fotmob]
 
     home_stats = team_stats(home_shots)
     away_stats = team_stats(away_shots)
@@ -351,7 +360,7 @@ def plot_shot_map_with_stats(shots_merged, home_stats, away_stats,
     return fig, ax
 
 @st.cache_data
-def preparar_xg_flows(shots_df, id_local):
+def preparar_xg_flows(shots_df, name_home_fotmob):
     """
     Prepara los DataFrames necesarios para el flujo de xG acumulado de un partido.
 
@@ -369,8 +378,9 @@ def preparar_xg_flows(shots_df, id_local):
             - h_total (str): xG total del equipo visitante.
     """
     # Separar tiros por equipo
-    df_tiros_local = shots_df[shots_df['teamId'] == id_local]
-    df_tiros_visit = shots_df[shots_df['teamId'] != id_local]
+    df_tiros_local = shots_df[shots_df['render_team'] == name_home_fotmob]
+    df_tiros_visit = shots_df[shots_df['render_team'] != name_home_fotmob]
+
 
     # Seleccionar columnas relevantes
     cols = ['playerName', 'teamColor', 'eventType', 'expectedGoals', 'period', 'min', 'minAdded', 'isOwnGoal']
@@ -542,6 +552,24 @@ def plot_xg_flow_streamlit(
 xT_grid = pd.read_csv('https://media.githubusercontent.com/media/ricardoherediaj/football-analytics-tutorials/refs/heads/main/data/xT_grid.csv', header=None)
 xT_grid = xT_grid.values
 
+def preparare_df_xt(df,name_home_fotmob,name_away_fotmob ):
+
+    df['render_team'] = df['nameTeam']
+    if 'isOwnGoal' not in df.columns:
+        df['isOwnGoal'] = False
+    mask = df['isOwnGoal'].eq(True)
+    home= name_home_fotmob
+    away= name_away_fotmob
+    team_swap = {
+        home: away,
+        away: home
+    }
+
+    df.loc[mask, 'render_team'] = (
+        df.loc[mask, 'nameTeam'].map(team_swap)
+    )
+    return df
+
 
 def plot_xt_momentum(df_events: pd.DataFrame,xT_grid: np.ndarray,team_dict: dict,home_team_id: int,away_team_id: int,window_size: int = 4,decay_rate: float = 0.25,
                     sigma: float = 1.0, home_color: str = '#43A1D5', away_color: str = '#FF4C4C', bg_color: str = '#0C0D0E', 
@@ -584,15 +612,22 @@ def plot_xt_momentum(df_events: pd.DataFrame,xT_grid: np.ndarray,team_dict: dict
     # 5. Clip xT values (e.g., max 0.1)
     df_xT['xT_clipped'] = np.clip(df_xT['xT'], 0, 0.1)
 
-    # 6. Map team_id to team name for grouping
-    df_xT['team'] = df_xT['teamId'].map(team_dict)
+    df_xT['team'] = df_xT['render_team']
+
+    # ---------------------------
+    # 6. TEAM ORDER (home/away)
+    # ---------------------------
+    teams = df_events['render_team'].dropna().unique().tolist()
+
+    # fallback safety
+    if len(teams) < 2:
+        teams = [df_events['render_team'].iloc[0], df_events['render_team'].iloc[-1]]
 
     # 7. For each team and minute, keep only the max xT (clipped)
     max_xT_per_minute = df_xT.groupby(['team', 'minute'])['xT_clipped'].max().reset_index()
 
     # 8. Calculate weighted sum of xT in rolling window for each minute/team
     minutes = sorted(max_xT_per_minute['minute'].unique())
-    teams = [team_dict[home_team_id], team_dict[away_team_id]]
     weighted_xT_sum = {team: [] for team in teams}
     momentum = []
 
@@ -625,6 +660,11 @@ def plot_xt_momentum(df_events: pd.DataFrame,xT_grid: np.ndarray,team_dict: dict
     ax.set_facecolor('none')
 
     # Smoothing
+    full_minutes = np.arange(0, 99)
+    momentum_df = momentum_df.set_index('minute').reindex(full_minutes)
+    momentum_df['momentum'] = momentum_df['momentum'].fillna(0)
+    momentum_df = momentum_df.reset_index().rename(columns={'index': 'minute'})
+
     momentum_df['smoothed_momentum'] = gaussian_filter1d(momentum_df['momentum'], sigma=sigma)
     ax.plot(momentum_df['minute'], momentum_df['smoothed_momentum'], color=line_color, linewidth=2)
 
@@ -636,16 +676,72 @@ def plot_xt_momentum(df_events: pd.DataFrame,xT_grid: np.ndarray,team_dict: dict
     # ax.text(2, 0.07, team_dict[home_team_id], fontsize=16, ha='left', va='center', color=home_color, fontweight='bold')
     # ax.text(2, -0.07, team_dict[away_team_id], fontsize=16, ha='left', va='center', color=away_color, fontweight='bold')
 
-    # Mark goals
-    for team_id, y in [(home_team_id, 0.065), (away_team_id, -0.065)]:
+    # ---------------------------
+    # GOALS + OWN GOALS (NO IMAGES)
+    # ---------------------------
+
+    for team, y in [(teams[0], 0.065), (teams[1], -0.065)]:
+
         goals = df_events[
-            (df_events['teamId'] == team_id) &
-            (df_events['type'] == 'Goal')
+            (df_events['render_team'] == team) &
+            (df_events['type'] == 'Goal') &
+            (~df_events['isOwnGoal'].fillna(False))
         ]['minute']
+
         for minute in goals:
             ax.axvline(minute, color=line_color, linestyle=':', linewidth=1, alpha=0.5)
-            ax.scatter(minute, y, color=line_color, s=80, zorder=10, alpha=0.8)
-            ax.text(minute+0.2, y+0.01*(1 if y>0 else -1), 'Goal', fontsize=10, ha='left', va='center', color=line_color)
+
+            ax.scatter(
+                minute,
+                y,
+                color='white',   # normal goal
+                s=80,
+                zorder=10,
+                alpha=0.9,
+                edgecolors='black'
+            )
+
+            ax.text(
+                minute + 0.9,
+                y,
+                'Goal',
+                fontsize=9,
+                color=line_color
+            )
+
+
+    # ---------------------------
+    # OWN GOALS (RED DOT)
+    # ---------------------------
+
+    own_goals = df_events[df_events['isOwnGoal'].eq(True)]
+
+    for _, row in own_goals.iterrows():
+
+        minute = row['minute']
+        team = row['render_team']
+
+        y = 0.065 if team == teams[0] else -0.065
+
+        ax.axvline(minute, color='red', linestyle=':', linewidth=1, alpha=0.6)
+
+        ax.scatter(
+            minute,
+            y,
+            color='red',
+            s=90,
+            zorder=12,
+            edgecolors='black'
+        )
+
+        ax.text(
+            minute + 0.9,
+            y,
+            'Own Goal',
+            fontsize=9,
+            color='red'
+        )
+
 
     # Aesthetics
     ax.set_xlabel('Minute', color=line_color, fontsize=15, fontweight='bold')
@@ -1825,8 +1921,22 @@ def zone14hs(ax, df, team_name, col):
 #-------------------------------------------GOALS POST (GK------------------------------------------------------
 @st.cache_data
 def prepare_df_shotsgoal(df, name_home , name_away):
-    hShotsdf = df[df['teamName']==name_home].reset_index(drop=True).copy()
-    aShotsdf = df[df['teamName']==name_away].reset_index(drop=True).copy() 
+    df['render_team'] = df['teamName']
+
+    mask = df['isOwnGoal'].eq(True)
+
+    home= name_home
+    away = name_away
+    team_swap = {
+        home: away,
+        away: home
+    }
+
+    df.loc[mask, 'render_team'] = (
+        df.loc[mask, 'teamName'].map(team_swap)
+    )
+    hShotsdf = df[df['render_team']==name_home].reset_index(drop=True).copy()
+    aShotsdf = df[df['render_team']==name_away].reset_index(drop=True).copy() 
 
     df_coords_h = hShotsdf['onGoalShot'].apply(pd.Series)
 
@@ -1848,7 +1958,7 @@ def prepare_df_shotsgoal(df, name_home , name_away):
 
     return df_tiros_coord_home, df_tiros_coord_away
 
-def draw_goal( df, title, color, imagen_pelota_path, ax=None):
+def draw_goal( df, title, color, imagen_pelota_path, imagen_pelota_red_path, ax=None):
     
 
     ax.set_xlim(0, 2)
@@ -1883,30 +1993,58 @@ def draw_goal( df, title, color, imagen_pelota_path, ax=None):
     # tiros
     for _, row in df.iterrows():
 
+        # ---------------------------
+        # GOAL NORMAL vs OWN GOAL
+        # ---------------------------
         if row["type"] == "Goal":
-            im = OffsetImage(imagen_pelota_path, zoom=0.03)
-            ab = AnnotationBbox(im, (row["coord_x"], row["coord_y"]), frameon=False)
+
+            # si es own goal → pelota roja
+            if row.get("isOwnGoal", False):
+
+                im = OffsetImage(imagen_pelota_red_path, zoom=0.02)
+
+            # goal normal → pelota normal
+            else:
+                im = OffsetImage(imagen_pelota_path, zoom=0.03)
+
+            ab = AnnotationBbox(
+                im,
+                (row["coord_x"], row["coord_y"]),
+                frameon=False,
+                zorder=10
+            )
+
             ax.add_artist(ab)
-            
 
+        # ---------------------------
+        # SAVED SHOT
+        # ---------------------------
         elif row["type"] == "SavedShot" and not row["isBlocked"]:
-            ax.scatter(row["coord_x"], row["coord_y"],
-                       s=350, alpha=0.6,
-                       color='red', edgecolors="white")
+            ax.scatter(
+                row["coord_x"], row["coord_y"],
+                s=350, alpha=0.6,
+                color='red', edgecolors="white"
+            )
 
+        # ---------------------------
+        # POST
+        # ---------------------------
         elif row["type"] in ["Post", "ShotOnPost"]:
-            ax.scatter(row["coord_x"], row["coord_y"],
-                       s=350, alpha=0.6,
-                       color='orange', edgecolors="white")
+            ax.scatter(
+                row["coord_x"], row["coord_y"],
+                s=350, alpha=0.6,
+                color='orange', edgecolors="white"
+            )
+
 
     ax.set_title(title, fontsize=20, fontweight="bold", color=color, pad=8)
 
 
-def plot_gk(df_home, df_away, color_home,color_away,  imagen_pelota):
+def plot_gk(df_home, df_away, color_home,color_away,  imagen_pelota_path, imagen_pelota_red_path):
     fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(10, 9), facecolor='none')
 
-    draw_goal( df_home,  "HOME GK SAVES", color_home,imagen_pelota, ax=ax1)
-    draw_goal( df_away, "AWAY GK SAVES", color_away, imagen_pelota, ax= ax2)
+    draw_goal( df_home,  "HOME GK SAVES", color_home,imagen_pelota_path, imagen_pelota_red_path, ax=ax1)
+    draw_goal( df_away, "AWAY GK SAVES", color_away, imagen_pelota_path, imagen_pelota_red_path, ax= ax2)
 
     return fig
 
@@ -2215,7 +2353,8 @@ def create_match_report1_plot(referee_html,group_round, stage_selected, id_home_
     plot_enhanced_network( passes_df, home_avg_locs, home_combinations, home_metrics, home_team_dict['name'], color_home, True, background_color,
             ax=axs[2, 0], show_title=True)
 
-    plot_xt_momentum(df, xT_grid, teams_dict_id_name_whoscored,matchdict['home']['teamId'], matchdict['away']['teamId'],
+    df_copy= preparare_df_xt(df, name_home_fotmob,name_away_fotmob)
+    plot_xt_momentum(df_copy, xT_grid, teams_dict_id_name_whoscored,matchdict['home']['teamId'], matchdict['away']['teamId'],
         home_color=color_home, away_color=color_away,ax=axs[2, 1])
 
     plot_enhanced_network(passes_df, away_avg_locs, away_combinations, away_metrics, away_team_dict['name'], color_away, False, background_color,
@@ -2231,7 +2370,7 @@ def create_match_report1_plot(referee_html,group_round, stage_selected, id_home_
     # ---------------- ROW 5 ----------------
     defensive_block(home_positions, home_actions,home_team_dict['name'], color_home,False, ax=axs[4, 0], title=True)
 
-    shots_merged, home_stats, away_stats = prepare_dataframe_shots( df, data, team_dict_fotmob, id_home_fotmob, id_away_fotmob)
+    shots_merged, home_stats, away_stats = prepare_dataframe_shots( df, data, team_dict_fotmob,name_home_fotmob,name_away_fotmob)
 
     plot_shot_map_with_stats(shots_merged, home_stats, away_stats,id_home_fotmob, id_away_fotmob,name_home_fotmob, name_away_fotmob,
         color_home, color_away, ax=axs[4, 1])
@@ -2321,8 +2460,8 @@ def create_match_report2_plot(referee_html,group_round, stage_selected, id_home_
         ax_gk_home.set_facecolor('none')
         ax_gk_away.set_facecolor('none')
 
-        draw_goal(df_tiros_coord_home, "HOME GK SAVES", color_home, IMAGEN_PELOTA, ax=ax_gk_home)
-        draw_goal(df_tiros_coord_away, "AWAY GK SAVES", color_away, IMAGEN_PELOTA, ax=ax_gk_away)
+        draw_goal(df_tiros_coord_home, "HOME GK SAVES", color_home, IMAGEN_PELOTA, IMAGEN_PELOTA_ROJA, ax=ax_gk_home)
+        draw_goal(df_tiros_coord_away, "AWAY GK SAVES", color_away, IMAGEN_PELOTA, IMAGEN_PELOTA_ROJA, ax=ax_gk_away)
 
         Chance_creating_zone( df, matchdict, matchdict['away']['name'], pearl_earring_cmapa, color_away, color_home, color_away,
             ax=axs[3, 2], title=True)

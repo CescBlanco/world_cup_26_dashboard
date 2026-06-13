@@ -430,14 +430,13 @@ def render_results(df: pd.DataFrame):
                                 
                             with overview_tabs[1]:
                                 write_subtitle("EVOLUTIVE EXPECTED GOAL (xG)")
-                                
-
+                            
                                 col1, col2, col3= st.columns([1, 3, 1])
 
                                 with col2:
-                                    shots_merged, home_stats, away_stats = prepare_dataframe_shots(df, data, team_dict_fotmob, id_home_fotmob , id_away_fotmob)
+                                    shots_merged, home_stats, away_stats = prepare_dataframe_shots(df, data, team_dict_fotmob, name_home_fotmob, name_away_fotmob)
 
-                                    datos_xg = preparar_xg_flows(shots_merged, id_home_fotmob)
+                                    datos_xg = preparar_xg_flows(shots_merged, name_home_fotmob)
                                                             
                                     local_xg,  visit_xg,   goles_local_xg,goles_visit_xg, xg_home,  xg_away = get_data_xg(datos_xg)
 
@@ -454,8 +453,9 @@ def render_results(df: pd.DataFrame):
                                 
                                 with col2:
                                 
-                                    shots_merged, home_stats, away_stats = prepare_dataframe_shots(df, data, team_dict_fotmob, id_home_fotmob , id_away_fotmob)
-                                    fig_xt, ax = plot_xt_momentum(df, xT_grid, teams_dict_id_name_whoscored, matchdict['home']['teamId'],
+                                    shots_merged, home_stats, away_stats = prepare_dataframe_shots(df, data, team_dict_fotmob, name_home_fotmob, name_away_fotmob)
+                                    df_copy= preparare_df_xt(df, name_home_fotmob,name_away_fotmob)
+                                    fig_xt, ax = plot_xt_momentum(df_copy, xT_grid, teams_dict_id_name_whoscored, matchdict['home']['teamId'],
                                                             matchdict['away']['teamId'], home_color= color_home, away_color=color_away)
                                     st.pyplot(fig_xt)
                                 
@@ -719,7 +719,7 @@ def render_results(df: pd.DataFrame):
 
                                 with col2:
                                     df_tiros_coord_home, df_tiros_coord_away = prepare_df_shotsgoal(shots_merged, name_home_fotmob , name_away_fotmob)
-                                    fig = plot_gk(df_tiros_coord_home, df_tiros_coord_away, color_home,color_away,  IMAGEN_PELOTA)
+                                    fig = plot_gk(df_tiros_coord_home, df_tiros_coord_away, color_home,color_away,  IMAGEN_PELOTA,  IMAGEN_PELOTA_ROJA)
                                     st.pyplot(fig, transparent=True)
                                 
                         # =====================
@@ -730,9 +730,6 @@ def render_results(df: pd.DataFrame):
                             st.caption("Generate and download tactical reports based on the match analysis.")
                             st.divider()
 
-                            
-
-                            
                             cache_key_reporte = f"{name_home_fotmob}_{name_away_fotmob}_report1"
                             cache_key_reporte2 = f"{name_home_fotmob}_{name_away_fotmob}"
                             # cache_key_reporteplayer = f"{name_home_fotmob}_{name_away_fotmob}_player"
