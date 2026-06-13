@@ -571,7 +571,7 @@ def preparare_df_xt(df,name_home_fotmob,name_away_fotmob ):
     return df
 
 
-def plot_xt_momentum(df_events: pd.DataFrame,xT_grid: np.ndarray,team_dict: dict,home_team_id: int,away_team_id: int,window_size: int = 4,decay_rate: float = 0.25,
+def plot_xt_momentum(df_events: pd.DataFrame,xT_grid: np.ndarray,teams_dict_id_name: dict,home_team_id: int,away_team_id: int,window_size: int = 4,decay_rate: float = 0.25,
                     sigma: float = 1.0, home_color: str = '#43A1D5', away_color: str = '#FF4C4C', bg_color: str = '#0C0D0E', 
                     line_color: str = 'white', figsize: tuple = (12, 6), ax=None):
     """
@@ -617,7 +617,12 @@ def plot_xt_momentum(df_events: pd.DataFrame,xT_grid: np.ndarray,team_dict: dict
     # ---------------------------
     # 6. TEAM ORDER (home/away)
     # ---------------------------
-    teams = df_events['render_team'].dropna().unique().tolist()
+    
+    
+    home_team = teams_dict_id_name[home_team_id]
+    away_team = teams_dict_id_name[away_team_id]
+
+    teams = [home_team, away_team]
 
     # fallback safety
     if len(teams) < 2:
