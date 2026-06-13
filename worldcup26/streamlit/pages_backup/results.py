@@ -239,7 +239,8 @@ def render_results(df: pd.DataFrame):
 
                         write_subtitle("SUBSTITUTIONS")
                         
-                        card_substitutions(first_eleven_home, player_home)
+                        home_events = pd.DataFrame(matchdict['home']['incidentEvents'])
+                        card_substitutions(home_events, teams_dict_id_name_whoscored ,players_dict) 
 
                     with col_space1:
                         st.write('')
@@ -363,7 +364,8 @@ def render_results(df: pd.DataFrame):
                         st.write("---") 
                         
                         write_subtitle("SUBSTITUTIONS")                   
-                        card_substitutions(first_eleven_away, player_away)
+                        away_events = pd.DataFrame(matchdict['away']['incidentEvents'])
+                        card_substitutions(away_events, teams_dict_id_name_whoscored ,players_dict)          
                         
                     
                     st.write('---')

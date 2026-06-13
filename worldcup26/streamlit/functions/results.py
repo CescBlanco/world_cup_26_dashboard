@@ -246,69 +246,58 @@ def card_formations_subs( player_team: pd.DataFrame, initial_captain_id: int | s
     return first_eleven
 
 #-----------------------------------------CARD SUBSTITUTIONS TEAMS-----------------------------------------
-def card_substitutions(df: pd.DataFrame,player_team: pd.DataFrame) -> None:
+def card_substitutions(matchdict: pd.DataFrame, teams_dict_id_name,
+                         players_dict: dict) -> None:
     """
-    Render player substitution events.
-
-    This function displays all substitutions performed by a team
-    during a match, including the minute, period, substituted player,
-    and incoming player.
-
-    Args:
-        df (pd.DataFrame): Team events dataset containing substitution
-            information.
-        player_team (pd.DataFrame): Team squad dataset used to resolve
-            player identifiers into player names.
-
-    Returns:
-        None
-
-    Raises:
-        TypeError: If inputs are not pandas DataFrames.
-        KeyError: If required columns are missing.
+    Render substitution events for a team.
     """
 
-    # 🔹 Validate input types
-    if not isinstance(df, pd.DataFrame):
-        raise TypeError("df must be a pandas DataFrame")
+    if matchdict.empty:
+        st.info("No substitutions")
+        return
 
-    if not isinstance(player_team, pd.DataFrame):
-        raise TypeError("player_team must be a pandas DataFrame")
+    # Resolver nombres
+    matchdict = matchdict.copy()
+    matchdict['type'] = matchdict['type'].apply(lambda x: x['displayName'] if isinstance(x, dict) else None)
+    matchdict['period'] = matchdict['period'].apply(lambda x: x['displayName'] if isinstance(x, dict) else None)
+    matchdict['nameTeam'] = matchdict['teamId'].map(teams_dict_id_name)
+    matchdict=matchdict[['minute', 'second', 'teamId', 'period'	,'type', 'relatedPlayerId', 'nameTeam']].copy()
+
+    tipos_excluir = [ "FormationSet", "FormationChange", "Pass", "Goal", "Card"]
+    matchdict = matchdict[~matchdict["type"].isin(tipos_excluir)].reset_index(drop=True).copy()
     
-    # 🔹 Extract substitution events
-    substitutions = df[df['subbedInPlayerId'].notna()].sort_values(by='subbedOutExpandedMinute', ascending=True)
+    matchdict["player_name"] = matchdict["relatedPlayerId"].astype("Int64").astype(str).map(players_dict)
+    
+    # Separar ON y OFF
+    subs_off = matchdict[matchdict["type"] == "SubstitutionOff"].copy()
 
-    # 🔹 Normalize player identifiers
-    player_team["playerId"] = player_team["playerId"].astype(int)
-    player_team["subbedInPlayerId"] = player_team["subbedInPlayerId"].astype("Int64")
+    subs_on = matchdict[ matchdict["type"] == "SubstitutionOn"].copy()
 
-     # 🔹 Create player lookup dictionary
-    sub_map = player_team.copy()
-    sub_map["playerId"] = sub_map["playerId"].astype(int)
-    sub_map = sub_map.set_index("playerId")["name"]
+    # Evitar cruces cuando hay varias sustituciones simultáneas
+    subs_off["sub_idx"] =  subs_off.groupby(["minute", "second", "teamId"]).cumcount()
 
-    # 🔹 Render substitutions
-    for _, jugador in substitutions.iterrows():
+    subs_on["sub_idx"] = subs_on.groupby(["minute", "second", "teamId"]).cumcount()
+    subs = subs_off.merge( subs_on, on=["minute", "second", "teamId", "period", "sub_idx"],suffixes=("_off", "_on")
+    )
 
-        minute = int(jugador.get("subbedOutExpandedMinute"))
-        period = jugador.get("subbedOutPeriod")
-
-        sub_in_id = int(jugador["subbedInPlayerId"])
-        sub_in_name = sub_map.get(sub_in_id, "Unknown")
+    # Render
+    for _, row in subs.iterrows():
 
         st.markdown(
-                f"""
-                <div style="text-align:left; font-size:12.5px;">
-                    <span style="color:#bbb;">{minute}' ({period}): </span>
-                    <strong style="color:#fff;"> {jugador['name']} </strong>
-                    <span style="color:#ff4d4d;"> ↓ </span>
-                    |
-                    <span style="color:#4caf50;"> ↑ </span>
-                    <strong style="color:#fff;">{sub_in_name}</strong>
-                </div>
-                """,
-                unsafe_allow_html=True
-            )
+            f"""
+            <div style="text-align:left; font-size:12.5px;">
+                <span style="color:#bbb;">{row['minute']}' ({row['period']}): </span>
+                <strong style="color:#fff;">{row['player_name_off']}</strong>
+                <span style="color:#ff4d4d;"> ↓ </span>
+                |
+                <span style="color:#4caf50;"> ↑ </span>
+                <strong style="color:#fff;">{row['player_name_on']}</strong>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
+
+        
 def prepare_df_events( matchdict: dict, teams_dict_id_name: dict) -> pd.DataFrame:
     """
     Convert raw WhoScored match events into a structured DataFrame.
