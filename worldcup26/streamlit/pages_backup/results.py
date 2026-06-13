@@ -184,6 +184,10 @@ def render_results(df: pd.DataFrame):
                 else:
                     texto_estado = estado
 
+                if (selected_home_team == 'United States') and (selected_away_team == 'Paraguay'):
+                    st.warning('Error in the interpretation of key events and graphics for own-goal events. The data provider will fix this shortly!')
+                
+                
                 st.write("---") 
 
                 with st.expander("📝 Show match details", expanded=False):
