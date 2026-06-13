@@ -187,7 +187,7 @@ def render_results(df: pd.DataFrame):
                 if (selected_home_team == 'United States') and (selected_away_team == 'Paraguay'):
                     st.warning('Error in the interpretation of key events and graphics for own-goal events. The data provider will fix this shortly!')
                 
-                
+
                 st.write("---") 
 
                 with st.expander("📝 Show match details", expanded=False):
@@ -301,7 +301,7 @@ def render_results(df: pd.DataFrame):
 
                         write_subtitle("EVENT KEYS")
 
-                        df_match, df_shootout = create_events_keys(matchdict, teams_dict_id_name_whoscored, players_dict, 'home', 'away')                                    
+                        df_match, df_shootout = create_events_keys(matchdict, teams_dict_id_name_whoscored, players_dict, home_team, away_team)                                    
                         card_events_key_match(df_match, home_team,away_team)
                         
                         st.write(" ")

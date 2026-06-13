@@ -573,6 +573,22 @@ def create_events_keys( matchdict: dict, teams_dict_id_name: dict, players_dict:
 
     # 🔹 Combine both teams
     df = pd.concat([incidents_home, incidents_away], axis=0)
+
+    # 🔹 Team used for rendering (own goals go to the opposite side)
+    team_swap = {
+        home: away,
+        away: home
+    }
+    df['render_team'] = df['nameTeam']
+
+    df.loc[
+        df['is_own_goal'],
+        'render_team'
+    ] = df.loc[
+        df['is_own_goal'],
+        'nameTeam'
+    ].map(team_swap)
+
     
     # 🔹 Split shootout events
     df_shootout = df[df['is_shootout']].copy()
@@ -727,13 +743,16 @@ def card_events_key_match( df_match: pd.DataFrame, home_team: str, away_team: st
         # =========================
         if row['event_category'] == 'goal':
 
-            main_text = f"{icon} {row['player_name']}"
+            if row['is_own_goal']:
+                main_text = f"{icon} {row['player_name']} (OG)"
+            else:
+                main_text = f"{icon} {row['player_name']}"
 
             assist_text = ""
             if pd.notna(row.get('player_name_related')):
                 assist_text = f"🅰️ {row['player_name_related']}"
 
-            if row['nameTeam'] == home_team:
+            if row['render_team'] == home_team:
 
                 left = f"""
                 <div style='text-align: right; line-height:1.2;font-size:13px '>
@@ -760,7 +779,7 @@ def card_events_key_match( df_match: pd.DataFrame, home_team: str, away_team: st
 
             text = f"{icon} {row['player_name']}"
 
-            if row['nameTeam'] == home_team:
+            if row['render_team'] == home_team:
                 left = f"<p style='text-align:right; font-size:13px '>{text}</p>"
                 right = ""
 
