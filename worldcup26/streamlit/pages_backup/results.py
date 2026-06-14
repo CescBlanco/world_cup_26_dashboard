@@ -281,7 +281,7 @@ def render_results(df: pd.DataFrame):
                                 <p style='text-align:center; font-size:15px; margin:0.5; line-height:1.4;'>
                                     Ubicación: {match_info['venue_name']} (Attendance: {match_info['attendance']})<br>
                                     {referee_html} <br>
-                                    ⭐ Match: {nombre_jugador_partido}
+                                    ⭐ Player of the Match: {nombre_jugador_partido}
                                 </p>
                                 """,
                                 unsafe_allow_html=True
