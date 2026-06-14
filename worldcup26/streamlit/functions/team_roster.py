@@ -350,10 +350,10 @@ def squad_by_position( players_only: pd.DataFrame) -> None:
                                 f"""
                                 <div style="
                                     background:{color};
-                                    color:white;
+                                    color:black;
                                     border-radius:8px;
                                     padding:6px 10px;
-                                    text-align:right;
+                                    text-align:center;
                                     font-weight:bold;
                                 ">
                                     {float(rating):.1f}
