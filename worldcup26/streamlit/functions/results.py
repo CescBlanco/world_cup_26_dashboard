@@ -1258,25 +1258,26 @@ def results_filtres(df: pd.DataFrame) -> tuple[pd.DataFrame, str, str | None, An
             # ---------------------------
 
             with col0:
-                stage_selected = st.selectbox( "🏆 Select stage",stages, index=len(stages) - 1)
+                stage_selected = st.selectbox( "🏆 Select stage",stages, index=0)
+                df_filtered_stage_selected = df[df["matchround"] == stage_selected]
 
             # NOTE:
             # The current implementation stores the selected stage
             # but does not directly filter the dataframe using it.
 
-            id_stage= df["round_id"].iloc[0]
+            id_stage= df_filtered_stage_selected["round_id"].iloc[0]
             # ---------------------------
             # Group filter
             # ---------------------------
             use_group_filter = st.checkbox("🔁 Filter by group")
-            groups = sorted(df['stageName'].dropna().unique().tolist())
+            groups = sorted(df_filtered_stage_selected['stageName'].dropna().unique().tolist())
             group_selected = None
-            df_filtered = df
+            df_filtered = df_filtered_stage_selected
 
             with col1:
                 if use_group_filter:
                     group_selected = st.selectbox( "🔁 Select group", groups, index=len(groups) - 1 if len(groups) > 0 else 0 )
-                    df_filtered = df[df["stageName"] == group_selected]
+                    df_filtered = df_filtered[df_filtered["stageName"] == group_selected]
                 else:
                     st.info("Group filter disabled")
             
