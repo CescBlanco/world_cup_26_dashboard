@@ -2389,7 +2389,7 @@ def create_match_report1_plot(referee_html,group_round, stage_selected, id_home_
     fig.set_facecolor('black')
 
     buffer = BytesIO()
-    fig.savefig(buffer, format='png', dpi=300, bbox_inches='tight')
+    fig.savefig(buffer, format='png', dpi=150, bbox_inches='tight')
     plt.close(fig)
 
     return buffer.getvalue()
@@ -2491,7 +2491,7 @@ def create_match_report2_plot(referee_html,group_round, stage_selected, id_home_
 
         fig.patch.set_alpha(1)
         buffer = BytesIO()
-        fig.savefig(buffer, format='png', dpi=300, bbox_inches='tight', facecolor='black', edgecolor= 'black')
+        fig.savefig(buffer, format='png', dpi=150, bbox_inches='tight', facecolor='black', edgecolor= 'black')
 
         plt.close(fig)
 

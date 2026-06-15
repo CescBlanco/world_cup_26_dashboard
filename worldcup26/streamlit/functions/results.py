@@ -1371,11 +1371,13 @@ def match_list_post_filter(partidos: pd.DataFrame,stage_selected: str,group_sele
             # ---------------------------
             # Match status
             # ---------------------------
-            estado = f"🕒 {hora_str}"
-            if pd.notna(row.get('elapsed')):
+            if row.get('status')==6:
                 estado = "✅ Completed"
+
+            elif row.get('status')==3:
+                estado= "🔴 Live"
             else :
-                estado = "Not started"
+                estado = f"🕒 Scheduled ({hora_str})"
             
             # ---------------------------
             # Match score
