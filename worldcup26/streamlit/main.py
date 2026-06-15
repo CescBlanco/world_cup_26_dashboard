@@ -207,10 +207,10 @@ with st.sidebar:
         st.session_state.page = "venues"
 
     if st.button("📅 Match schedule"):
-        st.session_state.page = "fixtures"
+        st.session_state.page = "match schedule"
 
     if st.button("📊 Results"):
-        st.session_state.page = "results"
+        st.session_state.page = "match results"
     
     st.info(f"**Current page:** {st.session_state.page.title()}")
     st.divider()
