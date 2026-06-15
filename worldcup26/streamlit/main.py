@@ -371,7 +371,7 @@ elif st.session_state.page == "venues":
 # - Standings integration
 #
 # =============================================================================
-elif st.session_state.page == "fixtures":
+elif st.session_state.page == "match schedule":
 
     st.subheader("📅 World Cup Calendar")   
 
@@ -401,7 +401,7 @@ elif st.session_state.page == "fixtures":
 # World Cup 2026 competition data becomes available.
 #
 # =============================================================================
-elif st.session_state.page == "results":
+elif st.session_state.page == "match results":
 
     st.subheader("📊 Results")
     df_fixtures_copaam = load_fixtures_pruebas()
