@@ -410,7 +410,8 @@ def create_inicidents_for_teams(matchdict: dict,teams_dict_id_name: dict,players
         return False
 
     # 🔹 Events not relevant for incident timeline
-    excluded_event_types = ["FormationSet","FormationChange","SubstitutionOff","SubstitutionOn","Pass","Tackle","BallTouch"]
+    excluded_event_types = ["FormationSet","FormationChange","SubstitutionOff","Error","Save"
+                            "SubstitutionOn","Pass","Tackle","BallTouch"]
 
     df = df[~df["type"].isin(excluded_event_types)].reset_index(drop=True).copy()
 
