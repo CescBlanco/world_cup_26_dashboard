@@ -40,7 +40,7 @@ def render_team_detail(df: pd.DataFrame) -> None:
         team = st.session_state.selected_team
 
         # 🔹 Filter dataset for selected team
-        team_data = df[df["team"] == team]
+        team_data = df[df["Squad"] == team]
 
         # =========================
         # TEAM PERFORMANCE BLOCKS
