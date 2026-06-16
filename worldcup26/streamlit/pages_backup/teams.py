@@ -94,7 +94,7 @@ def render_teams(df: pd.DataFrame) -> None:
                         )
 
                     if clicked > -1:
-                        st.session_state.selected_team = row["team"]
+                        st.session_state.selected_team = row["Squad"]
                         st.session_state.page = "team_detail"
                         st.rerun()
 
