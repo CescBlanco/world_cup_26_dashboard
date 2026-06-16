@@ -311,7 +311,7 @@ elif st.session_state.page == "team_detail":
     
     team = st.session_state.selected_team
 
-    team_data = df_teams_dataset[df_teams_dataset["team"] == team]
+    team_data = df_teams_dataset[df_teams_dataset["Squad"] == team]
     render_team_detail(team_data)
 
 # =============================================================================
@@ -329,7 +329,7 @@ elif st.session_state.page == "team_detail":
 # =============================================================================
 elif st.session_state.page == "rosters":
 
-    selected = st.selectbox( "Select Team",sorted(df_teams_dataset["team"].dropna().unique()))
+    selected = st.selectbox( "Select Team",sorted(df_teams_dataset["Squad"].dropna().unique()))
 
     df_all_players = load_all_players_fotmob()
     players_team = df_all_players[df_all_players["team_name"] == selected]
