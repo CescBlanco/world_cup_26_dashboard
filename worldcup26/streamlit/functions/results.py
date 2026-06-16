@@ -1437,6 +1437,70 @@ def match_list_post_filter(partidos: pd.DataFrame,stage_selected: str,group_sele
                 else:
                     st.markdown('<span style="color:gray">Details are not yet available.</span>', unsafe_allow_html=True)
 
+def get_valid_color(team: str,current_color: str,team_colors: dict[str, Any]) -> str:
+    """
+    Return a valid team color, replacing invalid FotMob colors.
+
+    FotMob occasionally returns '#000000' as a placeholder or
+    incorrect team color. When this occurs, the function attempts
+    to retrieve a valid color from the lightMode configuration and,
+    if necessary, from the darkMode configuration.
+
+    Priority order:
+        1. current_color
+        2. lightMode[team]
+        3. darkMode[team]
+
+    Args:
+        team (str):
+            Team side identifier ('home' or 'away').
+
+        current_color (str):
+            Color obtained from the matchFacts section.
+
+        team_colors (dict[str, Any]):
+            Team color configuration from:
+            data['data']['general']['teamColors']
+
+    Returns:
+        str:
+            A valid hexadecimal color string.
+
+    Raises:
+        TypeError:
+            If team is not a string or team_colors is not a dictionary.
+
+        ValueError:
+            If team is not 'home' or 'away'.
+    """
+    if not isinstance(team, str):
+        raise TypeError("team must be a string")
+
+    if not isinstance(team_colors, dict):
+        raise TypeError("team_colors must be a dictionary")
+
+    if team not in {"home", "away"}:
+        raise ValueError("team must be either 'home' or 'away'")
+
+    # Current color is valid
+    if current_color != "#000000":
+        return current_color
+
+    # Try light mode
+    light_color = team_colors.get("lightMode", {}).get(team)
+
+    if light_color and light_color != "#000000":
+        return light_color
+
+    # Try dark mode
+    dark_color = team_colors.get("darkMode", {}).get(team)
+
+    if dark_color and dark_color != "#000000":
+        return dark_color
+
+    # Fallback
+    return current_color
+
 def prepare_data_fotmob_cache( data: dict[str, Any]) -> tuple[str,str,str,str,int,int,dict[int, str]]:
     """
     Extract and prepare FotMob match metadata from cached data.
@@ -1478,6 +1542,11 @@ def prepare_data_fotmob_cache( data: dict[str, Any]) -> tuple[str,str,str,str,in
     colors_teams_fotmob= pd.DataFrame(data['content']['matchFacts']['playerOfTheMatch']['teamData'])
     color_home = colors_teams_fotmob['home']['color']
     color_away = colors_teams_fotmob['away']['color']
+
+    # Replace invalid FotMob colors using team color configuration
+    team_colors = data['general']['teamColors']
+    color_home = get_valid_color('home', color_home, team_colors)
+    color_away = get_valid_color('away', color_away, team_colors)
 
     # Extract team metadata
     name_home_fotmob= pd.DataFrame(data['header']['teams'])['name'].values[0]

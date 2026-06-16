@@ -184,8 +184,8 @@ def render_results(df: pd.DataFrame):
                 else:
                     texto_estado = estado
 
-                if (selected_home_team == 'IR Iran') and (selected_away_team == 'New Zealand'):
-                     st.warning("The away team's color is currently incorrect. The data provider will resolve this issue shortly!")
+                # if (selected_home_team == 'IR Iran') and (selected_away_team == 'New Zealand'):
+                #      st.warning("The away team's color is currently incorrect. The data provider will resolve this issue shortly!")
                 
 
                 st.write("---") 
