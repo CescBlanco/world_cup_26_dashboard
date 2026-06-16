@@ -38,14 +38,16 @@ def render_teams(df: pd.DataFrame) -> None:
         st.subheader("🌍 Competing Teams")
 
         st.info("Select a team by tapping its badge.")
+
         # 🔹 Create responsive grid layout
         cols = st.columns(4)
 
         # 🔹 Render one card per team
         for i, row in enumerate(df.to_dict("records")):
-
             with cols[i % 4]:
                 with st.container(border=True):
+                    
+                        
                     st.markdown(
                     """
                     <style>
@@ -64,37 +66,37 @@ def render_teams(df: pd.DataFrame) -> None:
                     """,
                     unsafe_allow_html=True,
                 )
-             
+            
                 clicked = clickable_images(
-                [row["team_photo"]],
-                titles=[f"View {row['Squad']}"],
-                div_style={
-                    "display": "flex",
-                    "justify-content": "center",
-                },
-                img_style={
-                    "width": "140px",
-                    "border-radius": "12px",
-                    "padding": "12px",
-                    "background-color": "#2e2e2e",
-                    "box-shadow": "0 2px 8px rgba(0,0,0,0.25)",
-                    "transition": "all 0.2s ease-in-out",
-                },
-            )
+                        [row["team_photo"]],
+                        titles=[f"View {row['Squad']}"],
+                        div_style={
+                            "display": "flex",
+                            "justify-content": "center",
+                        },
+                        img_style={
+                            "width": "140px",
+                            "border-radius": "12px",
+                            "padding": "12px",
+                            "background-color": "#2e2e2e",
+                            "box-shadow": "0 2px 8px rgba(0,0,0,0.25)",
+                            "transition": "all 0.2s ease-in-out",
+                        },
+                    )
 
                 st.markdown(
-                f"""
-                <div class="team-card">
-                    <div class="team-name">{row['Squad'].upper()}</div>
-                </div>
-                """,
-                unsafe_allow_html=True,
-            )
+                        f"""
+                        <div class="team-card">
+                            <div class="team-name">{row['Squad'].upper()}</div>
+                        </div>
+                        """,
+                        unsafe_allow_html=True,
+                    )
 
-                if clicked > -1:
-                    st.session_state.selected_team = row["team"]
-                    st.session_state.page = "team_detail"
-                    st.rerun()
+            if clicked > -1:
+                st.session_state.selected_team = row["team"]
+                st.session_state.page = "team_detail"
+                st.rerun()
 
     except Exception as e:
         raise RuntimeError( f"Failed to render teams grid: {e}")
