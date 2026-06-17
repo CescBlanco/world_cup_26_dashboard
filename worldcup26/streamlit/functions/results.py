@@ -1,6 +1,7 @@
 import pandas as pd
 import streamlit as st
-from dateutil import parser
+
+from datetime import datetime
 from typing import Any
 
 
@@ -1203,8 +1204,8 @@ def formatear_fecha_segura(f: Any) -> str:
             # Supports multiple formats such as:
             # - 23-05-2025
             # - 2025-05-23
-            fecha_obj = parser.parse(f, dayfirst=True) 
-            return fecha_obj.strftime('%d/%m/%Y')
+            fecha_obj = datetime.strptime(f, "%Y-%m-%d")
+            return fecha_obj.strftime("%d/%m/%Y")
         
         except Exception:
             # Return original value when parsing fails
@@ -1249,17 +1250,31 @@ def results_filtres(df: pd.DataFrame) -> tuple[pd.DataFrame, str, str | None, An
             raise TypeError("df must be a pandas DataFrame")
         col0, col1, col2 = st.columns([1,1,1])
         
-        stages = sorted(df['matchround'].dropna().unique().tolist())
-        if not stages:
-         raise ValueError("No stages available in dataframe")
-        
         with st.container():
             # ---------------------------
             # Stage filter
             # ---------------------------
-
             with col0:
-                stage_selected = st.selectbox( "🏆 Select stage",stages, index=0)
+                hoy = pd.Timestamp.today().normalize()
+                stages = sorted(df['matchround'].dropna().unique().tolist())
+                if not stages:
+                    raise ValueError("No stages available in dataframe")
+                
+                 # Buscar stage que contiene la fecha de hoy
+                stage_por_defecto = stages[0]
+
+                for stage in stages:
+                    fechas_stage = pd.to_datetime(
+                        df.loc[df["matchround"] == stage, "match_date"]
+                    ).dt.normalize()
+
+                    if hoy in fechas_stage.values:
+                        stage_por_defecto = stage
+                        break
+
+                indice_stage = stages.index(stage_por_defecto)
+                
+                stage_selected = st.selectbox( "🏆 Select stage",stages, index=indice_stage)
                 df_filtered_stage_selected = df[df["matchround"] == stage_selected]
 
             # NOTE:
@@ -1286,13 +1301,14 @@ def results_filtres(df: pd.DataFrame) -> tuple[pd.DataFrame, str, str | None, An
             # Date filter
             # --------------------------- 
             fechas = sorted(df_filtered['match_date'].dropna().unique().tolist())
-            fechas_formateadas = [formatear_fecha_segura(f) for f in fechas]
-
+            fechas_formateadas = [formatear_fecha_segura(f) for f in fechas]       
 
             with col2:
                 fecha_elegida = None
                 if len(fechas) > 0:
-                    fecha_label = st.selectbox("📆 Select date", fechas_formateadas )
+                    
+                    indice_hoy = min( range(len(fechas)), key=lambda i: abs(pd.Timestamp(fechas[i]).normalize() - hoy))
+                    fecha_label = st.selectbox("📆 Select date", fechas_formateadas, index=indice_hoy)
 
                     idx = fechas_formateadas.index(fecha_label)
                     fecha_elegida = fechas[idx]
@@ -1383,8 +1399,9 @@ def match_list_post_filter(partidos: pd.DataFrame,stage_selected: str,group_sele
             # ---------------------------
             # Match score
             # ---------------------------
-            resultado = ( f"{int(row.get('homeScore'))}-{int(row.get('awayScore'))}"if pd.notna(row.get('homeScore'))
-                            and pd.notna(row.get('awayScore'))else "vs")
+            resultado = ("vs" if row.get("status") == 3 else ( f"{int(row.get('homeScore'))}-{int(row.get('awayScore'))}"
+                    if pd.notna(row.get('homeScore')) and pd.notna(row.get('awayScore')) else "vs"))
+            
             home_team = row.get('homeTeamName', '')
             away_team = row.get('awayTeamName', '')
             homeTeamPhoto = row.get('homeTeamPhoto', '')
