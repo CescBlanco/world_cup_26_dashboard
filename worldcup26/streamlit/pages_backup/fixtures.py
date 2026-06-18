@@ -67,7 +67,18 @@ def render_fixtures(df: pd.DataFrame) -> None:
         # =========================
         # STANDINGS SECTION
         # =========================
-        table_groups()
+        option = st.segmented_control('\n\n', 
+                           ['🥇 Table groups', '⚔️ Final Stages'])
+   
+        if option == "🥇 Table groups":
+            table_groups()
+
+        elif option == "⚔️ Final Stages":
+
+            df_final_playoffs = prepare_playoffs_wc26()  
+        
+            fig = create_plot_playoffs(df_final_playoffs)
+            st.pyplot(fig, use_container_width=True)
 
     except Exception as e:
         raise RuntimeError(f"Failed to render fixtures page: {e}")
