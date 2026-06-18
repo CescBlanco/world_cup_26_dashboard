@@ -129,7 +129,7 @@ def build_event(row: pd.Series) -> dict:
 
         "time": dt.strftime("%H:%M"),
         "stage": safe_str(row["stageName"]),
-        "round": safe_int(row.get("round_id")),
+        "round": safe_str(row.get("matchround")),
         
     }
 }
@@ -215,6 +215,7 @@ def show_match_dialog(event):
         else:
             st.info(f"Kick-off: {props.get('time')}")
 
+        stage= props.get('round')
         st.write(f"🔁 Stage: {props.get('round').split(' ')[-1]}")
         st.write(f"🏆 Group: {props.get('stage').split(' ')[-1]}")
         
