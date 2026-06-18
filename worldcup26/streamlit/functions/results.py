@@ -1320,6 +1320,14 @@ def results_filtres(df: pd.DataFrame) -> tuple[pd.DataFrame, str, str | None, An
 
             if fecha_elegida:
                 partidos = partidos[partidos["match_date"] == fecha_elegida]
+
+            partidos["match_datetime_sort"] = pd.to_datetime(
+                partidos["match_date"].astype(str) + " " + partidos["match_time"].astype(str),
+                errors="coerce"
+            )
+
+            partidos = partidos.sort_values("match_datetime_sort", ascending=True)
+            
             return partidos, stage_selected, group_selected, fecha_elegida, id_stage
         
 def match_list_post_filter(partidos: pd.DataFrame,stage_selected: str,group_selected: str | None,fecha_elegida: Any,id_stage : str) -> None:
