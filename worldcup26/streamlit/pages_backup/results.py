@@ -48,7 +48,7 @@ def render_results(df: pd.DataFrame):
         partido_filtrado = df[df["url_match"] == st.session_state["partido_mostrado"]].reset_index(drop=True)
         if partido_filtrado.empty:
             st.session_state.pop("partido_mostrado", None)
-            st.warning("This match is not visible with the selected filters. Try changing stage, group or date.")
+            #st.warning("This match is not visible with the selected filters. Try changing stage, group or date.")
             st.stop()
         
         else:
@@ -740,22 +740,7 @@ def render_results(df: pd.DataFrame):
 
                     report1_exists = cache_key_reporte in st.session_state
                     report2_exists = cache_key_reporte2 in st.session_state    
-                    
-                    col1, col2 = st.columns(2)
 
-                    with col1:
-                        if report1_exists:
-                            st.success("✅ Tactical Report 1 Ready")
-                        else:
-                            st.info("❌ Tactical Report 1 not generated")
-
-                    with col2:
-                        if report2_exists:
-                            st.success("✅ Tactical Report 2 Ready")
-                        else:
-                            st.info("❌ Tactical Report 2 not generated")
-                    
-                    
                     col1tactical1, col2tactical = st.columns(2)
 
                     with col1tactical1:

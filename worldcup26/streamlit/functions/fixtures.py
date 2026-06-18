@@ -30,25 +30,29 @@ def match_status(row: pd.Series) -> str:
     Determine the status of a match based on score availability.
 
     A match is considered:
-    - "played" if both home and away scores are present
+    - "played" if status is 6
+    - "played" if status is 3
     - "scheduled" otherwise
 
     Args:
         row (pd.Series): Match row containing score information.
 
     Returns:
-        str: Match status ("played" or "scheduled").
+        str: Match status ("played", "live, or "scheduled").
 
     Raises:
         KeyError: If required columns are missing.
     """
 
     # 🔹 Match already played if both scores exist
-    return (
-        "played"
-        if pd.notna(row["homeScore"]) and pd.notna(row["awayScore"])
-        else "scheduled"
-    )
+    if row.get("status") == 3:
+        return "live"
+
+    elif row.get("status") == 6:
+        return "played"
+
+    else:
+        return "scheduled"
 
 def build_event(row: pd.Series) -> dict:
     """
@@ -75,7 +79,11 @@ def build_event(row: pd.Series) -> dict:
     # =========================
     # STATUS CONFIGURATION
     # =========================
-    STATUS_COLORS = { "played": "#057C0B", "scheduled": "#00E5FF"}
+    STATUS_COLORS = {
+            "played": "#057C0B",      # verde
+            "live": "#FF0000",        # rojo
+            "scheduled": "#00E5FF"    # azul
+        }
 
     # 🔹 Determine match status
     status = match_status(row)
@@ -700,7 +708,7 @@ def create_plot_playoffs(df):
             box_w,
             box_h,
             facecolor="none",
-            edgecolor="#3d3d3d",
+            edgecolor="white",
             linewidth=1
         ))
 
@@ -735,9 +743,9 @@ def create_plot_playoffs(df):
 
         mid_x = start_x + (end_x - start_x) * 0.35
 
-        ax.plot([start_x, mid_x], [y0, y0], color="#555", linewidth=1)
-        ax.plot([mid_x, mid_x], [y0, y1], color="#555", linewidth=1)
-        ax.plot([mid_x, end_x], [y1, y1], color="#555", linewidth=1)
+        ax.plot([start_x, mid_x], [y0, y0], color="white", linewidth=1.3)
+        ax.plot([mid_x, mid_x], [y0, y1], color="white", linewidth=1.3)
+        ax.plot([mid_x, end_x], [y1, y1], color="white", linewidth=1.3)
 
     plt.tight_layout()
 
