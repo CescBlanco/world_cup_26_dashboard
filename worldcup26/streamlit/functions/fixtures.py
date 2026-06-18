@@ -215,7 +215,8 @@ def show_match_dialog(event):
         else:
             st.info(f"Kick-off: {props.get('time')}")
 
-        stage= props.get('round')
+        round_value = props.get('round')
+        st.write(round_value)
         st.write(f"🔁 Stage: {props.get('round')}")
         st.write(f"🏆 Group: {props.get('stage').split(' ')[-1]}")
         
