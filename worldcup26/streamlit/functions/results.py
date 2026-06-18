@@ -1501,20 +1501,23 @@ def get_valid_color(team: str,current_color: str,team_colors: dict[str, Any]) ->
     if team not in {"home", "away"}:
         raise ValueError("team must be either 'home' or 'away'")
 
+    invalid_colors = {'#000000', '#100f10'}
+    current_color = (current_color or '').lower()
+    
     # Current color is valid
-    if current_color != "#000000":
+    if current_color not in invalid_colors:
         return current_color
 
     # Try light mode
-    light_color = team_colors.get("lightMode", {}).get(team)
+    light_color = team_colors.get('lightMode', {}).get(team)
 
-    if light_color and light_color != "#000000":
+    if light_color and light_color.lower() not in invalid_colors:
         return light_color
 
     # Try dark mode
-    dark_color = team_colors.get("darkMode", {}).get(team)
+    dark_color = team_colors.get('darkMode', {}).get(team)
 
-    if dark_color and dark_color != "#000000":
+    if dark_color and dark_color.lower() not in invalid_colors:
         return dark_color
 
     # Fallback
