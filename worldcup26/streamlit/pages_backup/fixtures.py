@@ -48,7 +48,7 @@ def render_fixtures(df: pd.DataFrame) -> None:
 
         df["matchround"] = pd.to_numeric(df["matchround"], errors="coerce")
         df = df.replace({pd.NA: None})
-        
+        st.dataframe(df)
         # =========================
         # BUILD CALENDAR EVENTS
         # =========================
