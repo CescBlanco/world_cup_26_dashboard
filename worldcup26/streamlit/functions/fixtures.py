@@ -100,8 +100,6 @@ def build_event(row: pd.Series) -> dict:
     else:
         title = f"⚽ {home} vs {away}"
         
-    round_value = row["matchround"]
-    round_value = ( int(round_value) if pd.notna(round_value) else None)
     # =========================
     # EVENT STRUCTURE
     # =========================
@@ -129,7 +127,7 @@ def build_event(row: pd.Series) -> dict:
 
         "time": dt.strftime("%H:%M"),
         "stage": safe_str(row["stageName"]),
-        "round": safe_str(row.get("matchround")),
+        "round": safe_str(row["matchround"]),
         
     }
 }
