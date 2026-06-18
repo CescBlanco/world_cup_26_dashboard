@@ -1267,7 +1267,10 @@ def results_filtres(df: pd.DataFrame) -> tuple[pd.DataFrame, str, str | None, An
                     fechas_stage = pd.to_datetime(
                         df.loc[df["matchround"] == stage, "match_date"]
                     ).dt.normalize()
-
+                    st.write("Stage:", stage)
+                    st.write("Hoy:", hoy)
+                    st.write("Primeras fechas:", fechas_stage.head().tolist())
+                    st.write("Existe hoy:", hoy in fechas_stage.values)
                     if hoy in fechas_stage.values:
                         stage_por_defecto = stage
                         break
@@ -1276,10 +1279,11 @@ def results_filtres(df: pd.DataFrame) -> tuple[pd.DataFrame, str, str | None, An
                 
                 stage_selected = st.selectbox( "🏆 Select stage",stages, index=indice_stage)
                 df_filtered_stage_selected = df[df["matchround"] == stage_selected]
-                st.write(type(hoy))
-                st.write(fechas_stage.head())
-                st.write(fechas_stage.dtype)
-
+                st.write("HOY =", hoy)
+                st.write("TIPO HOY =", type(hoy))
+                st.write("dtype match_date =", df["match_date"].dtype)
+                st.write("primer match_date =", df["match_date"].iloc[0])
+                st.write("tipo primer match_date =", type(df["match_date"].iloc[0]))
             # NOTE:
             # The current implementation stores the selected stage
             # but does not directly filter the dataframe using it.
