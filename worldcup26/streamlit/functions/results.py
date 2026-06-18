@@ -1276,6 +1276,9 @@ def results_filtres(df: pd.DataFrame) -> tuple[pd.DataFrame, str, str | None, An
                 
                 stage_selected = st.selectbox( "🏆 Select stage",stages, index=indice_stage)
                 df_filtered_stage_selected = df[df["matchround"] == stage_selected]
+                st.write(type(hoy))
+                st.write(fechas_stage.head())
+                st.write(fechas_stage.dtype)
 
             # NOTE:
             # The current implementation stores the selected stage
