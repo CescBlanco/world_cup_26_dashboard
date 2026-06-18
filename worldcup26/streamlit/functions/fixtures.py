@@ -196,7 +196,6 @@ def show_match_dialog(event):
     away_logo = props.get("away_logo")
 
     status = props.get("status")
-    st.write("EVENT COMPLETO:", event)
 
     col1, col2, col3 = st.columns([1.5, 2, 1.5])
 
@@ -213,9 +212,7 @@ def show_match_dialog(event):
         else:
             st.info(f"Kick-off: {props.get('time')}")
 
-        round_value = props.get('round')
-        st.write(round_value)
-        st.write(f"🔁 Stage: {props.get('round')}")
+        st.write(f"🔁 Stage: {props.get('round').split(' ')[-1]}")
         st.write(f"🏆 Group: {props.get('stage').split(' ')[-1]}")
         
 
