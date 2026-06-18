@@ -198,7 +198,7 @@ def show_match_dialog(event):
     away_logo = props.get("away_logo")
 
     status = props.get("status")
-
+    st.write("EVENT COMPLETO:", event)
 
     col1, col2, col3 = st.columns([1.5, 2, 1.5])
 
