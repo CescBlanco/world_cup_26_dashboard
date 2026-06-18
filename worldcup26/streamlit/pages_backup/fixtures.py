@@ -65,7 +65,7 @@ def render_fixtures(df: pd.DataFrame) -> None:
         # STANDINGS SECTION
         # =========================
         option = st.segmented_control('\n\n', 
-                           ['🥇 Table groups', '⚔️ Final Stages'])
+                           ['🥇 Table groups', '⚔️ Final Stages'], default= '🥇 Table groups')
    
         if option == "🥇 Table groups":
             table_groups()
