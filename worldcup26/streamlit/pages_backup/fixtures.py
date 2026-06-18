@@ -46,9 +46,6 @@ def render_fixtures(df: pd.DataFrame) -> None:
         df["homeScore"] = pd.to_numeric(df["homeScore"], errors="coerce")
         df["awayScore"] = pd.to_numeric(df["awayScore"], errors="coerce")
 
-        # df["matchround"] = pd.to_numeric(df["matchround"], errors="coerce")
-        # df = df.replace({pd.NA: None})
-        st.dataframe(df)
         # =========================
         # BUILD CALENDAR EVENTS
         # =========================
