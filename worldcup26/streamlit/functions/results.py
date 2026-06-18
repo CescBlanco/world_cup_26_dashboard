@@ -1450,10 +1450,8 @@ def match_list_post_filter(partidos: pd.DataFrame,stage_selected: str,group_sele
 
             with col2:
 
-                partido_jugado = (
-                    pd.notna(row.get('homeScore')) and
-                    pd.notna(row.get('awayScore'))
-                )
+                status = row.get("status")
+                partido_jugado = status == 6
                 # Match details are only available once a winner field exists.
                 if partido_jugado:
                     if st.button("🔍 View match details", key=clave):
