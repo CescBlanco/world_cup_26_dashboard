@@ -128,8 +128,8 @@ def build_event(row: pd.Series) -> dict:
         ),
 
         "time": dt.strftime("%H:%M"),
-        "stage": row["stageName"],
-        "round":  row["matchround"],
+        "stage": safe_str(row["stageName"]),
+        "round": safe_int(row.get("round_id")),
         
     }
 }
