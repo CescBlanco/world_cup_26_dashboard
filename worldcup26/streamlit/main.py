@@ -112,7 +112,7 @@ df_teams_dataset = build_teams_dataset(df_teams, df_fifa, df_elo)
 #
 # =============================================================================
 if "page" not in st.session_state:
-    st.session_state.page = "teams"
+    st.session_state.page = "match results"
 
 if "selected_team" not in st.session_state:
     st.session_state.selected_team = None

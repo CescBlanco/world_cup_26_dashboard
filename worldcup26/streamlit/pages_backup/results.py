@@ -397,7 +397,7 @@ def render_results(df: pd.DataFrame):
         
 
             option = st.segmented_control('Analysis type:\n\n', 
-                                    ['Team Analysis', 'Player of the Match'])
+                                    ['Team Analysis', 'Player of the Match'], default='Team Analysis')
             
             if option == "Team Analysis":
 
