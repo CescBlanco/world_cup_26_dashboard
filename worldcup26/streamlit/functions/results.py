@@ -1461,8 +1461,7 @@ def match_list_post_filter(partidos: pd.DataFrame,stage_selected: str,group_sele
                             st.session_state["partido_mostrado"] = partido_url
                     
                 else:
-                    st.markdown('<span style="color:gray">Details are not yet available.</span>', unsafe_allow_html=True)
-                    st.session_state["partido_mostrado"] = None  
+                    st.markdown('<span style="color:gray">Details are not yet available.</span>', unsafe_allow_html=True) 
 
 def get_valid_color(team: str,current_color: str,team_colors: dict[str, Any]) -> str:
     """
