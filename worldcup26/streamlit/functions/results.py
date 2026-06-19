@@ -1378,6 +1378,24 @@ def match_list_post_filter(partidos: pd.DataFrame,stage_selected: str,group_sele
                 {f" Matches from <span style='color:white;'>{formatear_fecha_segura(fecha_elegida)}</span>" if fecha_elegida else ""}
             </h3>
         """, unsafe_allow_html=True)
+    # ------------------------------------
+    # Autoabrir si solo hay 1 partido jugado
+    # ------------------------------------
+    partidos_finalizados = partidos[ partidos["status"] == 6]
+
+    if len(partidos_finalizados) == 1:
+
+        url_unica = partidos_finalizados.iloc[0]["url_match"]
+
+        if  st.session_state.get("partido_mostrado") != url_unica:
+            st.session_state["partido_mostrado"] = url_unica
+
+    elif len(partidos_finalizados) > 1:
+
+        partido_actual = st.session_state.get("partido_mostrado")
+
+        if ( partido_actual is not None and partido_actual not in partidos["url_match"].values):
+            st.session_state.pop("partido_mostrado", None )     
 
     for _, row in partidos.iterrows():
         with st.container():
@@ -1425,15 +1443,38 @@ def match_list_post_filter(partidos: pd.DataFrame,stage_selected: str,group_sele
             col1, col2 = st.columns([0.70, 0.35])
 
             with col1:
+                partido_abierto = (
+                    st.session_state.get("partido_mostrado")
+                    == partido_url
+                )
+
+                card_border = (
+                    "2px solid #4CAF50"
+                    if partido_abierto
+                    else "1px solid #e0e0e0"
+                )
+
+                card_shadow = (
+                    "0 0 12px rgba(76,175,80,0.25)"
+                    if partido_abierto
+                    else "2px 2px 8px rgba(0,0,0,0.05)"
+                )
+
+                card_background = (
+                    "rgba(76,175,80,0.05)"
+                    if partido_abierto
+                    else "transparent"
+                )
+
                 partido_html = f"""
                 <div style="
-                    border: 1px solid #e0e0e0;
-                    border-radius: 15px;
-                    padding: 1.5em;
-                    margin-bottom: 1em;
-                    background-color: transparent;
-                    box-shadow: 2px 2px 8px rgba(0,0,0,0.05);
-                ">
+                        border: {card_border};
+                        border-radius: 15px;
+                        padding: 1.5em;
+                        margin-bottom: 1em;
+                        background-color: {card_background};
+                        box-shadow: {card_shadow};
+                    ">
                     <div style="display: flex; justify-content: space-between; align-items: center;">
                         <div style="font-size: 14px; color: #999;">{estado}</div>
                         <div style="text-align: center; flex: 1;">
@@ -1453,15 +1494,42 @@ def match_list_post_filter(partidos: pd.DataFrame,stage_selected: str,group_sele
                 status = row.get("status")
                 partido_jugado = status == 6
                 # Match details are only available once a winner field exists.
+
                 if partido_jugado:
-                    if st.button("🔍 View match details", key=clave):
-                        if st.session_state.get("partido_mostrado") == partido_url:
-                            st.session_state["partido_mostrado"] = None  
+
+                    varios_partidos = len(partidos_finalizados) > 1
+
+                    partido_abierto = st.session_state.get("partido_mostrado")== partido_url
+                
+                    if varios_partidos:
+
+                        if partido_abierto:
+
+                            if st.button(  "❌ Hide details", key=f"hide_{clave}"):
+
+                                st.session_state.pop("partido_mostrado",None) 
+                                st.rerun()
+
                         else:
-                            st.session_state["partido_mostrado"] = partido_url
-                    
+                            if st.button("🔍 View match details", key=clave):
+
+                                st.session_state[ "partido_mostrado"] = partido_url
+                                st.rerun()
+
+                    else:
+
+                        pass
+
                 else:
-                    st.markdown('<span style="color:gray">Details are not yet available.</span>', unsafe_allow_html=True) 
+
+                    st.markdown(
+                        """
+                        <span style="color:gray">
+                            Details are not yet available.
+                        </span>
+                        """,
+                        unsafe_allow_html=True
+                    )
 
 def get_valid_color(team: str,current_color: str,team_colors: dict[str, Any]) -> str:
     """
@@ -1636,7 +1704,7 @@ def prepare_data_whoscored_cache( url_match_preview: str) -> tuple[dict, dict, d
     # Attempt cache retrieval
     cache_data = load_match_cache_whoscored(match_id_whoscored)
     if cache_data:
-        st.badge(f"🟢 Data loaded from CACHE WHOSCORED (match {match_id_whoscored})", color="green")
+        #st.badge(f"🟢 Data loaded from CACHE WHOSCORED (match {match_id_whoscored})", color="green")
 
         formation_mappings = cache_data["formation_mappings"]
         event_types_json = cache_data["event_types_json"]
@@ -1650,6 +1718,6 @@ def prepare_data_whoscored_cache( url_match_preview: str) -> tuple[dict, dict, d
         # Save newly scraped data
         save_match_cache_whoscored( match_id_whoscored, formation_mappings, event_types_json,
                                     matchdict, players_dict)
-        st.badge(f"🔵 Cache created successfully for match {match_id_whoscored}",  color="blue")
+        #st.badge(f"🔵 Cache created successfully for match {match_id_whoscored}",  color="blue")
 
     return formation_mappings, event_types_json, matchdict, players_dict

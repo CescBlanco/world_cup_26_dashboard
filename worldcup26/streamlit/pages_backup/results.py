@@ -44,7 +44,7 @@ def render_results(df: pd.DataFrame):
     
     match_list_post_filter(partidos, stage_selected, group_selected, fecha_elegida, id_stage)
 
-    if "partido_mostrado" in st.session_state:
+    if st.session_state.get("partido_mostrado"):
         partido_filtrado = df[df["url_match"] == st.session_state["partido_mostrado"]].reset_index(drop=True)
         if partido_filtrado.empty:
             st.session_state.pop("partido_mostrado", None)
@@ -87,7 +87,7 @@ def render_results(df: pd.DataFrame):
             match_id_fotmob= extract_match_id_fotmob(url_match_fotmob)
             cache_data_fotmob= load_match_cache_fotmob(match_id_fotmob)
             if cache_data_fotmob:
-                st.badge(f"🟢 Data loaded from CACHE MATCHES FOTMOB (match {match_id_fotmob})",  color="green")
+                #st.badge(f"🟢 Data loaded from CACHE MATCHES FOTMOB (match {match_id_fotmob})",  color="green")
                 data = cache_data_fotmob["data"]
             else:
                 json_path = Path(f"data/json_matches_fotmob/{match_id_fotmob}.json")
@@ -96,7 +96,7 @@ def render_results(df: pd.DataFrame):
                         with open(json_path) as f:
                             data = json.load(f)
                         save_match_cache_fotmob(match_id_fotmob, data)
-                        st.badge(f"🔵 Cache created successfully for match {match_id_fotmob}",  color="blue")
+                        #st.badge(f"🔵 Cache created successfully for match {match_id_fotmob}",  color="blue")
                 else:
                     st.badge("📭 No data available for this match yet. Data is pending update from the provider.", color= 'yellow')
                     st.stop()
