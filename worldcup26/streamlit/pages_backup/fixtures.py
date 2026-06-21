@@ -75,6 +75,8 @@ def render_fixtures(df: pd.DataFrame) -> None:
             df_final_playoffs = prepare_playoffs_wc26()  
         
             fig = create_plot_playoffs(df_final_playoffs)
+            st.info("Knockout stage pairings are provisional and will be finalized once all group standings are confirmed.")
+
             st.pyplot(fig, use_container_width=True)
 
     except Exception as e:
