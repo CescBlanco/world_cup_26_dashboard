@@ -608,17 +608,201 @@ def prepare_playoffs_wc26():
     df_bronze["date_label"] = df_bronze["date"].dt.strftime("%d %b %H:%M")
 
     df_final_concat = pd.concat([df, df_bronze], ignore_index=True)
+    df_final_concat['url_photo_home'] = "https://images.fotmob.com/image_resources/logo/teamlogo/"+ df_final_concat['home_id'].astype(str)+ ".png"
+
+    df_final_concat['url_photo_away'] = "https://images.fotmob.com/image_resources/logo/teamlogo/"+ df_final_concat['away_id'].astype(str)+ ".png"
     return df_final_concat
+
+# def create_plot_playoffs(df):
+
+#     # =====================================================
+#     # LAYOUT FOTMOB
+#     # =====================================================
+#     layout = {
+#         "GER": (-6,14), "NOR": (-6,12),
+#         "KOR": (-6,10), "NED": (-6,8),
+#         "COD": (-6,6), "ESP": (-6,4),
+#         "USA": (-6,2), "NZL": (-6,0),
+
+#         "G3A": (-3,13), "2AB": (-3,9),
+#         "2KL": (-3,5), "US3": (-3,1),
+
+#         "EF1": (0,11), "EF5": (0,3),
+#         "WQ1": (4,7),
+
+#         "1CF": (18,13), "M3C": (18,9),
+#         "1JH": (18,5), "1BE": (18,1),
+
+#         "BRA": (21,14), "CIV": (21,12),
+#         "MEX": (21,10), "ENG": (21,8),
+#         "ARG": (21,6), "AUS": (21,4),
+#         "CAN": (21,2), "COL": (21,0),
+
+#         "EF3": (15,11), "EF7": (15,3),
+#         "WQ3": (11,7),
+
+#         "WS1": (7.5,7),
+#         "LS1": (7.5,4.5)
+#     }
+
+#     # =====================================================
+#     # CONEXIONES
+#     # =====================================================
+#     connections = [
+#         ("GER","G3A"), ("NOR","G3A"),
+#         ("KOR","2AB"), ("NED","2AB"),
+#         ("COD","2KL"), ("ESP","2KL"),
+#         ("USA","US3"), ("NZL","US3"),
+#         ("G3A","EF1"), ("2AB","EF1"),
+#         ("2KL","EF5"), ("US3","EF5"),
+#         ("EF1","WQ1"), ("EF5","WQ1"),
+
+#         ("BRA","1CF"), ("CIV","1CF"),
+#         ("MEX","M3C"), ("ENG","M3C"),
+#         ("ARG","1JH"), ("AUS","1JH"),
+#         ("CAN","1BE"), ("COL","1BE"),
+#         ("1CF","EF3"), ("M3C","EF3"),
+#         ("1JH","EF7"), ("1BE","EF7"),
+#         ("EF3","WQ3"), ("EF7","WQ3"),
+
+#         ("WQ1","WS1"), ("WQ3","WS1")
+#     ]
+#     # =====================================================
+#     # FIGURA MATPLOTLIB
+#     # =====================================================
+#     fig, ax = plt.subplots(figsize=(25, 15))
+
+#     # ax.set_xlim(-8, 24)
+#     # ax.set_ylim(-8, 16)
+#     ax.axis("off")
+
+#     fig.patch.set_facecolor('none')
+#     ax.set_facecolor('none')
+
+#     # =====================================================
+# # 🔥 AUTO ZOOM PERFECTO (CLAVE)
+# # =====================================================
+#     xs = [x for x, y in layout.values()]
+#     ys = [y for x, y in layout.values()]
+
+#     box_w = 2.4
+#     box_h = 1.2
+
+#     pad = 3
+
+#     ax.set_xlim(min(xs) - pad, max(xs) + pad + box_w)
+#     ax.set_ylim(min(ys) - pad, max(ys) + pad)
+
+#     # =====================================================
+#     # CAJAS
+#     # =====================================================
+#     for _, row in df.iterrows():
+
+#         key = row["home_shortName"]
+#         if key not in layout:
+#             continue
+
+#         x, y = layout[key]
+
+#         # rect (Plotly shape equivalent)
+#         ax.add_patch(Rectangle(
+#             (x, y - 0.6),
+#             box_w,
+#             box_h,
+#             facecolor="none",
+#             edgecolor="white",
+#             linewidth=1
+#         ))
+
+#         # annotation (Plotly text equivalent)
+#         ax.text(
+#             x + box_w / 2,
+#             y,
+#             f"{row['home_shortName']} vs {row['away_shortName']}\n\n{row['date_label']}",
+#             ha="center",
+#             va="center",
+#             fontsize=12,
+#             color="white"
+#         )
+
+#     # =====================================================
+#     # BRACKETS
+#     # =====================================================
+#     for parent, child in connections:
+
+#         if parent not in layout or child not in layout:
+#             continue
+
+#         x0, y0 = layout[parent]
+#         x1, y1 = layout[child]
+
+#         if x1 > x0:
+#             start_x = x0 + box_w
+#             end_x = x1
+#         else:
+#             start_x = x0
+#             end_x = x1 + box_w
+
+#         mid_x = start_x + (end_x - start_x) * 0.35
+
+#         ax.plot([start_x, mid_x], [y0, y0], color="white", linewidth=1.3)
+#         ax.plot([mid_x, mid_x], [y0, y1], color="white", linewidth=1.3)
+#         ax.plot([mid_x, end_x], [y1, y1], color="white", linewidth=1.3)
+
+#     plt.tight_layout()
+
+#     return fig
 
 def create_plot_playoffs(df):
 
+    import matplotlib.pyplot as plt
+    from matplotlib.patches import Rectangle
+    from matplotlib.offsetbox import OffsetImage, AnnotationBbox
+    from PIL import Image
+    import requests
+    from io import BytesIO
+
     # =====================================================
-    # LAYOUT FOTMOB
+    # CACHE IMÁGENES (IMPORTANTE PARA RENDIMIENTO)
+    # =====================================================
+    img_cache = {}
+
+    def load_image(url):
+        if not isinstance(url, str) or url == "":
+            return None
+
+        if url in img_cache:
+            return img_cache[url]
+
+        try:
+            r = requests.get(url, timeout=5)
+            img = Image.open(BytesIO(r.content)).convert("RGBA")
+
+            # 🔥 FIX CLAVE: normalizar tamaño
+            img = img.resize((60, 60), Image.Resampling.LANCZOS)
+
+            img_cache[url] = img
+            return img
+
+        except:
+            return None
+
+    def add_img(ax, url, x, y, zoom=0.08):
+        img = load_image(url)
+        if img is None:
+            return
+
+        imagebox = OffsetImage(img, zoom=zoom)
+        ab = AnnotationBbox(imagebox, (x, y), frameon=False)
+        ax.add_artist(ab)
+
+    # =====================================================
+    # LAYOUT FOTMOB (NO TOCAR)
     # =====================================================
     layout = {
         "GER": (-6,14), "NOR": (-6,12),
         "KOR": (-6,10), "NED": (-6,8),
-        "COD": (-6,6), "URU": (-6,4),
+        "COD": (-6,6), "ESP": (-6,4),
         "USA": (-6,2), "NZL": (-6,0),
 
         "G3A": (-3,13), "2AB": (-3,9),
@@ -643,12 +827,12 @@ def create_plot_playoffs(df):
     }
 
     # =====================================================
-    # CONEXIONES
+    # CONEXIONES (NO TOCAR)
     # =====================================================
     connections = [
         ("GER","G3A"), ("NOR","G3A"),
         ("KOR","2AB"), ("NED","2AB"),
-        ("COD","2KL"), ("URU","2KL"),
+        ("COD","2KL"), ("ESP","2KL"),
         ("USA","US3"), ("NZL","US3"),
         ("G3A","EF1"), ("2AB","EF1"),
         ("2KL","EF5"), ("US3","EF5"),
@@ -664,44 +848,42 @@ def create_plot_playoffs(df):
 
         ("WQ1","WS1"), ("WQ3","WS1")
     ]
+
     # =====================================================
-    # FIGURA MATPLOTLIB
+    # FIGURA
     # =====================================================
     fig, ax = plt.subplots(figsize=(25, 15))
 
-    # ax.set_xlim(-8, 24)
-    # ax.set_ylim(-8, 16)
     ax.axis("off")
-
     fig.patch.set_facecolor('none')
     ax.set_facecolor('none')
 
     # =====================================================
-# 🔥 AUTO ZOOM PERFECTO (CLAVE)
-# =====================================================
+    # AUTO ZOOM
+    # =====================================================
     xs = [x for x, y in layout.values()]
     ys = [y for x, y in layout.values()]
 
     box_w = 2.4
     box_h = 1.2
-
     pad = 3
 
     ax.set_xlim(min(xs) - pad, max(xs) + pad + box_w)
     ax.set_ylim(min(ys) - pad, max(ys) + pad)
 
     # =====================================================
-    # CAJAS
+    # CAJAS + LOGOS
     # =====================================================
     for _, row in df.iterrows():
 
         key = row["home_shortName"]
+
         if key not in layout:
             continue
 
         x, y = layout[key]
 
-        # rect (Plotly shape equivalent)
+        # caja
         ax.add_patch(Rectangle(
             (x, y - 0.6),
             box_w,
@@ -711,19 +893,27 @@ def create_plot_playoffs(df):
             linewidth=1
         ))
 
-        # annotation (Plotly text equivalent)
+        # logos
+        home_x = x + 0.6
+        away_x = x + box_w - 0.6
+        logo_y = y + 0.15
+
+        add_img(ax, row.get("url_photo_home"), home_x, logo_y, zoom=0.35)
+        add_img(ax, row.get("url_photo_away"), away_x, logo_y, zoom=0.35)
+
+        # texto fallback
         ax.text(
             x + box_w / 2,
-            y,
-            f"{row['home_shortName']} vs {row['away_shortName']}\n\n{row['date_label']}",
+            y - 0.35,
+            f"{row['home_shortName']} vs {row['away_shortName']}\n{row['date_label']}",
             ha="center",
             va="center",
-            fontsize=12,
+            fontsize=10,
             color="white"
         )
 
     # =====================================================
-    # BRACKETS
+    # CONEXIONES
     # =====================================================
     for parent, child in connections:
 
