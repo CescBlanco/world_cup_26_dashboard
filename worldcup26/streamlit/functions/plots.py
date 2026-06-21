@@ -2048,8 +2048,8 @@ def draw_goal( df, title, color, imagen_pelota_path, imagen_pelota_red_path, ax=
 def plot_gk(df_home, df_away, color_home,color_away,  imagen_pelota_path, imagen_pelota_red_path):
     fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(10, 9), facecolor='none')
 
-    draw_goal( df_home,  "HOME GK SAVES", color_home,imagen_pelota_path, imagen_pelota_red_path, ax=ax1)
-    draw_goal( df_away, "AWAY GK SAVES", color_away, imagen_pelota_path, imagen_pelota_red_path, ax= ax2)
+    draw_goal( df_away,  "HOME GK SAVES", color_home,imagen_pelota_path, imagen_pelota_red_path, ax=ax1)
+    draw_goal( df_home, "AWAY GK SAVES", color_away, imagen_pelota_path, imagen_pelota_red_path, ax= ax2)
 
     return fig
 
@@ -2465,8 +2465,8 @@ def create_match_report2_plot(referee_html,group_round, stage_selected, id_home_
         ax_gk_home.set_facecolor('none')
         ax_gk_away.set_facecolor('none')
 
-        draw_goal(df_tiros_coord_home, "HOME GK SAVES", color_home, IMAGEN_PELOTA, IMAGEN_PELOTA_ROJA, ax=ax_gk_home)
-        draw_goal(df_tiros_coord_away, "AWAY GK SAVES", color_away, IMAGEN_PELOTA, IMAGEN_PELOTA_ROJA, ax=ax_gk_away)
+        draw_goal(df_tiros_coord_away, "HOME GK SAVES", color_home,IMAGEN_PELOTA, IMAGEN_PELOTA_ROJA, ax=ax_gk_home)
+        draw_goal(df_tiros_coord_home, "AWAY GK SAVES", color_away,IMAGEN_PELOTA, IMAGEN_PELOTA_ROJA, ax=ax_gk_away)
 
         Chance_creating_zone( df, matchdict, matchdict['away']['name'], pearl_earring_cmapa, color_away, color_home, color_away,
             ax=axs[3, 2], title=True)

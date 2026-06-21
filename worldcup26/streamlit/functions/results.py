@@ -288,11 +288,11 @@ def card_substitutions(matchdict: pd.DataFrame, teams_dict_id_name,
             f"""
             <div style="text-align:left; font-size:12.5px;">
                 <span style="color:#bbb;">{row['minute']}' ({row['period']}): </span>
-                <strong style="color:#fff;">{row['player_name_off']}</strong>
+                <strong style="color:#fff;">{row['player_name_on']}</strong>
                 <span style="color:#ff4d4d;"> ↓ </span>
                 |
                 <span style="color:#4caf50;"> ↑ </span>
-                <strong style="color:#fff;">{row['player_name_on']}</strong>
+                <strong style="color:#fff;">{row['player_name_off']}</strong>
             </div>
             """,
             unsafe_allow_html=True
