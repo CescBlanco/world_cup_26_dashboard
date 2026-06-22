@@ -518,11 +518,16 @@ def event_category(row: pd.Series) -> str:
         return 'shootout_penalty'
 
     # 🔹 Match penalty
+
+    if row['type'] == 'MissedShots' and row.get('is_match_penalty', False):
+        return 'missed_penalty'
+    
     if row.get('is_match_penalty', False):
         return 'match_penalty'
 
-    # 🔹 Goal
     if row['type'] == 'Goal':
+        if row.get('is_match_penalty', False):
+            return 'match_penalty'
         return 'goal'
 
     # 🔹 Card
@@ -688,6 +693,9 @@ def render_event( row: pd.Series,home_team: str, away_team: str) -> str:
 
     elif row['event_category'] == 'card':
         icon = card_icon(row['cardType'])
+
+    elif row['event_category'] == 'missed_penalty':
+        icon = "❌ (P)"
 
     elif row['event_category'] == 'match_penalty':
         icon = "⚽ (P)"
