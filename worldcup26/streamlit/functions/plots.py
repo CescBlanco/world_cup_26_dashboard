@@ -3060,7 +3060,7 @@ def individual_passMap( df1,nombre_jugador_partido,is_away_team=True, ax= None )
     ax.scatter(key_pass.endX, key_pass.endY, s=50, color='black',  edgecolor='violet', alpha=1, zorder=4)
     ax.scatter(g_assist.endX, g_assist.endY, s=50, color='black',  edgecolor= 'blue', alpha=1, zorder=5)
 
-    text = f"""          <Accurate Pass: {len(acc_pass)}>/{len(dfpass)} ({accurate_pass_perc}%) | <Chances Created: {len(key_pass)}>
+    text = f"""      <Accurate Pass: {len(acc_pass)}>/{len(dfpass)} ({accurate_pass_perc}%) | <Chances Created: {len(key_pass)}>
     Big Chances Created: {len(big_chnc)} | <Assists: {len(g_assist)}> | Pre-Assist: {len(pre_asst)} | Build-up to Shot: {len(shot_buildup)}
     Final-Third Passes: {len(fnl_thd)} | Middle-Third Passes: {len(midThird)} | Crosses (Acc.): {len(Crs_pass)} ({len(Crs_pass_acc)})
     Longballs (Acc.): {len(Lng_ball)} ({len(Lng_ball_acc)})
@@ -3155,7 +3155,7 @@ def individual_passes_recieved(df1,nombre_jugador_partido,color_team,is_away_tea
 
     if is_away_team:
 
-        ax_text(100, 105, f'''               <Passes Received: {len(dfp)}> | <Key Passes Received: {len(dfkp)}> | <Assists Received: {len(dfas)}>
+        ax_text(100, 105, f'''         <Passes Received: {len(dfp)}> | <Key Passes Received: {len(dfkp)}> | <Assists Received: {len(dfas)}>
         Passes Received in Final third: {len(dfnt)} | Passes Received in Opponent box: {len(dfpen)}
         Crosses Received: {len(dfcros)} | Longballs Received: {len(dflb)}
         Cutbacks Received: {len(cutback)} | Ball Retention: {ball_retention} % 
@@ -3164,7 +3164,7 @@ def individual_passes_recieved(df1,nombre_jugador_partido,color_team,is_away_tea
             highlight_textprops=[{'color':color_team}, {'color':'violet'}, {'color':'green'}])
         
     else:
-        ax_text(10,-2, f'''                  <Passes Received: {len(dfp)}> | <Key Passes Received: {len(dfkp)}> | <Assists Received: {len(dfas)}>
+        ax_text(10,-2, f'''         <Passes Received: {len(dfp)}> | <Key Passes Received: {len(dfkp)}> | <Assists Received: {len(dfas)}>
         Passes Received in Final third: {len(dfnt)} | Passes Received in Opponent box: {len(dfpen)}
         Crosses Received: {len(dfcros)} | Longballs Received: {len(dflb)}
         Cutbacks Received: {len(cutback)} | Ball Retention: {ball_retention} % 
@@ -3297,7 +3297,7 @@ def individual_def_acts(df1,nombre_jugador_partido,color_team,is_away_team=True,
     pitch.scatter(drb_pst.x, drb_pst.y, s=250, c='None', lw=2.5, edgecolor=color_team, marker='h', hatch='|||||', ax=ax)
 
     if is_away_team:
-        ax_text(100, 105, f'''        Tackle (Win): {len(hp_tk)} ({len(hp_tk) - len(hp_tk_u)}) | Dribblers Tackled: {len(drb_tkl)} | Dribbled past: {len(drb_pst)} | Interception: {len(hp_intc)}
+        ax_text(100, 105, f'''     Tackle (Win): {len(hp_tk)} ({len(hp_tk) - len(hp_tk_u)}) | Dribblers Tackled: {len(drb_tkl)} | Dribbled past: {len(drb_pst)} | Interception: {len(hp_intc)}
         Ball Recovery: {len(hp_br)} | Post Recovery Ball Retention: {post_rec_ball_retention} %  | Pass Block: {len(pass_bl)}
         Ball Clearances: {len(hp_cl)} | Shots Blocked: {len(shot_bl)} | Aerial Duels (Win): {len(hp_ar)} ({len(hp_ar) - len(hp_ar_u)}) | Fouls: {len(hp_fl_committed)}
         Fouls infront of Penalty Box: {len(dan_frk)} | Error Led to Shot/Led to Goal: {len(err_lat)}/{len(err_lgl)}
@@ -3305,7 +3305,7 @@ def individual_def_acts(df1,nombre_jugador_partido,color_team,is_away_team=True,
         ''', fontsize=10, ha='left', va='top', color= 'white', ax=ax)
     
     else:
-        ax_text(10, -2, f'''          Tackle (Win): {len(hp_tk)} ({len(hp_tk) - len(hp_tk_u)}) | Dribblers Tackled: {len(drb_tkl)} | Dribbled past: {len(drb_pst)} | Interception: {len(hp_intc)}
+        ax_text(10, -2, f'''     Tackle (Win): {len(hp_tk)} ({len(hp_tk) - len(hp_tk_u)}) | Dribblers Tackled: {len(drb_tkl)} | Dribbled past: {len(drb_pst)} | Interception: {len(hp_intc)}
         Ball Recovery: {len(hp_br)} | Post Recovery Ball Retention: {post_rec_ball_retention} %  | Pass Block: {len(pass_bl)}
         Ball Clearances: {len(hp_cl)} | Shots Blocked: {len(shot_bl)} | Aerial Duels (Win): {len(hp_ar)} ({len(hp_ar) - len(hp_ar_u)}) | Fouls: {len(hp_fl_committed)}
         Fouls infront of Penalty Box: {len(dan_frk)} | Error Led to Shot/Led to Goal: {len(err_lat)}/{len(err_lgl)}
