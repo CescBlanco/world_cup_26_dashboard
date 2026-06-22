@@ -825,7 +825,212 @@ def render_results(df: pd.DataFrame):
                             st.success("All report caches cleared")
 
             if option == "Player of the Match":
-                st.info(" This feature is coming soon.")
+                jugador_partido, nombre_jugador_partido, position_jugador_partido, player_id_jugador_partido,is_away_team, is_goalkeeper=prepare_df_player_of_match(player_home,player_away ,matchdict)
+                df_info= prepare_datafrmae_info_teams_whoscored(matchdict, teams_dict_id_name_whoscored)
+
+                
+                df['playerId'] = pd.to_numeric(df['playerId'], errors='coerce').astype('Int64')
+                df_info['playerId'] = pd.to_numeric(df_info['playerId'], errors='coerce').astype('Int64')
+
+                df1 = df.merge(df_info[['playerId', 'name','isFirstEleven']],on='playerId',how='left')
+
+                df1['name_norm'] = df1['name'].apply(normalize_name)
+                pname_norm = normalize_name(nombre_jugador_partido)
+
+                mins_played = playing_time(df1, pname_norm)
+
+                shots_merged_playerofmatch= prepare_dataframe_shots_playerofmatch(df1, data, team_dict_fotmob, name_home_fotmob,name_away_fotmob)
+                shots_merged_playerofmatch['name_norm'] = shots_merged_playerofmatch['name'].apply(normalize_name)
+
+                if is_goalkeeper:
+                    team_name = jugador_partido["team_name"].iloc[0]
+
+                    # equipo rival
+                    opponent_shots = shots_merged_playerofmatch[shots_merged_playerofmatch["teamName"] != team_name]
+
+                    player_id_fotmob_pom = int(opponent_shots["keeperId"].dropna().mode().iloc[0])
+                else:
+                    player_id_fotmob_pom= int(shots_merged_playerofmatch[shots_merged_playerofmatch['playerName']==nombre_jugador_partido].reset_index(drop=True)['playerId'][0])
+
+                if is_away_team:
+                    team_color= color_away
+                    id_team= id_away_fotmob
+                else:
+                    team_color= color_home
+                    id_team= id_home_fotmob
+
+                with st.container(border=True): 
+
+                    timage = Image.open(urlopen(
+                        f"https://images.fotmob.com/image_resources/playerimages/{player_id_fotmob_pom}.png"
+                    ))
+
+                    himage = Image.open(urlopen(
+                        f"https://images.fotmob.com/image_resources/logo/teamlogo/{id_team}.png"
+                    ))
+
+                    col1, col2, col3 = st.columns([1, 3, 1], vertical_alignment="center")
+                    with col1:
+                        st.image(timage, width=120)
+
+                    with col2:
+
+                        st.markdown(
+                            f"<h2 style='text-align:center; margin-bottom:0px;'>"
+                            f"{nombre_jugador_partido}"
+                            f"</h2>",
+                            unsafe_allow_html=True
+                        )
+
+                        st.markdown(
+                            f"""
+                            <div style='text-align:center; margin-top:-10px;'>
+                                <span style='background:#222; padding:4px 10px; border-radius:8px; font-size:12px; color:#fff;'>
+                                PLAYER OF THE MATCH
+                                </span>
+                            </div>
+                            """,
+                            unsafe_allow_html=True
+                        )
+
+                        st.markdown(
+                            f"<p style='text-align:center; margin-top: 10px; font-size:14px; color:#bbbbbb;'>"
+                            f"{name_home_fotmob} {homeScore}-{awayScore} {name_away_fotmob} | "
+                            f"{group_round} - {stage_selected} | World Cup 2026"
+                            f"</p>",
+                            unsafe_allow_html=True
+                        )
+                    with col3:
+                        st.image(himage, width=80)
+
+                    st.markdown("#### Player Profile")
+
+                    colA, colB, colC, colD = st.columns(4)
+
+                    colA.metric("Position", position_jugador_partido)
+                    colB.metric("Age", jugador_partido['age'].iloc[0])
+                    colC.metric("Height", f"{jugador_partido['height'].iloc[0]} cm")
+                    colD.metric("Weight", f"{jugador_partido['weight'].iloc[0]} kg")
+
+                    colE, colF = st.columns(2)
+
+                    colE.metric("Minutes Played", mins_played)
+                    colF.metric("Role", "GK" if is_goalkeeper else "Outfield")
+
+                main_tabs = st.tabs([
+                    "📊 Event timeline",
+                    "⚽ Attack",
+                    "🧠 Possession",
+                    "🛡️ Defense",
+                    "🥅 Goalkeeper",
+                    "📑 Generate reports"
+                ])
+
+                with main_tabs[0]:
+                    write_subtitle("EVENT TIMELINE")
+                    
+                    col1, col2, col3= st.columns([1, 3, 1])
+                        
+                    with col2:                       
+                        fig_et, ax_et = plot_event_timeline(df1, pname_norm,is_goalkeeper = is_goalkeeper)
+
+                        st.pyplot(fig_et)
+                    
+                with main_tabs[1]:
+                    
+                    if is_goalkeeper:
+                        st.info("This player is a goalkeeper, so a shotmap plot cannot be generated.")
+                    else:
+                        shots_merged_playerofmatch= prepare_dataframe_shots_playerofmatch(df1, data, team_dict_fotmob, name_home_fotmob,name_away_fotmob)
+                        shots_merged_playerofmatch['name_norm'] = shots_merged_playerofmatch['name'].apply(normalize_name)
+
+                        write_subtitle("SHOT MAP")
+                        
+                        col1, col2, col3= st.columns([1, 3, 1])
+                            
+                        with col2:       
+                            figshotmap, ax = Individual_ShotMap(shots_merged_playerofmatch, pname_norm, color_away,is_away_team=is_away_team)
+                            st.pyplot(figshotmap)
+
+                with main_tabs[2]:
+                    overview_tabs = st.tabs([
+                        "Pass Map",
+                        "Passes Recived",
+                        "Heatmap and Touches",
+                    ])
+                    with overview_tabs[0]:
+                        write_subtitle("PASS MAP")
+                        
+                        col1, col2, col3= st.columns([1, 3, 1])
+                            
+                        with col2:
+                            fig_ind_pass, ax_ind_pass = individual_passMap(df1,pname_norm,is_away_team=is_away_team )
+                            st.pyplot(fig_ind_pass)
+
+                    with overview_tabs[1]: 
+                        write_subtitle("PASSES RECIEVED")
+                            
+                        col1, col2, col3= st.columns([1, 3, 1])
+                            
+                        with col2:                       
+                            fig_pass_rec, ax = individual_passes_recieved(df1,pname_norm,team_color,is_away_team=is_away_team  )        
+                            st.pyplot(fig_pass_rec)
+
+                            if is_goalkeeper:
+                                st.info('Passes received are inferred from event order (not explicitly tracked). For goalkeepers, values may be lower due to saves and possession restarts.')
+
+                    with overview_tabs[2]:
+                        write_subtitle("HEATMAP AND TOUCHES")
+                        
+                        col1, col2, col3= st.columns([1, 3, 1])
+                            
+                        with col2:                       
+                            fig_hp, ax_hp = heatMap( df1, pname_norm, team_color, is_away_team= is_away_team)
+                            st.pyplot(fig_hp)
+                
+                with main_tabs[3]:
+
+                    write_subtitle("DEFENSIVE ACTIONS")
+                    
+                    col1, col2, col3= st.columns([1, 3, 1])
+                        
+                    with col2:                       
+                        fig_def, ax = individual_def_acts( df1, pname_norm, team_color, is_away_team=is_away_team)
+                        st.pyplot(fig_def)
+
+                with main_tabs[4]:
+                    if is_goalkeeper: 
+                        IMAGEN_PELOTA = mpimg.imread('worldcup26/data/sport-ball-football-free-png.webp')
+                        IMAGEN_PELOTA_ROJA =mpimg.imread('worldcup26/data/pelota_roja.png')
+
+                        shots_merged_playerofmatch= prepare_dataframe_shots_playerofmatch(df1, data, team_dict_fotmob, name_home_fotmob,name_away_fotmob)
+                        shots_merged_playerofmatch['name_norm'] = shots_merged_playerofmatch['name'].apply(normalize_name)
+                      
+                        df_tiros_coord_home, df_tiros_coord_away = prepare_df_shotsgoal_pom(shots_merged_playerofmatch, name_home_fotmob , name_away_fotmob)
+                        if is_away_team:
+                            df_shots = df_tiros_coord_home
+                        else:
+                            df_shots = df_tiros_coord_away
+                        
+                        write_subtitle("GK SAVES")
+                    
+                        col1, col2, col3= st.columns([1, 3, 1])
+                            
+                        with col2:                       
+                            fig_goalpost, ax= draw_goal_pom( df_shots, IMAGEN_PELOTA, IMAGEN_PELOTA_ROJA)
+                            st.pyplot(fig_goalpost)
+
+                    else: 
+                        st.info("This player is not a goalkeeper, so a goal-post plot cannot be generated.")
+                with main_tabs[5]:
+                    st.info(" This feature is coming soon.")
+
+
+                    
+
+                    
+
+
 
     else:
         st.info("Select a match to view detailed analysis.")

@@ -21,6 +21,7 @@ import matplotlib.patches as patches
 import matplotlib.pyplot as plt
 from matplotlib.offsetbox import OffsetImage, AnnotationBbox
 import streamlit as st
+from matplotlib.lines import Line2D
 
 background_color = '#0C0D0E'
 text_color = 'white'
@@ -2497,3 +2498,1006 @@ def create_match_report2_plot(referee_html,group_round, stage_selected, id_home_
 
         return buffer.getvalue()
 
+#-----------------------------------------PLAYER OF THE MATCH---------------------------------------------------------------
+def prepare_df_player_of_match(player_home,player_away, matchdict ):
+    jugador_partido = player_home.loc[player_home["isManOfTheMatch"]].copy()
+    if jugador_partido.empty:
+        jugador_partido = player_away.loc[player_away["isManOfTheMatch"]].copy()
+    jugador_partido["is_away_team"] = jugador_partido["field"] == "away"
+    nombre_jugador_partido = jugador_partido["name"].iloc[0]
+    position_jugador_partido = jugador_partido["position"].iloc[0]
+    player_id_jugador_partido = int(jugador_partido["playerId"].iloc[0])
+    is_away_team = bool(jugador_partido["is_away_team"].iloc[0])
+
+    jugador_partido["is_goalkeeper"] = jugador_partido["position"] == "GK"
+    is_goalkeeper = bool(jugador_partido["is_goalkeeper"].iloc[0])
+
+
+    home_name = matchdict['home']['name']
+    away_name = matchdict['away']['name']
+
+    field_to_teamId = {
+        "home": home_name,
+        "away": away_name
+    }
+
+    jugador_partido["team_name"] = jugador_partido["field"].map(field_to_teamId)
+    return jugador_partido, nombre_jugador_partido, position_jugador_partido, player_id_jugador_partido,is_away_team, is_goalkeeper
+
+def prepare_datafrmae_info_teams_whoscored(matchdict, teams_dict_id_name_whoscored):
+    from unidecode import unidecode
+    players_home_df = pd.DataFrame(matchdict['home']['players'])
+    players_home_df["teamId"] = matchdict['home']['teamId']
+    players_away_df = pd.DataFrame(matchdict['away']['players'])
+    players_away_df["teamId"] = matchdict['away']['teamId']
+    dfp = pd.concat([players_home_df, players_away_df])
+    dfp['name'] = dfp['name'].astype(str)
+    dfp['name'] = dfp['name'].apply(unidecode)
+    dfp['teamName']= dfp['teamId'].map(teams_dict_id_name_whoscored)
+    return  dfp[['playerId', 'name', 'isFirstEleven', 'isManOfTheMatch', 'teamId',	'teamName']].copy()
+
+def normalize_name(name):
+
+    import unicodedata
+    import re
+    
+    if pd.isna(name):
+        return ""
+    name = str(name).lower().strip()
+    name = unicodedata.normalize('NFKD', name)
+    name = ''.join(c for c in name if not unicodedata.combining(c))
+    name = re.sub(r'[^a-z\s]', '', name)
+    return name
+
+def playing_time(df, pname):
+    df_player = df[df['name_norm'] == pname].copy()
+
+    if df_player.empty:
+        return 0
+
+    df_player['isFirstEleven'] = df_player['isFirstEleven'].fillna(0).astype(int)
+
+    max_min = df['minute'].max()
+
+    df_sub_on = df_player[df_player['type'] == 'SubstitutionOn']
+    df_sub_off = df_player[df_player['type'] == 'SubstitutionOff']
+
+    is_starting = (df_player['isFirstEleven'].max() == 1)
+
+    # -----------------------
+    # TITULAR
+    # -----------------------
+    if is_starting:
+
+        # si no fue sustituido → jugó todo el tiempo
+        if df_sub_off.empty:
+            return int(max_min)
+
+        off_min = df_sub_off['minute'].min()
+
+        return int(off_min)
+
+    # -----------------------
+    # SUPLENTE
+    # -----------------------
+    else:
+
+        if df_sub_on.empty:
+            return 0
+
+        on_min = df_sub_on['minute'].min()
+
+        return int(max_min - on_min)
+
+def prepare_dataframe_shots_playerofmatch(df, data,team_dict_fotmob, name_home_fotmob,name_away_fotmob):
+    shots_df= pd.DataFrame(data['content']['shotmap']['shots'])
+    shots_df = shots_df[shots_df['period']!='PenaltyShootout']
+    shots_df['teamName'] = shots_df['teamId'].map(team_dict_fotmob)
+
+    #Dataframe eventos whoscored
+    df_events_shots = df[ (df['isShot'] == True) & (df['period'] != 'PenaltyShootout')][['id', 'qualifiers', 'type', 'name','satisfiedEventsTypes']]
+
+    shots_merged = pd.merge(shots_df, df_events_shots, left_on='id', right_on='id', how='left')
+
+    
+    # Add flags
+    shots_merged['is_big_chance'] = shots_merged['qualifiers'].apply(is_big_chance)
+    shots_merged['is_own_goal'] = shots_merged['qualifiers'].apply(is_own_goal)
+
+    home= name_home_fotmob
+    away = name_away_fotmob
+
+    team_swap = {
+            home: away,
+            away: home
+        }
+    shots_merged['render_team'] = shots_merged['teamName']
+
+    shots_merged.loc[
+        shots_merged['is_own_goal'],
+        'render_team'
+    ] = shots_merged.loc[
+        shots_merged['is_own_goal'],
+        'teamName'
+    ].map(team_swap)
+
+    return shots_merged
+
+def plot_event_timeline(df, player_name, is_goalkeeper=False, ax=None):
+
+    path_eff = [
+        path_effects.Stroke(linewidth=1, foreground='white'),
+        path_effects.Normal()
+    ]
+
+    # ----------------------------
+    # FILTER
+    # ----------------------------
+    player_df = df[df['name_norm'] == player_name].copy()
+    player_df = player_df.sort_values("minute")
+
+    # ----------------------------
+    # BUILD EVENTS
+    # ----------------------------
+    timeline = []
+
+    for _, row in player_df.iterrows():
+
+        minute = int(row["minute"])
+        events = row.get("satisfiedEventsTypes", []) or []
+
+        if row["type"] == "Goal":
+            timeline.append((minute, "Goal"))
+
+        elif 100 in events:
+            timeline.append((minute, "Assist"))
+
+        elif 123 in events:
+            timeline.append((minute, "Key Pass"))
+
+        elif 203 in events:
+            timeline.append((minute, "Big Chance"))
+
+        elif row["type"] == "BallRecovery":
+            timeline.append((minute, "Recovery"))
+
+        elif row["type"] == "Interception":
+            timeline.append((minute, "Interception"))
+
+        elif row["type"] == "Tackle":
+            timeline.append((minute, "Tackle"))
+
+        elif row["type"] in ["Save", "SavedShot"] or 113 in events:
+            timeline.append((minute, "Save"))
+
+        elif 161 in events or 178 in events:
+            timeline.append((minute, "Goal Conceded"))
+
+        elif 111 in events:
+            timeline.append((minute, "Penalty Save"))
+
+        elif row["type"] == "Claim" or 104 in events or 103 in events:
+            timeline.append((minute, "Claim"))
+
+        elif 127 in events:
+            timeline.append((minute, "Long Pass"))
+
+        elif 101 in events or row["type"] == "Smother":
+            timeline.append((minute, "Sweeper"))
+
+    # ----------------------------
+    # STYLE
+    # ----------------------------
+    if is_goalkeeper:
+
+        colors = {
+            "Save": "#00bfff",
+            "Goal Conceded": "#ff4d4d",
+            "Claim": "#ffffff",
+            "Sweeper": "#ffd700",
+            "Penalty Save": "#00ff88",
+            "Long Pass": "#ff9900",
+            "Error": "#ff0000"
+        }
+
+        y_map = {
+            "Save": 0.35,
+            "Claim": 0.23,
+            "Sweeper": 0.10,
+            "Long Pass": 0.01,
+            "Penalty Save": -0.08,
+            "Goal Conceded": -0.15,
+            "Error": -0.25
+        }
+
+        sizes = {k: 140 for k in colors}  # fallback simple
+
+    else:
+
+        colors = {
+            "Goal": "#00ff88",
+            "Assist": "#00bfff",
+            "Key Pass": "#b266ff",
+            "Big Chance": "#ff9900",
+            "Recovery": "#ffd700",
+            "Interception": "#ff4d4d",
+            "Tackle": "#ffffff"
+        }
+
+        sizes = {
+            "Goal": 260,
+            "Assist": 180,
+            "Big Chance": 160,
+            "Key Pass": 140,
+            "Recovery": 90,
+            "Interception": 90,
+            "Tackle": 80
+        }
+
+        y_map = {
+            "Goal": 0.12,
+            "Assist": 0.8,
+            "Big Chance": 0.4,
+            "Key Pass": -0.001,
+            "Recovery": -0.10,
+            "Interception": -0.17,
+            "Tackle": -0.25
+        }
+
+    # ----------------------------
+    # AX SETUP
+    # ----------------------------
+    max_minute = player_df["minute"].max() if not player_df.empty else 90
+    end_time = max(90, max_minute)
+
+    if ax is None:
+        fig, ax = plt.subplots(figsize=(10, 3.2))
+    else:
+        fig = ax.figure
+        ax.text( 0.5, 0.95, "EVENT TIMELINE", transform=ax.transAxes, ha="center", va="center", color="white", fontsize=20, fontweight="bold", path_effects=path_eff)
+
+    fig.patch.set_facecolor((0, 0, 0, 0))
+    ax.set_facecolor((0, 0, 0, 0))
+
+    # ----------------------------
+    # BASE LINE
+    # ----------------------------
+    ax.hlines(-0.3, 1, end_time, color="white", alpha=0.30, linewidth=2)
+
+    # ----------------------------
+    # PLOT EVENTS (SAFE VERSION)
+    # ----------------------------
+    for minute, event in timeline:
+
+        if event not in y_map or event not in colors:
+            continue
+
+        ax.scatter(
+            minute,
+            y_map[event],
+            s=sizes.get(event, 100),
+            color=colors.get(event, "gray"),
+            edgecolors="white",
+            linewidths=1.2,
+            alpha=0.95,
+            zorder=3
+        )
+
+    # ----------------------------
+    # MINUTES
+    # ----------------------------
+    for m in range(0, end_time + 1, 15):
+        ax.text(m, -0.39, str(m), ha="center", color="white", fontsize=10)
+
+    # ----------------------------
+    # LEGEND
+    # ----------------------------
+    legend_elements = [
+        Line2D(
+            [0], [0],
+            marker='o',
+            color='none',
+            markerfacecolor=colors[k],
+            markeredgecolor='white',
+            markersize=8,
+            label=k
+        )
+        for k in colors
+    ]
+
+    leg = ax.legend(
+        handles=legend_elements,
+        loc='upper center',
+        bbox_to_anchor=(0.5, 0.20),
+        ncol=4,
+        frameon=False,
+        fontsize=10
+    )
+
+    for text in leg.get_texts():
+        text.set_color("white")
+
+    # ----------------------------
+    # AXIS CLEAN
+    # ----------------------------
+    ax.set_xlim(-2, end_time + 2)
+    ax.set_ylim(-0.8, 0.6)
+    ax.axis("off")
+
+    return fig, ax
+
+def prepare_dataframe_shots_playerofmatch(df, data,team_dict_fotmob, name_home_fotmob,name_away_fotmob):
+    shots_df= pd.DataFrame(data['content']['shotmap']['shots'])
+    shots_df = shots_df[shots_df['period']!='PenaltyShootout']
+    shots_df['teamName'] = shots_df['teamId'].map(team_dict_fotmob)
+
+    #Dataframe eventos whoscored
+    df_events_shots = df[ (df['isShot'] == True) & (df['period'] != 'PenaltyShootout')][['id', 'qualifiers', 'type', 'name','satisfiedEventsTypes']]
+
+    shots_merged = pd.merge(shots_df, df_events_shots, left_on='id', right_on='id', how='left')
+
+    
+    # Add flags
+    shots_merged['is_big_chance'] = shots_merged['qualifiers'].apply(is_big_chance)
+    shots_merged['is_own_goal'] = shots_merged['qualifiers'].apply(is_own_goal)
+
+    home= name_home_fotmob
+    away = name_away_fotmob
+
+    team_swap = {
+            home: away,
+            away: home
+        }
+    shots_merged['render_team'] = shots_merged['teamName']
+
+    shots_merged.loc[
+        shots_merged['is_own_goal'],
+        'render_team'
+    ] = shots_merged.loc[
+        shots_merged['is_own_goal'],
+        'teamName'
+    ].map(team_swap)
+
+    return shots_merged
+
+def Individual_ShotMap(shots_merged, nombre_jugador_partido, color_team,is_away_team=True, ax= None ):
+
+    path_eff = [path_effects.Stroke(linewidth=1, foreground='white'), path_effects.Normal()]
+    
+    if ax is None:
+        fig, ax = plt.subplots(figsize=(10,7))
+    else:
+        fig = ax.figure
+        ax.set_title("SHOT MAP",  color='white', fontsize=20, fontweight='bold', path_effects=path_eff)
+
+    pitch = Pitch(pitch_type='uefa',pitch_color='none',line_color='white')
+
+    pitch.draw(ax=ax)
+    
+    fig.set_facecolor('none')
+    ax.set_facecolor('none')
+
+    # =========================
+    # TRANSFORMACIÓN DE DATOS
+    # =========================
+    def transform(df):
+        if is_away_team:
+            return 100 - df['x'], df['y']
+        return df['x'], df['y']
+
+
+    # =========================
+    # FILTRO DE EVENTOS
+    # =========================
+    op_sh = shots_merged[ (shots_merged['name_norm'] == nombre_jugador_partido) & (shots_merged['situation'] == 'RegularPlay')]
+
+    goal = shots_merged[ (shots_merged['name_norm'] == nombre_jugador_partido) & (shots_merged['eventType'] == 'Goal')]
+
+    miss = shots_merged[ (shots_merged['name_norm'] == nombre_jugador_partido) & (shots_merged['eventType'] == 'Miss')]
+
+    save = shots_merged[ (shots_merged['name_norm'] == nombre_jugador_partido) & (shots_merged['eventType'] == 'AttemptSaved') & (shots_merged['isBlocked'] == 0)]
+
+    blok = shots_merged[ (shots_merged['name_norm'] == nombre_jugador_partido) & (shots_merged['eventType'] == 'AttemptSaved') & (shots_merged['isBlocked'] == 1)]
+
+    post = shots_merged[ (shots_merged['name_norm'] == nombre_jugador_partido) & (shots_merged['eventType'] == 'Post')]
+
+    shots = shots_merged[ (shots_merged['name_norm'] == nombre_jugador_partido) & (shots_merged['type'].isin(['Goal', 'MissedShots', 'SavedShot', 'ShotOnPost']))].copy()
+
+    out_box = shots[shots['isFromInsideBox'] == False]
+
+    # =========================
+    # MÉTRICAS
+    # =========================
+    shots['Length'] = np.sqrt((shots['x'] - 105)**2 + (shots['y'] - 34)**2)
+    avg_dist = round(shots['Length'].mean(), 2)
+
+    xG = round(shots_merged[ shots_merged['name_norm'] == nombre_jugador_partido]['expectedGoals'].sum(), 2)
+
+    xGOT = round(shots_merged[ shots_merged['name_norm'] == nombre_jugador_partido]['expectedGoalsOnTarget'].sum(), 2)
+
+    # =========================
+    # TRANSFORMACIÓN COORDS
+    # =========================
+    x_g, y_g = transform(goal)
+    x_p, y_p = transform(post)
+    x_b, y_b = transform(blok)
+    x_s, y_s = transform(save)
+    x_m, y_m = transform(miss)
+
+    # =========================
+    # SHOT MAP
+    # =========================
+    pitch.scatter(x_g, y_g,s=goal['expectedGoals'] * 1000,marker='football',edgecolors='green',c='None',ax=ax)
+    pitch.scatter(x_p, y_p,s=post['expectedGoals'] * 1000 + 100,marker='o',edgecolors=color_team,c='None',hatch='+++',ax=ax)
+    pitch.scatter(x_b, y_b,s=blok['expectedGoals'] * 1000 + 100,marker='o',edgecolors=color_team,c='None',hatch='/////',ax=ax)
+    pitch.scatter(x_s, y_s,s=save['expectedGoals'] * 1000 + 100,marker='o',color=color_team,edgecolors='white',ax=ax)
+    pitch.scatter(x_m, y_m,s=miss['expectedGoals'] * 1000 + 100,marker='o',edgecolors=color_team,c='None',ax=ax)
+
+    # =========================
+    # PANEL DE STATS (PRO)
+    # =========================
+    stat_x = 0.55 if is_away_team else 0.08
+    text_x = 0.60 if is_away_team else 0.10
+
+    stats = [
+        f"Total Shots: {len(shots)}",
+        f"Open-play Shots: {len(op_sh)}",
+        f"Goals: {len(goal)}",
+        f"Shot on Post: {len(post)}",
+        f"Shots on Target: {len(save)}",
+        f"Shots off Target: {len(miss)}",
+        f"Shots Blocked: {len(blok)}",
+        f"Shots outside box: {len(out_box)}",
+        f"Shots inside box: {len(shots) - len(out_box)}",
+        f"Avg. Shot Distance: {avg_dist} m",
+        f"xG: {xG}",
+        f"xGOT: {xGOT}",
+    ]
+
+    # Título
+    ax.text(stat_x, 0.85,
+            "Shooting Stats",
+            transform=ax.transAxes,
+            color='black',
+            fontsize=15,
+            fontweight='bold',
+            bbox=dict(facecolor='white', alpha=0.9, edgecolor=color_team, pad=8))
+
+    # Métricas
+    for i, stat in enumerate(stats):
+        ax.text(text_x,
+                0.75 - i * 0.05,
+                stat,
+                transform=ax.transAxes,
+                fontsize=10,
+                ha='left',
+                va='center',
+                color='black',
+                bbox=dict(facecolor='white', alpha=1, edgecolor=color_team, pad=4))
+    return fig, ax
+
+def individual_passMap( df1,nombre_jugador_partido,is_away_team=True, ax= None ):
+    path_eff = [path_effects.Stroke(linewidth=1, foreground='white'), path_effects.Normal()]
+    pitch = Pitch(pitch_type='opta', corner_arcs=True, pitch_color='black', line_color='white', linewidth=2)
+    
+
+    if ax is None:
+        fig, ax = plt.subplots(figsize=(10, 7))
+    else:
+        fig = ax.figure
+        ax.set_title("PASS MAP",  color='white', fontsize=20, fontweight='bold', path_effects=path_eff)
+    pitch.draw(ax=ax)
+    fig.set_facecolor('none')
+    ax.set_facecolor('none')
+
+    if is_away_team== True:
+
+        ax.invert_xaxis()
+        ax.invert_yaxis()
+
+    dfpass = df1[(df1['type']=='Pass') & (df1['name_norm']==nombre_jugador_partido)]
+    acc_pass = dfpass[dfpass['outcomeType']=='Successful']
+    iac_pass = dfpass[dfpass['outcomeType']=='Unsuccessful']
+
+    if len(dfpass) != 0:
+            accurate_pass_perc = round((len(acc_pass)/len(dfpass))*100, 2)
+    else:
+        accurate_pass_perc = 0
+
+    Thr_ball = dfpass[(dfpass['satisfiedEventsTypes'].apply(lambda x: 129 in x))].reset_index(drop=True)
+    Thr_ball_acc = Thr_ball[Thr_ball['outcomeType']=='Successful'].reset_index(drop=True)
+
+    Lng_ball = dfpass[(dfpass['satisfiedEventsTypes'].apply(lambda x: 127 in x))].reset_index(drop=True)
+    Lng_ball_acc = Lng_ball[Lng_ball['outcomeType']=='Successful'].reset_index(drop=True)
+
+    Crs_pass = dfpass[(dfpass['satisfiedEventsTypes'].apply(lambda x: 125 in x))].reset_index(drop=True)
+    Crs_pass_acc = Crs_pass[Crs_pass['outcomeType']=='Successful'].reset_index(drop=True)
+
+    key_pass = dfpass[dfpass['satisfiedEventsTypes'].apply(lambda x: 123 in x)].reset_index(drop=True)
+    big_chnc = dfpass[dfpass['satisfiedEventsTypes'].apply(lambda x: 203 in x)].reset_index(drop=True)
+
+
+    df_no_carry = df1[df1['type']!='Carry'].reset_index(drop=True)
+    pre_asst = df_no_carry[(df_no_carry['satisfiedEventsTypes'].apply(lambda x: 100 in x)) & (df_no_carry['type']=='Pass') & 
+                            (df_no_carry['outcomeType']=='Successful') &  (df_no_carry['name']==nombre_jugador_partido)]
+    shot_buildup = df_no_carry[(df_no_carry['satisfiedEventsTypes'].apply(lambda x: 123 in x)) & (df_no_carry['type']=='Pass') & 
+                            (df_no_carry['outcomeType']=='Successful') &  (df_no_carry['name']==nombre_jugador_partido)]
+
+    g_assist = dfpass[(df_no_carry['satisfiedEventsTypes'].apply(lambda x: 100 in x))].reset_index(drop=True)
+
+    corners = dfpass[(df_no_carry['satisfiedEventsTypes'].apply(lambda x: 31 in x))].reset_index(drop=True)
+    corners_acc = corners[corners['outcomeType']=='Successful']
+
+    freekik = dfpass[(df_no_carry['satisfiedEventsTypes'].apply(lambda x: 34 in x))].reset_index(drop=True)
+    freekik_acc = freekik[freekik['outcomeType']=='Successful']
+
+    throwins = dfpass[(df_no_carry['satisfiedEventsTypes'].apply(lambda x: 212 in x))].reset_index(drop=True)
+    throwins_acc = throwins[throwins['outcomeType']=='Successful']
+
+    fnl_thd = dfpass[(df_no_carry['satisfiedEventsTypes'].apply(lambda x: 217 in x))].reset_index(drop=True)
+    midThird = dfpass[(df_no_carry['satisfiedEventsTypes'].apply(lambda x: 216 in x))].reset_index(drop=True)
+    defensiveThird = dfpass[(df_no_carry['satisfiedEventsTypes'].apply(lambda x: 215 in x))].reset_index(drop=True)
+
+    frwd_pass = dfpass[(df_no_carry['satisfiedEventsTypes'].apply(lambda x: 36 in x))].reset_index(drop=True)
+    back_pass = dfpass[(df_no_carry['satisfiedEventsTypes'].apply(lambda x: 35 in x))].reset_index(drop=True)
+
+    frwd_pass_acc = frwd_pass[frwd_pass['outcomeType']=='Successful'].reset_index(drop=True)
+    back_pass_acc = back_pass[back_pass['outcomeType']=='Successful'].reset_index(drop=True)
+
+    if len(frwd_pass) != 0:
+        Forward_Pass_Accuracy = round((len(frwd_pass_acc)/len(frwd_pass))*100, 2)
+    else:
+        Forward_Pass_Accuracy = 0
+        
+    pitch.lines(iac_pass.x, iac_pass.y, iac_pass.endX, iac_pass.endY, color='red', lw=4, alpha=0.45, comet=True, zorder=4, ax=ax)
+    pitch.lines(acc_pass.x, acc_pass.y, acc_pass.endX, acc_pass.endY, color='green', lw=2, alpha=0.45, comet=True, zorder=4, ax=ax)
+
+    pitch.lines(key_pass.x, key_pass.y, key_pass.endX, key_pass.endY, color='violet',     lw=4, alpha=1,    comet=True, zorder=4, ax=ax)
+    pitch.lines(g_assist.x, g_assist.y, g_assist.endX, g_assist.endY, color='blue',      lw=4, alpha=1,    comet=True, zorder=5, ax=ax)
+
+    ax.scatter(acc_pass.endX, acc_pass.endY, s=30, color='green',    edgecolor='green', alpha=1, zorder=4)
+    ax.scatter(iac_pass.endX, iac_pass.endY, s=30, color='red',    edgecolor='green', alpha=1, zorder=4)
+    ax.scatter(key_pass.endX, key_pass.endY, s=50, color='black',  edgecolor='violet', alpha=1, zorder=4)
+    ax.scatter(g_assist.endX, g_assist.endY, s=50, color='black',  edgecolor= 'blue', alpha=1, zorder=5)
+
+    text = f"""                            <Accurate Pass: {len(acc_pass)}>/{len(dfpass)} ({accurate_pass_perc}%) | <Chances Created: {len(key_pass)}>
+    Big Chances Created: {len(big_chnc)} | <Assists: {len(g_assist)}> | Pre-Assist: {len(pre_asst)} | Build-up to Shot: {len(shot_buildup)}
+    Final-Third Passes: {len(fnl_thd)} | Middle-Third Passes: {len(midThird)} | Crosses (Acc.): {len(Crs_pass)} ({len(Crs_pass_acc)})
+    Longballs (Acc.): {len(Lng_ball)} ({len(Lng_ball_acc)})
+    """
+
+    if is_away_team== True:
+        ax_text( 100, 102, text, color='white', highlight_textprops=[  {'color': 'green'}, {'color': 'violet'},  {'color': 'blue'} ], 
+                fontsize=10, ha='left', va='top', ax=ax)
+    
+    else:
+        ax_text(10, -2, text, color='white', highlight_textprops=[  {'color': 'green'}, {'color': 'violet'},  {'color': 'blue'} ], 
+                fontsize=10, ha='left', va='top', ax=ax)
+        
+    return fig, ax
+
+def individual_passes_recieved(df1,nombre_jugador_partido,color_team,is_away_team=True,ax=None  ):
+    path_eff = [path_effects.Stroke(linewidth=1, foreground='white'), path_effects.Normal()]
+    
+    if ax is None:
+        fig, ax = plt.subplots(figsize=(10,7))
+    else:
+        fig = ax.figure
+        ax.set_title("PASSES RECIEVED",  color='white', fontsize=20, fontweight='bold', path_effects=path_eff)
+
+    pitch = Pitch(pitch_type='opta',pitch_color='none',line_color='white')
+
+    pitch.draw(ax=ax)
+
+    if is_away_team:
+        ax.invert_xaxis()
+        ax.invert_yaxis()
+
+    fig.set_facecolor('none')
+    ax.set_facecolor('none')
+
+    dfp = df1[(df1['type']=='Pass') & (df1['outcomeType']=='Successful') & (df1['name_norm'].shift(-1)==nombre_jugador_partido)& 
+            (df1['teamId']==df1['teamId'].shift(-1))]
+    dfkp = df1[
+        (df1['type']=='Pass') &
+        (df1['outcomeType']=='Successful') &
+        (df1['name_norm'].shift(-1)==nombre_jugador_partido) &
+        (df1['teamId']==df1['teamId'].shift(-1)) &
+        (df1['satisfiedEventsTypes'].apply(lambda x: 123 in x))
+    ]
+
+    dfas = df1[
+        (df1['type'] == 'Pass') &
+        (df1['outcomeType'] == 'Successful') &
+        (df1['name_norm'].shift(-1) == nombre_jugador_partido) &
+        (df1['teamId']==df1['teamId'].shift(-1)) &
+        (df1['satisfiedEventsTypes'].apply(lambda x: 100 in x))
+    ]
+
+    dfnt = dfp[dfp['endX']>=70]
+    dfpen = dfp[(dfp['endX']>=87.5) & (dfp['endY']>=13.6) & (dfp['endY']<=54.6)]
+
+    dfcros = dfp[dfp['satisfiedEventsTypes'].apply(lambda x: 125 in x)].reset_index(drop=True)
+    dflb = dfp[dfp['satisfiedEventsTypes'].apply(lambda x: 127 in x)].reset_index(drop=True)
+    cutback = dfp[((dfp['x'] >= 88.54) & (dfp['x'] <= 105) & 
+                    ((dfp['y'] >= 40.8) & (dfp['y'] <= 54.4) | (dfp['y'] >= 13.6) & (dfp['y'] <= 27.2)) & 
+                    (dfp['endY'] >= 27.2) & (dfp['endY'] <= 40.8) & (dfp['endX'] >= 81.67))]
+    next_act = df1[(df1['name']==nombre_jugador_partido) & (df1['type'].shift(1)=='Pass') & (df1['outcomeType'].shift(1)=='Successful')]
+    ball_retain = next_act[(next_act['outcomeType']=='Successful') & ((next_act['type']!='Foul') | (next_act['type']!='Dispossessed'))]
+    if len(next_act) != 0:
+        ball_retention = round((len(ball_retain)/len(next_act))*100, 2)
+    else:
+        ball_retention = 0
+
+    if len(dfp) != 0:
+        name_counts = dfp['name'].value_counts()
+        name_counts_df = name_counts.reset_index()
+        name_counts_df.columns = ['name', 'count']
+        name_counts_df = name_counts_df.sort_values(by='count', ascending=False)  
+        name_counts_df = name_counts_df.reset_index()
+        r_name = name_counts_df['name'][0]
+        r_count = name_counts_df['count'][0]
+    else:
+        r_name = 'None'
+        r_count = 0        
+
+    pitch.lines(dfp.x, dfp.y, dfp.endX, dfp.endY, lw=3, transparent=True, comet=True,color=color_team, ax=ax, alpha=0.5)
+    pitch.lines(dfkp.x, dfkp.y, dfkp.endX, dfkp.endY, lw=4, transparent=True, comet=True,color='violet', ax=ax, alpha=0.75)
+    pitch.lines(dfas.x, dfas.y, dfas.endX, dfas.endY, lw=4, transparent=True, comet=True,color='green', ax=ax, alpha=0.75)
+    pitch.scatter(dfp.endX, dfp.endY, s=30, edgecolor=color_team, linewidth=1, color=color_team, zorder=2, ax=ax)
+    pitch.scatter(dfkp.endX, dfkp.endY, s=40, edgecolor='violet', linewidth=1.5, color=color_team, zorder=2, ax=ax)
+    pitch.scatter(dfas.endX, dfas.endY, s=50, edgecolors='green', linewidths=1, marker='football', c=color_team, zorder=2, ax=ax)
+
+    avg_endY = dfp['endY'].median()
+    avg_endX = dfp['endX'].median()
+    ax.axvline(x=avg_endX, ymin=0, ymax=68, color='gray', linestyle='--', alpha=0.6, linewidth=2)
+    ax.axhline(y=avg_endY, xmin=0, xmax=105, color='gray', linestyle='--', alpha=0.6, linewidth=2)
+
+    if is_away_team:
+
+        ax_text(100, 105, f'''                                <Passes Received: {len(dfp)}> | <Key Passes Received: {len(dfkp)}> | <Assists Received: {len(dfas)}>
+        Passes Received in Final third: {len(dfnt)} | Passes Received in Opponent box: {len(dfpen)}
+        Crosses Received: {len(dfcros)} | Longballs Received: {len(dflb)}
+        Cutbacks Received: {len(cutback)} | Ball Retention: {ball_retention} % 
+        Avg. Distance of Pass Receiving from Opponent Goal line: {round(105-dfp['endX'].median(),2)}m
+        Most Passes from: {r_name} ({r_count})''', fontsize=10, ha='left', va='top', color= 'white', ax=ax,
+            highlight_textprops=[{'color':color_team}, {'color':'violet'}, {'color':'green'}])
+        
+    else:
+        ax_text(10,-2, f'''                                <Passes Received: {len(dfp)}> | <Key Passes Received: {len(dfkp)}> | <Assists Received: {len(dfas)}>
+        Passes Received in Final third: {len(dfnt)} | Passes Received in Opponent box: {len(dfpen)}
+        Crosses Received: {len(dfcros)} | Longballs Received: {len(dflb)}
+        Cutbacks Received: {len(cutback)} | Ball Retention: {ball_retention} % 
+        Avg. Distance of Pass Receiving from Opponent Goal line: {round(105-dfp['endX'].median(),2)}m
+        Most Passes from: {r_name} ({r_count})''', fontsize=10, ha='left', va='top', color= 'white', ax=ax,
+            highlight_textprops=[{'color':color_team}, {'color':'violet'}, {'color':'green'}])
+        
+    return fig, ax
+
+
+def heatMap(df,player,color_team,is_away_team=True,ax=None):
+    path_eff = [path_effects.Stroke(linewidth=1, foreground='white'), path_effects.Normal()]
+    flamingo_cmap = LinearSegmentedColormap.from_list("Team colors", ['#0C0D0E', color_team], N=500)
+
+    if ax is None:
+        fig, ax = plt.subplots(figsize=(10,7))
+    else:
+        fig = ax.figure
+        ax.set_title("TOUCH AND HEATMAP",  color='white', fontsize=20, fontweight='bold', path_effects=path_eff)
+
+    pitch = Pitch(
+        pitch_type='opta',
+        pitch_color='none',
+        line_color='white'
+    )
+
+    pitch.draw(ax=ax)
+
+    if is_away_team:
+        ax.invert_xaxis()
+        ax.invert_yaxis()
+
+    player_df = df[df['name_norm'] == player].reset_index(drop=True).copy()
+    player_df = player_df[~player_df['type'].str.contains('SubstitutionOff|SubstitutionOn|Card|Carry',na=False)].reset_index(drop=True)
+
+    touches = player_df[player_df['isTouch'] ==True]
+
+    if len(touches) == 0:
+        return ax
+    
+    pitch.kdeplot(  touches.x,  touches.y,  ax=ax,  fill=True,  levels=250,  thresh=0.08, cut=3,  alpha=0.3, cmap=flamingo_cmap)
+
+
+    pitch.scatter(touches.x,touches.y,ax=ax,color='white',s=8,alpha=0.3)
+
+    
+    final_third = touches[touches['x'] >= 66.7]
+    box_touches = touches[(touches['x'] >= 83) & (touches['y'] >= 21) & (touches['y'] <= 79)]
+
+    if is_away_team:
+        ax.text( 60, 105, f"Touches: {len(touches)} | Touches in de Final-Third: {len(final_third)} | Touches in Penalty Area : {len(box_touches)}", 
+                ha='center', color='white', fontsize=10)
+    
+    else:
+        ax.text( 45, -5, f"Touches: {len(touches)} | Touches in de Final-Third: {len(final_third)} | Touches in Penalty Area : {len(box_touches)}", 
+                ha='center', color='white', fontsize=10)
+    
+    fig.set_facecolor('none')
+    ax.set_facecolor('none')
+    
+    return fig, ax
+
+def individual_def_acts(df1,nombre_jugador_partido,color_team,is_away_team=True,ax=None  ):
+    from matplotlib.lines import Line2D
+    path_eff = [path_effects.Stroke(linewidth=1, foreground='white'), path_effects.Normal()]
+    
+    if ax is None:
+        fig, ax = plt.subplots(figsize=(10,7))
+    else:
+        fig = ax.figure
+        ax.set_title("DEFENSIVE ACTIONS",  color='white', fontsize=20, fontweight='bold', path_effects=path_eff)
+
+    pitch = Pitch(pitch_type='opta',pitch_color='none',line_color='white')
+
+    pitch.draw(ax=ax)
+
+    if is_away_team:
+        ax.invert_xaxis()
+        ax.invert_yaxis()
+
+    fig.set_facecolor('none')
+    ax.set_facecolor('none')
+    
+    playerdf = df1[df1['name_norm'] == nombre_jugador_partido].reset_index(drop=True).copy()
+
+    ball_wins = playerdf[(playerdf['type']=='Interception') | (playerdf['type']=='BallRecovery')]
+    f_third = ball_wins[ball_wins['x']>=66.66]
+    m_third = ball_wins[(ball_wins['x']>33.3) & (ball_wins['x']<66.66)]
+    d_third = ball_wins[ball_wins['x']<=33.3]
+
+    hp_tk = playerdf[(playerdf['type']=='Tackle')]
+    hp_tk_u = playerdf[(playerdf['type']=='Tackle') & (playerdf['outcomeType']=='Unsuccessful')]
+
+    hp_intc = playerdf[(playerdf['type']=='Interception')]
+    hp_br = playerdf[playerdf['type']=='BallRecovery']
+    hp_cl = playerdf[playerdf['type']=='Clearance']
+
+    hp_fl_committed = playerdf[(playerdf['satisfiedEventsTypes'].apply(lambda x: 64 in x)) & (playerdf['type']=='Foul')]
+
+    hp_ar =playerdf[(playerdf['type']=='Aerial') & (playerdf['satisfiedEventsTypes'].apply(lambda x: 197 in x)) | (playerdf['satisfiedEventsTypes'].apply(lambda x: 198 in x))]
+    hp_ar_u = hp_ar[(hp_ar['outcomeType']=='Unsuccessful')]
+
+    pass_bl = playerdf[playerdf['type']=='BlockedPass']
+    shot_bl = playerdf[playerdf['type']=='Save']
+
+    drb_pst = playerdf[playerdf['type']=='Challenge']
+    drb_tkl = df1[(df1['name']==nombre_jugador_partido) & (df1['type']=='Tackle') & (df1['type'].shift(1)=='TakeOn') & (df1['outcomeType'].shift(1)=='Unsuccessful')]
+    err_lat = playerdf[playerdf['satisfiedEventsTypes'].apply(lambda x: 99 in x)]
+    err_lgl = playerdf[playerdf['satisfiedEventsTypes'].apply(lambda x: 98 in x)]
+
+    dan_frk = playerdf[(playerdf['type']=='Foul') & (playerdf['x']>16.5) & (playerdf['x']<35) & (playerdf['y']>13.6) & (playerdf['y']<54.4)]
+
+    prbr = df1[(df1['name']==nombre_jugador_partido) & ((df1['type']=='BallRecovery') | (df1['type']=='Interception')) & (df1['name'].shift(-1)==nombre_jugador_partido) & 
+                (df1['outcomeType'].shift(-1)=='Successful') &
+                ((df1['type'].shift(-1)!='Foul') | (df1['type'].shift(-1)!='Dispossessed'))]
+
+    if (len(hp_br)+len(hp_intc)) != 0:
+            post_rec_ball_retention = round((len(prbr)/(len(hp_br)+len(hp_intc)))*100, 2)
+    else:
+        post_rec_ball_retention = 0
+
+    pitch.scatter(hp_tk.x, hp_tk.y, s=250, c=color_team, lw=2.5, edgecolor=color_team, marker='+', hatch='/////', ax=ax)
+    pitch.scatter(hp_tk_u.x, hp_tk_u.y, s=250, c='gray', lw=2.5, edgecolor='gray', marker='+', hatch='/////', ax=ax)
+    pitch.scatter(hp_intc.x, hp_intc.y, s=250, c='None', lw=2.5, edgecolor=color_team, marker='s', hatch='/////', ax=ax)
+    pitch.scatter(hp_br.x, hp_br.y, s=250, c='None', lw=2.5, edgecolor=color_team, marker='o', hatch='/////', ax=ax)
+    pitch.scatter(hp_cl.x, hp_cl.y, s=250, c='None', lw=2.5, edgecolor=color_team, marker='d', hatch='/////', ax=ax)
+    pitch.scatter(hp_fl_committed.x, hp_fl_committed.y, s=250, c=color_team, lw=2.5, edgecolor=color_team, marker='x', hatch='/////', ax=ax)
+    pitch.scatter(hp_ar.x, hp_ar.y, s=250, c='None', lw=2.5, edgecolor=color_team, marker='^', hatch='/////', ax=ax)
+    pitch.scatter(hp_ar_u.x, hp_ar_u.y, s=250, c='None', lw=2.5, edgecolor='gray', marker='^', hatch='/////', ax=ax)
+    pitch.scatter(drb_pst.x, drb_pst.y, s=250, c='None', lw=2.5, edgecolor=color_team, marker='h', hatch='|||||', ax=ax)
+
+    if is_away_team:
+        ax_text(100, 105, f'''                            Tackle (Win): {len(hp_tk)} ({len(hp_tk) - len(hp_tk_u)}) | Dribblers Tackled: {len(drb_tkl)} | Dribbled past: {len(drb_pst)} | Interception: {len(hp_intc)}
+        Ball Recovery: {len(hp_br)} | Post Recovery Ball Retention: {post_rec_ball_retention} %  | Pass Block: {len(pass_bl)}
+        Ball Clearances: {len(hp_cl)} | Shots Blocked: {len(shot_bl)} | Aerial Duels (Win): {len(hp_ar)} ({len(hp_ar) - len(hp_ar_u)}) | Fouls: {len(hp_fl_committed)}
+        Fouls infront of Penalty Box: {len(dan_frk)} | Error Led to Shot/Led to Goal: {len(err_lat)}/{len(err_lgl)}
+        Possession Win in Final third/Mid third/Defensive third: {len(f_third)}/{len(m_third)}/{len(d_third)}
+        ''', fontsize=10, ha='left', va='top', color= 'white', ax=ax)
+    
+    else:
+        ax_text(10, -2, f'''                            Tackle (Win): {len(hp_tk)} ({len(hp_tk) - len(hp_tk_u)}) | Dribblers Tackled: {len(drb_tkl)} | Dribbled past: {len(drb_pst)} | Interception: {len(hp_intc)}
+        Ball Recovery: {len(hp_br)} | Post Recovery Ball Retention: {post_rec_ball_retention} %  | Pass Block: {len(pass_bl)}
+        Ball Clearances: {len(hp_cl)} | Shots Blocked: {len(shot_bl)} | Aerial Duels (Win): {len(hp_ar)} ({len(hp_ar) - len(hp_ar_u)}) | Fouls: {len(hp_fl_committed)}
+        Fouls infront of Penalty Box: {len(dan_frk)} | Error Led to Shot/Led to Goal: {len(err_lat)}/{len(err_lgl)}
+        Possession Win in Final third/Mid third/Defensive third: {len(f_third)}/{len(m_third)}/{len(d_third)}
+        ''', fontsize=10, ha='left', va='top', color= 'white', ax=ax)
+
+    legend_elements = [
+        Line2D([0], [0], marker='+', color=color_team, linestyle='None',  markersize=12, label='Tackle Won'),
+
+        Line2D([0], [0], marker='+', color='gray', linestyle='None',  markersize=12, label='Tackle Lost'),
+
+        Line2D([0], [0], marker='s', markerfacecolor='none',  markeredgecolor=color_team, linestyle='None',  markersize=10, label='Interception'),
+
+        Line2D([0], [0], marker='o', markerfacecolor='none',  markeredgecolor=color_team, linestyle='None',  markersize=10, label='Ball Recovery'),
+
+        Line2D([0], [0], marker='d', markerfacecolor='none',  markeredgecolor=color_team, linestyle='None',  markersize=10, label='Clearance'),
+
+        Line2D([0], [0], marker='x', color=color_team,  linestyle='None', markersize=10,  label='Foul Committed'),
+
+        Line2D([0], [0], marker='^', markerfacecolor='none',  markeredgecolor=color_team, linestyle='None',  markersize=10, label='Aerial Won'),
+
+        Line2D([0], [0], marker='^', markerfacecolor='none',  markeredgecolor='gray', linestyle='None',  markersize=10, label='Aerial Lost'),
+
+        Line2D([0], [0], marker='h', markerfacecolor='none',  markeredgecolor=color_team, linestyle='None',  markersize=10, label='Dribbled Past')
+        ]
+
+    ax.legend( handles=legend_elements, loc='lower center', bbox_to_anchor=(1.08, 0.5), ncol=1, frameon=False, fontsize=8, labelcolor='white')
+
+    return fig, ax
+
+def prepare_dataframe_shots_playerofmatch(df, data,team_dict_fotmob, name_home_fotmob,name_away_fotmob):
+    shots_df= pd.DataFrame(data['content']['shotmap']['shots'])
+    shots_df = shots_df[shots_df['period']!='PenaltyShootout']
+    shots_df['teamName'] = shots_df['teamId'].map(team_dict_fotmob)
+
+    #Dataframe eventos whoscored
+    df_events_shots = df[ (df['isShot'] == True) & (df['period'] != 'PenaltyShootout')][['id', 'qualifiers', 'type', 'name','satisfiedEventsTypes']]
+
+    shots_merged = pd.merge(shots_df, df_events_shots, left_on='id', right_on='id', how='left')
+
+    
+    # Add flags
+    shots_merged['is_big_chance'] = shots_merged['qualifiers'].apply(is_big_chance)
+    shots_merged['is_own_goal'] = shots_merged['qualifiers'].apply(is_own_goal)
+
+    home= name_home_fotmob
+    away = name_away_fotmob
+
+    team_swap = {
+            home: away,
+            away: home
+        }
+    shots_merged['render_team'] = shots_merged['teamName']
+
+    shots_merged.loc[
+        shots_merged['is_own_goal'],
+        'render_team'
+    ] = shots_merged.loc[
+        shots_merged['is_own_goal'],
+        'teamName'
+    ].map(team_swap)
+
+    return shots_merged
+
+def prepare_df_shotsgoal_pom(df, name_home , name_away):
+    df['render_team'] = df['teamName']
+
+    mask = df['isOwnGoal'].eq(True)
+
+    home= name_home
+    away = name_away
+    team_swap = {
+        home: away,
+        away: home
+    }
+
+    df.loc[mask, 'render_team'] = (
+        df.loc[mask, 'teamName'].map(team_swap)
+    )
+    hShotsdf = df[df['render_team']==name_home].reset_index(drop=True).copy()
+    aShotsdf = df[df['render_team']==name_away].reset_index(drop=True).copy() 
+
+    df_coords_h = hShotsdf['onGoalShot'].apply(pd.Series)
+
+    df_coords_h = df_coords_h.rename(columns={
+        'x': 'coord_x',
+        'y': 'coord_y',
+        'zoomRatio': 'coord_zoom'
+    })
+    df_tiros_coord_home = pd.concat([hShotsdf.drop(columns=['onGoalShot']), df_coords_h], axis=1)
+
+    df_coordsa = aShotsdf['onGoalShot'].apply(pd.Series)
+
+    df_coordsa = df_coordsa.rename(columns={
+        'x': 'coord_x',
+        'y': 'coord_y',
+        'zoomRatio': 'coord_zoom'
+    })
+    df_tiros_coord_away = pd.concat([aShotsdf.drop(columns=['onGoalShot']), df_coordsa], axis=1)
+
+    return df_tiros_coord_home, df_tiros_coord_away
+    
+def draw_goal_pom( df, imagen_pelota_path, imagen_pelota_red_path, ax=None):
+    path_eff = [
+        path_effects.Stroke(linewidth=1, foreground='white'),
+        path_effects.Normal()
+    ]
+    if ax is None:
+        fig, ax = plt.subplots(figsize=(10, 3.2), facecolor= 'none')
+    else:
+        fig = ax.figure
+        ax.text(
+            0.5, 1.54, "GK SAVES",
+            transform=ax.transAxes,
+            ha="center", va="center",
+            color="white", fontsize=20,
+            fontweight="bold",
+            path_effects=path_eff
+        )
+    
+    ax.set_xlim(0, 2)
+    ax.set_ylim(0, 0.68)
+    ax.set_facecolor('none')
+    ax.patch.set_alpha(0)
+    ax.set_aspect("equal")
+    ax.axis("off")
+
+    # césped
+    ax.fill_between([0, 2], 0, -0.06, color="green", alpha=0.3)
+
+    # marco
+    post_width = 0.03
+    goal_height = 0.65
+    goal_width = 1.99
+
+    ax.add_patch(patches.Rectangle((0.01, 0), post_width, goal_height, color="white", zorder=1))
+    ax.add_patch(patches.Rectangle((goal_width - post_width, 0), post_width, goal_height, color="white", zorder=1))
+    ax.add_patch(patches.Rectangle((0.01, goal_height - 0.015), goal_width - 0.02, 0.015, color="white", zorder=1))
+
+    # red
+    num_lines = 6
+    for i in range(1, num_lines):
+        x = i * goal_width / num_lines
+        ax.plot([x, x], [0, goal_height], color="lightgray", lw=0.5, zorder=0)
+
+    for j in range(1, int(goal_height * 20)):
+        y = j * goal_height / (goal_height * 20)
+        ax.plot([0.01, goal_width - 0.01], [y, y], color="lightgray", lw=0.5, zorder=0)
+
+    # tiros
+    for _, row in df.iterrows():
+
+        # ---------------------------
+        # GOAL NORMAL vs OWN GOAL
+        # ---------------------------
+        if row["type"] == "Goal":
+
+            # si es own goal → pelota roja
+            if row.get("isOwnGoal", False):
+
+                im = OffsetImage(imagen_pelota_red_path, zoom=0.02)
+
+            # goal normal → pelota normal
+            else:
+                im = OffsetImage(imagen_pelota_path, zoom=0.03)
+
+            ab = AnnotationBbox(
+                im,
+                (row["coord_x"], row["coord_y"]),
+                frameon=False,
+                zorder=10
+            )
+
+            ax.add_artist(ab)
+
+        # ---------------------------
+        # SAVED SHOT
+        # ---------------------------
+        elif row["type"] == "SavedShot" and not row["isBlocked"]:
+            ax.scatter(
+                row["coord_x"], row["coord_y"],
+                s=350, alpha=0.6,
+                color='red', edgecolors="white"
+            )
+
+        # ---------------------------
+        # POST
+        # ---------------------------
+        elif row["type"] in ["Post", "ShotOnPost"]:
+            ax.scatter(
+                row["coord_x"], row["coord_y"],
+                s=350, alpha=0.6,
+                color='orange', edgecolors="white"
+            )
+    return fig, ax
