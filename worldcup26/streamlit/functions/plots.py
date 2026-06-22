@@ -3060,18 +3060,18 @@ def individual_passMap( df1,nombre_jugador_partido,is_away_team=True, ax= None )
     ax.scatter(key_pass.endX, key_pass.endY, s=50, color='black',  edgecolor='violet', alpha=1, zorder=4)
     ax.scatter(g_assist.endX, g_assist.endY, s=50, color='black',  edgecolor= 'blue', alpha=1, zorder=5)
 
-    text = f"""    <Accurate Pass: {len(acc_pass)}>/{len(dfpass)} ({accurate_pass_perc}%) | <Chances Created: {len(key_pass)}>
+    text = f"""    <Accurate Pass: {len(acc_pass)}>/{len(dfpass)} ({accurate_pass_perc}%)  | <Inaccurate Pass: {len(iac_pass)}> | <Chances Created: {len(key_pass)}>
     Big Chances Created: {len(big_chnc)} | <Assists: {len(g_assist)}> | Pre-Assist: {len(pre_asst)} | Build-up to Shot: {len(shot_buildup)}
     Final-Third Passes: {len(fnl_thd)} | Middle-Third Passes: {len(midThird)} | Crosses (Acc.): {len(Crs_pass)} ({len(Crs_pass_acc)})
     Longballs (Acc.): {len(Lng_ball)} ({len(Lng_ball_acc)})
     """
 
     if is_away_team== True:
-        ax_text( 100, 102, text, color='white', highlight_textprops=[  {'color': 'green'}, {'color': 'violet'},  {'color': 'blue'} ], 
+        ax_text( 100, 102, text, color='white', highlight_textprops=[  {'color': 'green'}, {'color': 'red'}, {'color': 'violet'},  {'color': 'blue'} ], 
                 fontsize=10, ha='left', va='top', ax=ax)
     
     else:
-        ax_text(10, -2, text, color='white', highlight_textprops=[  {'color': 'green'}, {'color': 'violet'},  {'color': 'blue'} ], 
+        ax_text(10, -2, text, color='white', highlight_textprops=[  {'color': 'green'},{'color': 'red'}, {'color': 'violet'},  {'color': 'blue'} ], 
                 fontsize=10, ha='left', va='top', ax=ax)
         
     return fig, ax
