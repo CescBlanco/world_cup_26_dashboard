@@ -3297,7 +3297,7 @@ def individual_def_acts(df1,nombre_jugador_partido,color_team,is_away_team=True,
     pitch.scatter(drb_pst.x, drb_pst.y, s=250, c='None', lw=2.5, edgecolor=color_team, marker='h', hatch='|||||', ax=ax)
 
     if is_away_team:
-        ax_text(100, 105, f'''                            Tackle (Win): {len(hp_tk)} ({len(hp_tk) - len(hp_tk_u)}) | Dribblers Tackled: {len(drb_tkl)} | Dribbled past: {len(drb_pst)} | Interception: {len(hp_intc)}
+        ax_text(100, 105, f'''          Tackle (Win): {len(hp_tk)} ({len(hp_tk) - len(hp_tk_u)}) | Dribblers Tackled: {len(drb_tkl)} | Dribbled past: {len(drb_pst)} | Interception: {len(hp_intc)}
         Ball Recovery: {len(hp_br)} | Post Recovery Ball Retention: {post_rec_ball_retention} %  | Pass Block: {len(pass_bl)}
         Ball Clearances: {len(hp_cl)} | Shots Blocked: {len(shot_bl)} | Aerial Duels (Win): {len(hp_ar)} ({len(hp_ar) - len(hp_ar_u)}) | Fouls: {len(hp_fl_committed)}
         Fouls infront of Penalty Box: {len(dan_frk)} | Error Led to Shot/Led to Goal: {len(err_lat)}/{len(err_lgl)}
@@ -3305,7 +3305,7 @@ def individual_def_acts(df1,nombre_jugador_partido,color_team,is_away_team=True,
         ''', fontsize=10, ha='left', va='top', color= 'white', ax=ax)
     
     else:
-        ax_text(10, -2, f'''                            Tackle (Win): {len(hp_tk)} ({len(hp_tk) - len(hp_tk_u)}) | Dribblers Tackled: {len(drb_tkl)} | Dribbled past: {len(drb_pst)} | Interception: {len(hp_intc)}
+        ax_text(10, -2, f'''            Tackle (Win): {len(hp_tk)} ({len(hp_tk) - len(hp_tk_u)}) | Dribblers Tackled: {len(drb_tkl)} | Dribbled past: {len(drb_pst)} | Interception: {len(hp_intc)}
         Ball Recovery: {len(hp_br)} | Post Recovery Ball Retention: {post_rec_ball_retention} %  | Pass Block: {len(pass_bl)}
         Ball Clearances: {len(hp_cl)} | Shots Blocked: {len(shot_bl)} | Aerial Duels (Win): {len(hp_ar)} ({len(hp_ar) - len(hp_ar_u)}) | Fouls: {len(hp_fl_committed)}
         Fouls infront of Penalty Box: {len(dan_frk)} | Error Led to Shot/Led to Goal: {len(err_lat)}/{len(err_lgl)}

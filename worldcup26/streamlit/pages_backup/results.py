@@ -1000,8 +1000,6 @@ def render_results(df: pd.DataFrame):
 
                 with main_tabs[4]:
                     if is_goalkeeper: 
-                        IMAGEN_PELOTA = mpimg.imread('worldcup26/data/sport-ball-football-free-png.webp')
-                        IMAGEN_PELOTA_ROJA =mpimg.imread('worldcup26/data/pelota_roja.png')
 
                         shots_merged_playerofmatch= prepare_dataframe_shots_playerofmatch(df1, data, team_dict_fotmob, name_home_fotmob,name_away_fotmob)
                         shots_merged_playerofmatch['name_norm'] = shots_merged_playerofmatch['name'].apply(normalize_name)
