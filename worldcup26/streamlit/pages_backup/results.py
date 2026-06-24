@@ -2,7 +2,7 @@ import pandas as pd
 from functions.results import * 
 from functions.plots import *
 
-from services.load_data import load_all_matches_fotmob
+from services.load_data import load_all_matches_fotmob, load_all_players_fotmob
 
 from pathlib import Path
 import matplotlib.image as mpimg
@@ -842,16 +842,11 @@ def render_results(df: pd.DataFrame):
                 shots_merged_playerofmatch= prepare_dataframe_shots_playerofmatch(df1, data, team_dict_fotmob, name_home_fotmob,name_away_fotmob)
                 shots_merged_playerofmatch['name_norm'] = shots_merged_playerofmatch['name'].apply(normalize_name)
 
-                if is_goalkeeper:
-                    team_name = jugador_partido["team_name"].iloc[0]
-
-                    # equipo rival
-                    opponent_shots = shots_merged_playerofmatch[shots_merged_playerofmatch["teamName"] != team_name]
-
-                    player_id_fotmob_pom = int(opponent_shots["keeperId"].dropna().mode().iloc[0])
-                else:
-                    player_id_fotmob_pom= int(shots_merged_playerofmatch[shots_merged_playerofmatch['playerName']==nombre_jugador_partido].reset_index(drop=True)['playerId'][0])
-
+                df_all_players_fotmob= load_all_players_fotmob()
+                df_all_players_fotmob['name_norm'] = df_all_players_fotmob['name'].apply(normalize_name)
+                candidates = df_all_players_fotmob[df_all_players_fotmob['name_norm'].apply(lambda x: token_match(x, pname_norm))]
+                player_id_fotmob_pom= int(candidates['id'].values[0])
+                
                 if is_away_team:
                     team_color= color_away
                     id_team= id_away_fotmob

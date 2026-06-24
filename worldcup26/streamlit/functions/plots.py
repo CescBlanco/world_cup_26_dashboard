@@ -2537,17 +2537,44 @@ def prepare_datafrmae_info_teams_whoscored(matchdict, teams_dict_id_name_whoscor
     return  dfp[['playerId', 'name', 'isFirstEleven', 'isManOfTheMatch', 'teamId',	'teamName']].copy()
 
 def normalize_name(name):
-
     import unicodedata
     import re
-    
+
     if pd.isna(name):
         return ""
+
     name = str(name).lower().strip()
+
+    # normaliza acentos
     name = unicodedata.normalize('NFKD', name)
     name = ''.join(c for c in name if not unicodedata.combining(c))
+
+    # 🔥 IMPORTANTÍSIMO: guiones → espacios
+    name = name.replace('-', ' ')
+
+    # elimina caracteres raros pero mantiene espacios
     name = re.sub(r'[^a-z\s]', '', name)
+
+    # limpia espacios dobles
+    name = re.sub(r'\s+', ' ', name).strip()
+
     return name
+
+def token_match(a, b):
+    a_tokens = set(a.split())
+    b_tokens = set(b.split())
+
+    # match fuerte: subset
+    if a_tokens.issubset(b_tokens):
+        return True
+
+    # match inverso (por si acaso)
+    if b_tokens.issubset(a_tokens):
+        return True
+
+    # match parcial (mínimo 80% overlap)
+    overlap = len(a_tokens & b_tokens) / max(len(a_tokens), len(b_tokens))
+    return overlap >= 0.8
 
 def playing_time(df, pname):
     df_player = df[df['name_norm'] == pname].copy()
