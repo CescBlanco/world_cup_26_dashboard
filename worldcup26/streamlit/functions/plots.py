@@ -3359,7 +3359,7 @@ def individual_def_acts(df1,nombre_jugador_partido,color_team,is_away_team=True,
         Line2D([0], [0], marker='h', markerfacecolor='none',  markeredgecolor=color_team, linestyle='None',  markersize=10, label='Dribbled Past')
         ]
 
-    ax.legend( handles=legend_elements, loc='lower center', bbox_to_anchor=(1.08, 0.5), ncol=1, frameon=False, fontsize=8, labelcolor='white')
+    ax.legend( handles=legend_elements, loc='lower center', bbox_to_anchor=(1.08, 0.5), ncol=1, frameon=False, fontsize=10, labelcolor='white')
 
     return fig, ax
 
