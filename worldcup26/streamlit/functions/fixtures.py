@@ -800,9 +800,9 @@ def create_plot_playoffs(df):
     # LAYOUT FOTMOB (NO TOCAR)
     # =====================================================
     layout = {
-        "GER": (-6,14), "NOR": (-6,12),
+        "GER": (-6,14), "FRA": (-6,12),
         "KOR": (-6,10), "NED": (-6,8),
-        "COD": (-6,6), "ESP": (-6,4),
+        "POR": (-6,6), "ESP": (-6,4),
         "USA": (-6,2), "EGY": (-6,0),
 
         "G3A": (-3,13), "2AB": (-3,9),
@@ -812,7 +812,7 @@ def create_plot_playoffs(df):
         "WQ1": (4,7),
 
         "1CF": (18,13), "M3C": (18,9),
-        "1JH": (18,5), "1BE": (18,1),
+        "AR2": (18,5), "1BE": (18,1),
 
         "BRA": (21,14), "CIV": (21,12),
         "MEX": (21,10), "ENG": (21,8),
@@ -830,9 +830,9 @@ def create_plot_playoffs(df):
     # CONEXIONES (NO TOCAR)
     # =====================================================
     connections = [
-        ("GER","G3A"), ("NOR","G3A"),
+        ("GER","G3A"), ("FRA","G3A"),
         ("KOR","2AB"), ("NED","2AB"),
-        ("COD","2KL"), ("ESP","2KL"),
+        ("POR","2KL"), ("ESP","2KL"),
         ("USA","US3"), ("NZL","US3"),
         ("G3A","EF1"), ("2AB","EF1"),
         ("2KL","EF5"), ("US3","EF5"),
@@ -840,10 +840,10 @@ def create_plot_playoffs(df):
 
         ("BRA","1CF"), ("CIV","1CF"),
         ("MEX","M3C"), ("ENG","M3C"),
-        ("ARG","1JH"), ("AUS","1JH"),
+        ("ARG","AR2"), ("AUS","AR2"),
         ("CAN","1BE"), ("COL","1BE"),
         ("1CF","EF3"), ("M3C","EF3"),
-        ("1JH","EF7"), ("1BE","EF7"),
+        ("AR2","EF7"), ("1BE","EF7"),
         ("EF3","WQ3"), ("EF7","WQ3"),
 
         ("WQ1","WS1"), ("WQ3","WS1")
