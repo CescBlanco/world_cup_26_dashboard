@@ -620,7 +620,7 @@ def prepare_playoffs_wc26():
 #     # =====================================================
 #     layout = {
 #         "GER": (-6,14), "NOR": (-6,12),
-#         "KOR": (-6,10), "NED": (-6,8),
+#         "RSA": (-6,10), "NED": (-6,8),
 #         "COD": (-6,6), "ESP": (-6,4),
 #         "USA": (-6,2), "NZL": (-6,0),
 
@@ -650,7 +650,7 @@ def prepare_playoffs_wc26():
 #     # =====================================================
 #     connections = [
 #         ("GER","G3A"), ("NOR","G3A"),
-#         ("KOR","2AB"), ("NED","2AB"),
+#         ("RSA","2AB"), ("NED","2AB"),
 #         ("COD","2KL"), ("ESP","2KL"),
 #         ("USA","US3"), ("NZL","US3"),
 #         ("G3A","EF1"), ("2AB","EF1"),
@@ -763,117 +763,264 @@ def create_plot_playoffs(df):
     from io import BytesIO
 
     # =====================================================
-    # CACHE IMÁGENES (IMPORTANTE PARA RENDIMIENTO)
+    # COPIA
     # =====================================================
+
+    df = df.copy()
+
+    # =====================================================
+    # RENOMBRAR TBD
+    # =====================================================
+
+    tbd_map = {
+        4653843: "TBD_L1",  # RSA/NED
+        4653846: "TBD_R1",  # BRA/CIV
+        4653849: "TBD_R2",  # SUI/COL
+    }
+
+    for match_id, code in tbd_map.items():
+
+        mask = df["matchId"] == match_id
+
+        if mask.any():
+            df.loc[mask, "home_shortName"] = code
+
+    # =====================================================
+    # CACHE IMÁGENES
+    # =====================================================
+
     img_cache = {}
 
     def load_image(url):
-        if not isinstance(url, str) or url == "":
+
+        if not isinstance(url, str):
             return None
 
         if url in img_cache:
             return img_cache[url]
 
         try:
-            r = requests.get(url, timeout=5)
-            img = Image.open(BytesIO(r.content)).convert("RGBA")
 
-            # 🔥 FIX CLAVE: normalizar tamaño
-            img = img.resize((60, 60), Image.Resampling.LANCZOS)
+            r = requests.get(url, timeout=5)
+
+            img = Image.open(
+                BytesIO(r.content)
+            ).convert("RGBA")
+
+            img = img.resize(
+                (60, 60),
+                Image.Resampling.LANCZOS
+            )
 
             img_cache[url] = img
+
             return img
 
         except:
             return None
 
-    def add_img(ax, url, x, y, zoom=0.08):
+    def add_img(ax, url, x, y, zoom=0.35):
+
         img = load_image(url)
+
         if img is None:
             return
 
-        imagebox = OffsetImage(img, zoom=zoom)
-        ab = AnnotationBbox(imagebox, (x, y), frameon=False)
+        imagebox = OffsetImage(
+            img,
+            zoom=zoom
+        )
+
+        ab = AnnotationBbox(
+            imagebox,
+            (x, y),
+            frameon=False
+        )
+
         ax.add_artist(ab)
 
     # =====================================================
-    # LAYOUT FOTMOB (NO TOCAR)
+    # LAYOUT
     # =====================================================
+
     layout = {
-        "GER": (-6,14), "FRA": (-6,12),
-        "KOR": (-6,10), "NED": (-6,8),
-        "POR": (-6,6), "ESP": (-6,4),
-        "USA": (-6,2), "EGY": (-6,0),
 
-        "G3A": (-3,13), "1GA": (-3,9),
-        "2KL": (-3,5), "US3": (-3,1),
+        # ---------------------------
+        # DIECISEISAVOS IZQUIERDA
+        # ---------------------------
 
-        "EF1": (0,11), "EF5": (0,3),
-        "WQ1": (4,7),
+        "GER": (-6, 14),
+        "FRA": (-6, 12),
 
-        "1CF": (18,13), "M3C": (18,9),
-        "AR2": (18,5), "TBD": (18,1),
+        "RSA": (-6, 10),
+        "NED": (-6, 8),
 
-        "BRA": (21,14), "CIV": (21,12),
-        "MEX": (21,10), "ENG": (21,8),
-        "ARG": (21,6), "AUS": (21,4),
-        "SUI": (21,2), "COL": (21,0),
+        "POR": (-6, 6),
+        "ESP": (-6, 4),
 
-        "EF3": (15,11), "EF7": (15,3),
-        "WQ3": (11,7),
+        "USA": (-6, 2),
+        "EGY": (-6, 0),
 
-        "WS1": (7.5,7),
-        "LS1": (7.5,4.5)
+        # ---------------------------
+        # OCTAVOS IZQUIERDA
+        # ---------------------------
+
+        "G3A": (-2, 13),
+        "TBD_L1": (-2, 9),
+
+        "2KL": (-2, 5),
+        "US3": (-2, 1),
+
+        # ---------------------------
+        # CUARTOS IZQUIERDA
+        # ---------------------------
+
+        "EF1": (2, 11),
+        "EF5": (2, 3),
+
+        # ---------------------------
+        # SEMI IZQUIERDA
+        # ---------------------------
+
+        "WQ1": (6, 7),
+
+        # ---------------------------
+        # FINAL
+        # ---------------------------
+
+        "WS1": (10, 7),
+
+        # ---------------------------
+        # BRONCE
+        # ---------------------------
+
+        "LS1": (10, 4),
+
+        # =====================================================
+        # DERECHA
+        # =====================================================
+
+        "BRA": (26, 14),
+        "CIV": (26, 12),
+
+        "MEX": (26, 10),
+        "ENG": (26, 8),
+
+        "ARG": (26, 6),
+        "AUS": (26, 4),
+
+        "SUI": (26, 2),
+        "COL": (26, 0),
+
+        # OCTAVOS
+
+        "TBD_R1": (22, 13),
+        "M3C": (22, 9),
+
+        "AR2": (22, 5),
+        "TBD_R2": (22, 1),
+
+        # CUARTOS
+
+        "EF3": (18, 11),
+        "EF7": (18, 3),
+
+        # SEMI
+
+        "WQ3": (14, 7),
+
+        # FINAL DERECHO
+
+        "WS2": (10, 7),
     }
 
     # =====================================================
-    # CONEXIONES (NO TOCAR)
+    # CONEXIONES
     # =====================================================
+
     connections = [
-        ("GER","G3A"), ("FRA","G3A"),
-        ("KOR","1GA"), ("NED","1GA"),
-        ("POR","2KL"), ("ESP","2KL"),
-        ("USA","US3"), ("NZL","US3"),
-        ("G3A","EF1"), ("1GA","EF1"),
-        ("2KL","EF5"), ("US3","EF5"),
-        ("EF1","WQ1"), ("EF5","WQ1"),
 
-        ("BRA","1CF"), ("CIV","1CF"),
-        ("MEX","M3C"), ("ENG","M3C"),
-        ("ARG","AR2"), ("AUS","AR2"),
-        ("SUI","TBD"), ("COL","TBD"),
-        ("1CF","EF3"), ("M3C","EF3"),
-        ("AR2","EF7"), ("TBD","EF7"),
-        ("EF3","WQ3"), ("EF7","WQ3"),
+        # --------------------
+        # IZQUIERDA
+        # --------------------
 
-        ("WQ1","WS1"), ("WQ3","WS1")
+        ("GER", "G3A"),
+        ("FRA", "G3A"),
+
+        ("RSA", "TBD_L1"),
+        ("NED", "TBD_L1"),
+
+        ("POR", "2KL"),
+        ("ESP", "2KL"),
+
+        ("USA", "US3"),
+        ("EGY", "US3"),
+
+        ("G3A", "EF1"),
+        ("TBD_L1", "EF1"),
+
+        ("2KL", "EF5"),
+        ("US3", "EF5"),
+
+        ("EF1", "WQ1"),
+        ("EF5", "WQ1"),
+
+        # --------------------
+        # DERECHA
+        # --------------------
+
+        ("BRA", "TBD_R1"),
+        ("CIV", "TBD_R1"),
+
+        ("MEX", "M3C"),
+        ("ENG", "M3C"),
+
+        ("ARG", "AR2"),
+        ("AUS", "AR2"),
+
+        ("SUI", "TBD_R2"),
+        ("COL", "TBD_R2"),
+
+        ("TBD_R1", "EF3"),
+        ("M3C", "EF3"),
+
+        ("AR2", "EF7"),
+        ("TBD_R2", "EF7"),
+
+        ("EF3", "WQ3"),
+        ("EF7", "WQ3"),
+
+        # --------------------
+        # FINAL
+        # --------------------
+
+        ("WQ1", "WS1"),
+        ("WQ3", "WS2"),
     ]
 
     # =====================================================
     # FIGURA
     # =====================================================
-    fig, ax = plt.subplots(figsize=(25, 15))
+
+    fig, ax = plt.subplots(
+        figsize=(26, 15)
+    )
+
+    fig.patch.set_facecolor("none")
+    ax.set_facecolor("none")
 
     ax.axis("off")
-    fig.patch.set_facecolor('none')
-    ax.set_facecolor('none')
 
-    # =====================================================
-    # AUTO ZOOM
-    # =====================================================
-    xs = [x for x, y in layout.values()]
-    ys = [y for x, y in layout.values()]
-
-    box_w = 2.4
+    box_w = 2.6
     box_h = 1.2
-    pad = 3
 
-    ax.set_xlim(min(xs) - pad, max(xs) + pad + box_w)
-    ax.set_ylim(min(ys) - pad, max(ys) + pad)
+    ax.set_xlim(-10, 32)
+    ax.set_ylim(-2, 16)
 
     # =====================================================
-    # CAJAS + LOGOS
+    # DIBUJAR CAJAS
     # =====================================================
+
     for _, row in df.iterrows():
 
         key = row["home_shortName"]
@@ -883,60 +1030,100 @@ def create_plot_playoffs(df):
 
         x, y = layout[key]
 
-        # caja
-        ax.add_patch(Rectangle(
-            (x, y - 0.6),
-            box_w,
-            box_h,
-            facecolor="none",
-            edgecolor="white",
-            linewidth=1
-        ))
+        ax.add_patch(
+            Rectangle(
+                (x, y - 0.6),
+                box_w,
+                box_h,
+                facecolor="none",
+                edgecolor="white",
+                linewidth=0.8
+            )
+        )
 
-        # logos
-        home_x = x + 0.6
-        away_x = x + box_w - 0.6
-        logo_y = y + 0.15
+        add_img(
+            ax,
+            row.get("url_photo_home"),
+            x + 0.65,
+            y + 0.15
+        )
 
-        add_img(ax, row.get("url_photo_home"), home_x, logo_y, zoom=0.35)
-        add_img(ax, row.get("url_photo_away"), away_x, logo_y, zoom=0.35)
+        add_img(
+            ax,
+            row.get("url_photo_away"),
+            x + box_w - 0.65,
+            y + 0.15
+        )
 
-        # texto fallback
         ax.text(
             x + box_w / 2,
-            y - 0.35,
-            f"{row['home_shortName']} vs {row['away_shortName']}\n{row['date_label']}",
+            y - 0.25,
+            f"{row['home_shortName']} vs {row['away_shortName']}",
             ha="center",
             va="center",
-            fontsize=10,
-            color="white"
+            fontsize=11,
+            color="white",
+            fontweight="bold"
+        )
+
+        ax.text(
+            x + box_w / 2,
+            y - 0.75,
+            str(row["date_label"]),
+            ha="center",
+            va="center",
+            fontsize=9,
+            color="#cfcfcf"
         )
 
     # =====================================================
     # CONEXIONES
     # =====================================================
+
     for parent, child in connections:
 
-        if parent not in layout or child not in layout:
+        if parent not in layout:
+            continue
+
+        if child not in layout:
             continue
 
         x0, y0 = layout[parent]
         x1, y1 = layout[child]
 
         if x1 > x0:
+
             start_x = x0 + box_w
             end_x = x1
+
         else:
+
             start_x = x0
             end_x = x1 + box_w
 
-        mid_x = start_x + (end_x - start_x) * 0.35
+        mid_x = start_x + (end_x - start_x) * 0.45
 
-        ax.plot([start_x, mid_x], [y0, y0], color="white", linewidth=1.3)
-        ax.plot([mid_x, mid_x], [y0, y1], color="white", linewidth=1.3)
-        ax.plot([mid_x, end_x], [y1, y1], color="white", linewidth=1.3)
+        ax.plot(
+            [start_x, mid_x],
+            [y0, y0],
+            color="white",
+            linewidth=1.3
+        )
+
+        ax.plot(
+            [mid_x, mid_x],
+            [y0, y1],
+            color="white",
+            linewidth=1.3
+        )
+
+        ax.plot(
+            [mid_x, end_x],
+            [y1, y1],
+            color="white",
+            linewidth=1.3
+        )
 
     plt.tight_layout()
 
     return fig
-
