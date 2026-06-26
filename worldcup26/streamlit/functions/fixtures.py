@@ -776,6 +776,7 @@ def create_plot_playoffs(df):
         4653843: "TBD_L1",  # RSA/NED
         4653846: "TBD_R1",  # BRA/CIV
         4653849: "TBD_R2",  # SUI/COL
+        4653845: "TBD_L2"
     }
 
     for match_id, code in tbd_map.items():
@@ -869,7 +870,7 @@ def create_plot_playoffs(df):
         "TBD_L1": (-2, 9),
 
         "2KL": (-2, 5),
-        "US3": (-2, 1),
+        "TBD_L2": (-2, 1),
 
         # ---------------------------
         # CUARTOS IZQUIERDA
@@ -953,8 +954,8 @@ def create_plot_playoffs(df):
         ("POR", "2KL"),
         ("ESP", "2KL"),
 
-        ("USA", "US3"),
-        ("EGY", "US3"),
+        ("USA", "TBD_L2"),
+        ("EGY", "TBD_L2"),
 
         ("G3A", "EF1"),
         ("TBD_L1", "EF1"),
