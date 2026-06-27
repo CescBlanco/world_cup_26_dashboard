@@ -961,7 +961,7 @@ def create_plot_playoffs(df):
         ("USA", "TBD_L2"),
         ("BEL", "TBD_L2"),
 
-        ("G3A", "EF1"),
+        ("TBD_L0", "EF1"),
         ("TBD_L1", "EF1"),
 
         ("2KL", "EF5"),
