@@ -774,11 +774,12 @@ def create_plot_playoffs(df):
 
     tbd_map = {
         4653842: "TBD_L0",
-        4653843: "TBD_L1",  # RSA/NED
-        4653846: "TBD_R1",  # BRA/CIV
-        4653849: "TBD_R3",  # SUI/COL
-        4653845: "TBD_L2",
+        4653843: "TBD_L1", 
+        4653846: "TBD_R1",  
+        4653849: "TBD_R3",  
+        4653845: "TBD_L3",
         4653848: "TBD_R2",  
+        4653844: "TBD_L2",  
         
 
     }
@@ -850,6 +851,7 @@ def create_plot_playoffs(df):
 
     layout = {
 
+        
         # ---------------------------
         # DIECISEISAVOS IZQUIERDA
         # ---------------------------
@@ -873,8 +875,8 @@ def create_plot_playoffs(df):
         "TBD_L0": (-2, 13),
         "TBD_L1": (-2, 9),
 
-        "2KL": (-2, 5),
-        "TBD_L2": (-2, 1),
+        "TBD_L2": (-2, 5),
+        "TBD_L3": (-2, 1),
 
         # ---------------------------
         # CUARTOS IZQUIERDA
@@ -955,17 +957,17 @@ def create_plot_playoffs(df):
         ("RSA", "TBD_L1"),
         ("NED", "TBD_L1"),
 
-        ("POR", "2KL"),
-        ("ESP", "2KL"),
+        ("POR", "TBD_L2"),
+        ("ESP", "TBD_L2"),
 
-        ("USA", "TBD_L2"),
-        ("BEL", "TBD_L2"),
+        ("USA", "TBD_L3"),
+        ("BEL", "TBD_L3"),
 
         ("TBD_L0", "EF1"),
         ("TBD_L1", "EF1"),
 
-        ("2KL", "EF5"),
         ("TBD_L2", "EF5"),
+        ("TBD_L3", "EF5"),
 
         ("EF1", "WQ1"),
         ("EF5", "WQ1"),
