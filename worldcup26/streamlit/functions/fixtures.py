@@ -773,10 +773,14 @@ def create_plot_playoffs(df):
     # =====================================================
 
     tbd_map = {
+        4653842: "TBD_L0",
         4653843: "TBD_L1",  # RSA/NED
         4653846: "TBD_R1",  # BRA/CIV
-        4653849: "TBD_R2",  # SUI/COL
-        4653845: "TBD_L2"
+        4653849: "TBD_R3",  # SUI/COL
+        4653845: "TBD_L2",
+        4653848: "TBD_R2",  
+        
+
     }
 
     for match_id, code in tbd_map.items():
