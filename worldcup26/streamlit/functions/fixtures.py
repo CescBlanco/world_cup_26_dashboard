@@ -860,13 +860,13 @@ def create_plot_playoffs(df):
         "ESP": (-6, 4),
 
         "USA": (-6, 2),
-        "EGY": (-6, 0),
+        "BEL": (-6, 0),
 
         # ---------------------------
         # OCTAVOS IZQUIERDA
         # ---------------------------
 
-        "G3A": (-2, 13),
+        "TBD_L0": (-2, 13),
         "TBD_L1": (-2, 9),
 
         "2KL": (-2, 5),
@@ -918,8 +918,8 @@ def create_plot_playoffs(df):
         "TBD_R1": (22, 13),
         "M3C": (22, 9),
 
-        "AR2": (22, 5),
-        "TBD_R2": (22, 1),
+        "TBD_R2": (22, 5),
+        "TBD_R3": (22, 1),
 
         # CUARTOS
 
@@ -945,8 +945,8 @@ def create_plot_playoffs(df):
         # IZQUIERDA
         # --------------------
 
-        ("GER", "G3A"),
-        ("FRA", "G3A"),
+        ("GER", "TBD_L0"),
+        ("FRA", "TBD_L0"),
 
         ("RSA", "TBD_L1"),
         ("NED", "TBD_L1"),
@@ -955,7 +955,7 @@ def create_plot_playoffs(df):
         ("ESP", "2KL"),
 
         ("USA", "TBD_L2"),
-        ("EGY", "TBD_L2"),
+        ("BEL", "TBD_L2"),
 
         ("G3A", "EF1"),
         ("TBD_L1", "EF1"),
@@ -976,17 +976,17 @@ def create_plot_playoffs(df):
         ("MEX", "M3C"),
         ("ENG", "M3C"),
 
-        ("ARG", "AR2"),
-        ("AUS", "AR2"),
+        ("ARG", "TBD_R2"),
+        ("AUS", "TBD_R2"),
 
-        ("SUI", "TBD_R2"),
-        ("COL", "TBD_R2"),
+        ("SUI", "TBD_R3"),
+        ("COL", "TBD_R3"),
 
         ("TBD_R1", "EF3"),
         ("M3C", "EF3"),
 
-        ("AR2", "EF7"),
         ("TBD_R2", "EF7"),
+        ("TBD_R3", "EF7"),
 
         ("EF3", "WQ3"),
         ("EF7", "WQ3"),
@@ -998,6 +998,7 @@ def create_plot_playoffs(df):
         ("WQ1", "WS1"),
         ("WQ3", "WS2"),
     ]
+
 
     # =====================================================
     # FIGURA
