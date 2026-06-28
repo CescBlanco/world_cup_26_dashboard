@@ -1376,12 +1376,16 @@ def match_list_post_filter(partidos: pd.DataFrame,stage_selected: str,group_sele
     """
     if not isinstance(partidos, pd.DataFrame):
         raise TypeError( "partidos must be a pandas DataFrame")
-
+    # Mostrar nombre del stage
+    if int(id_stage) <= 3:
+        stage_display = id_stage
+    else:
+        stage_display = stage_selected
     # Display filter summary
     if not partidos.empty:
         st.markdown(f"""
             <h3 style='margin-top: 1em; color: #999;'>
-                ⚽ Stage: <span style='color:white;'>{id_stage} ,</span>
+                ⚽ Stage: <span style='color:white;'>{stage_display} ,</span>
                 {f" Group: <span style='color:white;'>{group_selected}, </span>" if group_selected else "All groups, "}
                 {f" Matches from <span style='color:white;'>{formatear_fecha_segura(fecha_elegida)}</span>" if fecha_elegida else ""}
             </h3>
