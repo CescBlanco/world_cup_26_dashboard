@@ -2306,7 +2306,7 @@ def Final_third_entry(df, team_name, col, color_home, color_away, ax=None, show_
 
     return fig, ax
 
-def create_match_report1_plot(referee_html,group_round, stage_selected, id_home_fotmob,id_away_fotmob,name_home_fotmob,name_away_fotmob,homeScore,awayScore,texto_estado,
+def create_match_report1_plot(referee_html,group_round, stage_selected,id_stage, id_home_fotmob,id_away_fotmob,name_home_fotmob,name_away_fotmob,homeScore,awayScore,texto_estado,
                                 match_info, nombre_jugador_partido, av_players_home, av_players_away, df, passes_df,
                                 home_avg_locs,away_avg_locs,home_combinations,away_combinations,   home_metrics,   away_metrics,
                             home_team_dict, away_team_dict, color_home, color_away, background_color, stats,
@@ -2339,7 +2339,12 @@ def create_match_report1_plot(referee_html,group_round, stage_selected, id_home_
 
     fig_text(0.5, 0.95, texto_estado, color='white', fontsize=40, fontweight='bold', ha='center', va='center', ax=header_ax)
 
-    fig_text(0.5, 0.92, f"{group_round} - {stage_selected}, World Cup 2026 | Post Match Report-1", color='white', fontsize=30, ha='center',
+    if int(id_stage) <= 3:
+        title = f"{group_round} - {stage_selected}, World Cup 2026 | Post Match Report-1"
+    else:
+        title = f"{stage_selected}, World Cup 2026 | Post Match Report-1"
+
+    fig_text(0.5, 0.92, title, color='white', fontsize=30, ha='center',
                     va='center', ax=header_ax)
 
     fig_text(0.5, 0.90, f"Venue: {match_info['venue_name']} (Attendance: {match_info['attendance']}) | {referee_html}",
@@ -2395,7 +2400,7 @@ def create_match_report1_plot(referee_html,group_round, stage_selected, id_home_
 
     return buffer.getvalue()
                     
-def create_match_report2_plot(referee_html,group_round, stage_selected, id_home_fotmob,id_away_fotmob,name_home_fotmob,name_away_fotmob,homeScore,awayScore,texto_estado,
+def create_match_report2_plot(referee_html,group_round, stage_selected, id_stage, id_home_fotmob,id_away_fotmob,name_home_fotmob,name_away_fotmob,homeScore,awayScore,texto_estado,
                             match_info, nombre_jugador_partido, df, matchdict, color_home, color_away, home_team, away_team,
                             local_xg, visit_xg, goles_local_xg, goles_visit_xg, df_tiros_coord_home, df_tiros_coord_away, pearl_earring_cmaph,
                             pearl_earring_cmapa,IMAGEN_PELOTA,IMAGEN_PELOTA_ROJA):
@@ -2427,7 +2432,12 @@ def create_match_report2_plot(referee_html,group_round, stage_selected, id_home_
 
         fig_text(0.5, 0.95, texto_estado, color='white', fontsize=40, fontweight='bold', ha='center', va='center', ax=header_ax)
 
-        fig_text(0.5, 0.92, f"{group_round} - {stage_selected}, World Cup 2026 | Post Match Report-2", color='white', fontsize=30, ha='center',
+        if int(id_stage) <= 3:
+            title = f"{group_round} - {stage_selected}, World Cup 2026 | Post Match Report-2"
+        else:
+            title = f"{stage_selected}, World Cup 2026 | Post Match Report-2"
+
+        fig_text(0.5, 0.92, title,  color='white', fontsize=30, ha='center',
                     va='center', ax=header_ax)
 
         fig_text(0.5, 0.90, f"Venue: {match_info['venue_name']} (Attendance: {match_info['attendance']}) | {referee_html}",
