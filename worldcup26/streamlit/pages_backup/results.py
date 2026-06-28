@@ -66,6 +66,16 @@ def render_results(df: pd.DataFrame):
             awayTeamPhoto = partido_detalle["awayTeamPhoto"]
 
             match_round_good= partido_detalle["matchround"]
+
+            ROUND_MAPPING = {
+                '4': "1/16",
+                '5': "1/8",
+                '6': "Quarter-final",
+                '7': "Semi-final",
+                '8': "Final"
+            }
+
+            round_name_whoscored_for_fotmob = ROUND_MAPPING.get(round_name_whoscored, str(round_name_whoscored))
             # =============================================================================
             # LOAD FOTMOB MATCH DATA
             # =============================================================================
@@ -83,7 +93,7 @@ def render_results(df: pd.DataFrame):
             #     3. Stop execution if unavailable
 
             df_all_matches_fotmob=  load_all_matches_fotmob()
-            url_match_fotmob= extract_url_fotmob(df_all_matches_fotmob, selected_home_team, selected_away_team, round=round_name_whoscored)
+            url_match_fotmob= extract_url_fotmob(df_all_matches_fotmob, selected_home_team, selected_away_team, round=round_name_whoscored_for_fotmob)
             match_id_fotmob= extract_match_id_fotmob(url_match_fotmob)
             cache_data_fotmob= load_match_cache_fotmob(match_id_fotmob)
             if cache_data_fotmob:
