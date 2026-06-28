@@ -774,12 +774,13 @@ def create_plot_playoffs(df):
 
     tbd_map = {
         4653842: "TBD_L0",
-        4653843: "TBD_L1", 
-        4653846: "TBD_R1",  
-        4653849: "TBD_R3",  
+        4653843: "TBD_L1",
+        4653844: "TBD_L2", 
         4653845: "TBD_L3",
-        4653848: "TBD_R2",  
-        4653844: "TBD_L2",  
+        4653846: "TBD_R1",
+        4653847: "TBD_R2",    
+        4653848: "TBD_R3",  
+        4653849: "TBD_R4",  
         
 
     }
@@ -922,10 +923,10 @@ def create_plot_playoffs(df):
         # OCTAVOS
 
         "TBD_R1": (22, 13),
-        "M3C": (22, 9),
+        "TBD_R2": (22, 9),
 
-        "TBD_R2": (22, 5),
-        "TBD_R3": (22, 1),
+        "TBD_R3": (22, 5),
+        "TBD_R4": (22, 1),
 
         # CUARTOS
 
@@ -940,6 +941,7 @@ def create_plot_playoffs(df):
 
         "WS2": (10, 7),
     }
+
 
     # =====================================================
     # CONEXIONES
@@ -979,20 +981,20 @@ def create_plot_playoffs(df):
         ("BRA", "TBD_R1"),
         ("CIV", "TBD_R1"),
 
-        ("MEX", "M3C"),
-        ("ENG", "M3C"),
+        ("MEX", "TBD_R2"),
+        ("ENG", "TBD_R2"),
 
-        ("ARG", "TBD_R2"),
-        ("AUS", "TBD_R2"),
+        ("ARG", "TBD_R3"),
+        ("AUS", "TBD_R3"),
 
-        ("SUI", "TBD_R3"),
-        ("COL", "TBD_R3"),
+        ("SUI", "TBD_R4"),
+        ("COL", "TBD_R4"),
 
         ("TBD_R1", "EF3"),
-        ("M3C", "EF3"),
+        ("TBD_R2", "EF3"),
 
-        ("TBD_R2", "EF7"),
         ("TBD_R3", "EF7"),
+        ("TBD_R4", "EF7"),
 
         ("EF3", "WQ3"),
         ("EF7", "WQ3"),
