@@ -418,6 +418,11 @@ def create_inicidents_for_teams(matchdict: dict,teams_dict_id_name: dict,players
 
     # 🔹 Resolve player names
     df['player_name'] = df['playerId'].astype('Int64').astype(str).map(players_dict)
+
+    incidents = incidents[
+        ~((incidents['type'] == 'Card') & (incidents['player_name'].isna()))
+    ].reset_index(drop=True)
+
     df['player_name_related'] = df['relatedPlayerId'].astype('Int64').astype(str).map(players_dict)
 
     # 🔹 Detect own goals
@@ -470,7 +475,9 @@ def minute_display(row: pd.Series) -> str:
     minute = int(row['minute'])
     period = row['period']
 
-    # 🔹 First half
+    # =========================
+    # 🟢 FIRST HALF
+    # =========================
     if period == 'FirstHalf':
 
         # normal time
@@ -480,8 +487,10 @@ def minute_display(row: pd.Series) -> str:
         # added time
         return f"45+{minute - 45}"
 
-    # 🔹 Second half
-    if period == 'SecondHalf':
+    # =========================
+    # 🔴 SECOND HALF
+    # =========================
+    elif period == 'SecondHalf':
 
         # normal time
         if minute < 90:
@@ -491,6 +500,17 @@ def minute_display(row: pd.Series) -> str:
 
         # added time 
         return f"90+{minute - 90}"
+
+    elif period == 'FirstPeriodOfExtraTime':
+        if minute < 105:
+            return str(minute + 1)
+        return f"105+{minute-105}"
+
+    elif period == 'SecondPeriodOfExtraTime':
+        if minute < 120:
+            return str(minute + 1)
+        return f"120+{minute-120}"
+    return str(minute + 1)
 
 def event_category(row: pd.Series) -> str:
     """
@@ -725,14 +745,28 @@ def card_events_key_match( df_match: pd.DataFrame, home_team: str, away_team: st
         TypeError: If df_match is not a DataFrame.
     """
 
-    # 🔹 Detect halftime transition             
-    ht_index = df_match.index[(df_match['period'].shift(1) == 'FirstHalf') &(df_match['period'] == 'SecondHalf')]
+    # 🔹 Detect parts match transition             
+    period_labels = {
+        ('FirstHalf', 'SecondHalf'): 'HT',
+        ('SecondHalf', 'FirstPeriodOfExtraTime'): 'AET',
+        ('SecondHalf', 'SecondPeriodOfExtraTime'): 'AET',
+        ('FirstPeriodOfExtraTime', 'SecondPeriodOfExtraTime'): 'AET HT',
+    }
 
     # 🔹 Render event timeline
     for i, row in df_match.iterrows():
-        # 🔥 HT LINE
-        if i in ht_index:
-            st.markdown("<p style='text-align:center; font-weight:bold; margin:10px 0;'>HT</p>", unsafe_allow_html=True)
+
+        if i > 0:
+            previous_period = df_match.loc[i-1, 'period']
+            current_period = row['period']
+
+            label = period_labels.get((previous_period, current_period))
+
+            if label:
+                st.markdown(
+                    f"<p style='text-align:center; font-weight:bold; margin:10px 0;'>{label}</p>",
+                    unsafe_allow_html=True
+                )
 
 
         icon = render_event(row, home_team, away_team)
