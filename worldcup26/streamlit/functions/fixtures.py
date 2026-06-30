@@ -53,7 +53,20 @@ def match_status(row: pd.Series) -> str:
 
     else:
         return "scheduled"
+def format_score(row):
+    home = int(row["homeScore"])
+    away = int(row["awayScore"])
 
+    # ajusta esto según tu dataset real
+    result_type = row.get("resultType") or row.get("matchResultType")
+
+    if result_type == "PEN":
+        return f"{home}-{away} (PEN)"
+    elif result_type == "AET":
+        return f"{home}-{away} (AET)"
+    else:
+        return f"{home}-{away}"
+    
 def build_event(row: pd.Series) -> dict:
     """
     Build a calendar event object from a match row.
@@ -103,11 +116,13 @@ def build_event(row: pd.Series) -> dict:
     # EVENT TITLE
     # =========================
     # 🔹 Scheduled match (no score yet)
-    if status == "played" and h_score is not None and a_score is not None:
-        title = f"⚽ {home} {int(h_score)}-{int(a_score)} {away}"
-    else:
+
+    if status == "scheduled":
         title = f"⚽ {home} vs {away}"
-        
+    else:
+        score = format_score(row)
+        title = f"⚽ {home} {score} {away}"
+    
     # =========================
     # EVENT STRUCTURE
     # =========================
@@ -127,11 +142,7 @@ def build_event(row: pd.Series) -> dict:
         "away_logo":away_logo,
         "status": status,
 
-        "score": (
-            f"{int(row['homeScore'])}-{int(row['awayScore'])}"
-            if status == "played"
-            else None
-        ),
+        "score": format_score(row) if status == "played" else None,
 
         "time": dt.strftime("%H:%M"),
         "stage": safe_str(row["stageName"]),
@@ -205,6 +216,7 @@ def show_match_dialog(event):
 
     status = props.get("status")
 
+
     col1, col2, col3 = st.columns([1.5, 2, 1.5])
 
     with col1:
@@ -215,21 +227,32 @@ def show_match_dialog(event):
 
     with col2:
 
+        score = props.get("score")
+
         if status == "played":
-            st.success(f"Final Score: {props.get('score')}")
+            st.success(f"Final Score: {score}")
         else:
             st.info(f"Kick-off: {props.get('time')}")
 
-        st.write(f"🔁 Stage: {props.get('round').split(' ')[-1]}")
-        st.write(f"🏆 Group: {props.get('stage').split(' ')[-1]}")
+        round_stage= props.get('round')
+
+        if "Round of" in round_stage:
+            stage = props.get('stage', '')
+            clean_stage = stage.replace("World Cup ", "")
+            st.write(f"🏆 {clean_stage}")
+            st.write(f"🔁 {props.get('round')}")
+            
+    
+        else:
         
+            st.write(f"🔁 Stage: {props.get('round').split(' ')[-1]}")
+            st.write(f"🏆 Group: {props.get('stage').split(' ')[-1]}")
 
     with col3:
         if away_logo:
             st.image(away_logo, width=120)
 
         st.markdown( f"<div style='text-align:center'><b>{away.upper()}</b></div>", unsafe_allow_html=True)
-
 
 def click_event_and_info(state: dict) -> None:
     """
