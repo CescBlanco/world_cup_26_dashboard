@@ -419,8 +419,8 @@ def create_inicidents_for_teams(matchdict: dict,teams_dict_id_name: dict,players
     # 🔹 Resolve player names
     df['player_name'] = df['playerId'].astype('Int64').astype(str).map(players_dict)
 
-    incidents = incidents[
-        ~((incidents['type'] == 'Card') & (incidents['player_name'].isna()))
+    df = df[
+        ~((df['type'] == 'Card') & (df['player_name'].isna()))
     ].reset_index(drop=True)
 
     df['player_name_related'] = df['relatedPlayerId'].astype('Int64').astype(str).map(players_dict)
