@@ -68,6 +68,7 @@ def render_fixtures(df: pd.DataFrame) -> None:
                            ['🥇 Table groups', '⚔️ Final Stages'], default= '🥇 Table groups')
    
         if option == "🥇 Table groups":
+            st.badge("✅ Group stage completed", color="green")
             table_groups()
 
         elif option == "⚔️ Final Stages":
@@ -75,7 +76,7 @@ def render_fixtures(df: pd.DataFrame) -> None:
             df_final_playoffs = prepare_playoffs_wc26()  
         
             fig = create_plot_playoffs(df_final_playoffs)
-            st.info("Knockout stage pairings are provisional and will be finalized once all group standings are confirmed.")
+            #st.info("Knockout stage pairings are provisional and will be finalized once all group standings are confirmed.")
 
             st.pyplot(fig, use_container_width=True)
 
