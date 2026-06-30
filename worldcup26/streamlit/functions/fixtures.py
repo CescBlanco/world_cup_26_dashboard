@@ -647,146 +647,6 @@ def prepare_playoffs_wc26():
     df_final_concat['url_photo_away'] = "https://images.fotmob.com/image_resources/logo/teamlogo/"+ df_final_concat['away_id'].astype(str)+ ".png"
     return df_final_concat
 
-# def create_plot_playoffs(df):
-
-#     # =====================================================
-#     # LAYOUT FOTMOB
-#     # =====================================================
-#     layout = {
-#         "GER": (-6,14), "NOR": (-6,12),
-#         "RSA": (-6,10), "NED": (-6,8),
-#         "COD": (-6,6), "ESP": (-6,4),
-#         "USA": (-6,2), "NZL": (-6,0),
-
-#         "G3A": (-3,13), "2AB": (-3,9),
-#         "2KL": (-3,5), "US3": (-3,1),
-
-#         "EF1": (0,11), "EF5": (0,3),
-#         "WQ1": (4,7),
-
-#         "1CF": (18,13), "M3C": (18,9),
-#         "1JH": (18,5), "1BE": (18,1),
-
-#         "BRA": (21,14), "CIV": (21,12),
-#         "MEX": (21,10), "ENG": (21,8),
-#         "ARG": (21,6), "AUS": (21,4),
-#         "CAN": (21,2), "COL": (21,0),
-
-#         "EF3": (15,11), "EF7": (15,3),
-#         "WQ3": (11,7),
-
-#         "WS1": (7.5,7),
-#         "LS1": (7.5,4.5)
-#     }
-
-#     # =====================================================
-#     # CONEXIONES
-#     # =====================================================
-#     connections = [
-#         ("GER","G3A"), ("NOR","G3A"),
-#         ("RSA","2AB"), ("NED","2AB"),
-#         ("COD","2KL"), ("ESP","2KL"),
-#         ("USA","US3"), ("NZL","US3"),
-#         ("G3A","EF1"), ("2AB","EF1"),
-#         ("2KL","EF5"), ("US3","EF5"),
-#         ("EF1","WQ1"), ("EF5","WQ1"),
-
-#         ("BRA","1CF"), ("CIV","1CF"),
-#         ("MEX","M3C"), ("ENG","M3C"),
-#         ("ARG","1JH"), ("AUS","1JH"),
-#         ("CAN","1BE"), ("COL","1BE"),
-#         ("1CF","EF3"), ("M3C","EF3"),
-#         ("1JH","EF7"), ("1BE","EF7"),
-#         ("EF3","WQ3"), ("EF7","WQ3"),
-
-#         ("WQ1","WS1"), ("WQ3","WS1")
-#     ]
-#     # =====================================================
-#     # FIGURA MATPLOTLIB
-#     # =====================================================
-#     fig, ax = plt.subplots(figsize=(25, 15))
-
-#     # ax.set_xlim(-8, 24)
-#     # ax.set_ylim(-8, 16)
-#     ax.axis("off")
-
-#     fig.patch.set_facecolor('none')
-#     ax.set_facecolor('none')
-
-#     # =====================================================
-# # 🔥 AUTO ZOOM PERFECTO (CLAVE)
-# # =====================================================
-#     xs = [x for x, y in layout.values()]
-#     ys = [y for x, y in layout.values()]
-
-#     box_w = 2.4
-#     box_h = 1.2
-
-#     pad = 3
-
-#     ax.set_xlim(min(xs) - pad, max(xs) + pad + box_w)
-#     ax.set_ylim(min(ys) - pad, max(ys) + pad)
-
-#     # =====================================================
-#     # CAJAS
-#     # =====================================================
-#     for _, row in df.iterrows():
-
-#         key = row["home_shortName"]
-#         if key not in layout:
-#             continue
-
-#         x, y = layout[key]
-
-#         # rect (Plotly shape equivalent)
-#         ax.add_patch(Rectangle(
-#             (x, y - 0.6),
-#             box_w,
-#             box_h,
-#             facecolor="none",
-#             edgecolor="white",
-#             linewidth=1
-#         ))
-
-#         # annotation (Plotly text equivalent)
-#         ax.text(
-#             x + box_w / 2,
-#             y,
-#             f"{row['home_shortName']} vs {row['away_shortName']}\n\n{row['date_label']}",
-#             ha="center",
-#             va="center",
-#             fontsize=12,
-#             color="white"
-#         )
-
-#     # =====================================================
-#     # BRACKETS
-#     # =====================================================
-#     for parent, child in connections:
-
-#         if parent not in layout or child not in layout:
-#             continue
-
-#         x0, y0 = layout[parent]
-#         x1, y1 = layout[child]
-
-#         if x1 > x0:
-#             start_x = x0 + box_w
-#             end_x = x1
-#         else:
-#             start_x = x0
-#             end_x = x1 + box_w
-
-#         mid_x = start_x + (end_x - start_x) * 0.35
-
-#         ax.plot([start_x, mid_x], [y0, y0], color="white", linewidth=1.3)
-#         ax.plot([mid_x, mid_x], [y0, y1], color="white", linewidth=1.3)
-#         ax.plot([mid_x, end_x], [y1, y1], color="white", linewidth=1.3)
-
-#     plt.tight_layout()
-
-#     return fig
-
 def create_plot_playoffs(df):
 
     import matplotlib.pyplot as plt
@@ -802,29 +662,6 @@ def create_plot_playoffs(df):
 
     df = df.copy()
 
-    # =====================================================
-    # RENOMBRAR TBD
-    # =====================================================
-
-    tbd_map = {
-        4653842: "TBD_L0",
-        4653843: "TBD_L1",
-        4653844: "TBD_L2", 
-        4653845: "TBD_L3",
-        4653846: "TBD_R1",
-        4653847: "TBD_R2",    
-        4653848: "TBD_R3",  
-        4653849: "TBD_R4",  
-        
-
-    }
-
-    for match_id, code in tbd_map.items():
-
-        mask = df["matchId"] == match_id
-
-        if mask.any():
-            df.loc[mask, "home_shortName"] = code
 
     # =====================================================
     # CACHE IMÁGENES
@@ -886,96 +723,62 @@ def create_plot_playoffs(df):
 
     layout = {
 
-        
-        # ---------------------------
-        # DIECISEISAVOS IZQUIERDA
-        # ---------------------------
+    # 1/16
+    4653703: (-6,14),
+    4653704: (-6,12),
+    4653705: (-6,10),
+    4653706: (-6,8),
 
-        "GER": (-6, 14),
-        "FRA": (-6, 12),
+    4653707: (-6,6),
+    4653708: (-6,4),
+    4653709: (-6,2),
+    4653710: (-6,0),
 
-        "RSA": (-6, 10),
-        "NED": (-6, 8),
+    4653711: (26,14),
+    4653712: (26,12),
+    4653713: (26,10),
+    4653714: (26,8),
 
-        "POR": (-6, 6),
-        "ESP": (-6, 4),
+    4653715: (26,6),
+    4653716: (26,4),
+    4653717: (26,2),
+    4653718: (26,0),
 
-        "USA": (-6, 2),
-        "BEL": (-6, 0),
+    # Octavos
 
-        # ---------------------------
-        # OCTAVOS IZQUIERDA
-        # ---------------------------
+    4653842: (-2,13),
+    4653843: (-2,9),
 
-        "TBD_L0": (-2, 13),
-        "TBD_L1": (-2, 9),
+    4653844: (-2,5),
+    4653845: (-2,1),
 
-        "TBD_L2": (-2, 5),
-        "TBD_L3": (-2, 1),
+    4653846: (22,13),
+    4653847: (22,9),
 
-        # ---------------------------
-        # CUARTOS IZQUIERDA
-        # ---------------------------
+    4653848: (22,5),
+    4653849: (22,1),
 
-        "EF1": (2, 11),
-        "EF5": (2, 3),
+    # Cuartos
 
-        # ---------------------------
-        # SEMI IZQUIERDA
-        # ---------------------------
+    4653851: (2,11),
+    4653853: (2,3),
 
-        "WQ1": (6, 7),
+    4653852: (18,11),
+    4653854: (18,3),
 
-        # ---------------------------
-        # FINAL
-        # ---------------------------
+    # Semis
 
-        "WS1": (10, 7),
+    4653855: (6,7),
+    4653856: (14,7),
 
-        # ---------------------------
-        # BRONCE
-        # ---------------------------
+    # Final
 
-        "LS1": (10, 4),
+    4653858: (10,7),
 
-        # =====================================================
-        # DERECHA
-        # =====================================================
+    # Bronce
 
-        "BRA": (26, 14),
-        "CIV": (26, 12),
-
-        "MEX": (26, 10),
-        "ENG": (26, 8),
-
-        "ARG": (26, 6),
-        "AUS": (26, 4),
-
-        "SUI": (26, 2),
-        "COL": (26, 0),
-
-        # OCTAVOS
-
-        "TBD_R1": (22, 13),
-        "TBD_R2": (22, 9),
-
-        "TBD_R3": (22, 5),
-        "TBD_R4": (22, 1),
-
-        # CUARTOS
-
-        "EF3": (18, 11),
-        "EF7": (18, 3),
-
-        # SEMI
-
-        "WQ3": (14, 7),
-
-        # FINAL DERECHO
-
-        "WS2": (10, 7),
-    }
-
+    4653857: (10,4),
+}
 
     # =====================================================
     # CONEXIONES
@@ -983,64 +786,64 @@ def create_plot_playoffs(df):
 
     connections = [
 
-        # --------------------
-        # IZQUIERDA
-        # --------------------
+    # Dieciseisavos -> Octavos
 
-        ("GER", "TBD_L0"),
-        ("FRA", "TBD_L0"),
+    (4653703,4653842),
+    (4653704,4653842),
 
-        ("RSA", "TBD_L1"),
-        ("NED", "TBD_L1"),
+    (4653705,4653843),
+    (4653706,4653843),
 
-        ("POR", "TBD_L2"),
-        ("ESP", "TBD_L2"),
+    (4653707,4653844),
+    (4653708,4653844),
 
-        ("USA", "TBD_L3"),
-        ("BEL", "TBD_L3"),
+    (4653709,4653845),
+    (4653710,4653845),
 
-        ("TBD_L0", "EF1"),
-        ("TBD_L1", "EF1"),
+    (4653711,4653846),
+    (4653712,4653846),
 
-        ("TBD_L2", "EF5"),
-        ("TBD_L3", "EF5"),
+    (4653713,4653847),
+    (4653714,4653847),
 
-        ("EF1", "WQ1"),
-        ("EF5", "WQ1"),
+    (4653715,4653848),
+    (4653716,4653848),
 
-        # --------------------
-        # DERECHA
-        # --------------------
+    (4653717,4653849),
+    (4653718,4653849),
 
-        ("BRA", "TBD_R1"),
-        ("CIV", "TBD_R1"),
+    # Octavos -> Cuartos
 
-        ("MEX", "TBD_R2"),
-        ("ENG", "TBD_R2"),
+    (4653842,4653851),
+    (4653843,4653851),
 
-        ("ARG", "TBD_R3"),
-        ("AUS", "TBD_R3"),
+    (4653844,4653853),
+    (4653845,4653853),
 
-        ("SUI", "TBD_R4"),
-        ("COL", "TBD_R4"),
+    (4653846,4653852),
+    (4653847,4653852),
 
-        ("TBD_R1", "EF3"),
-        ("TBD_R2", "EF3"),
+    (4653848,4653854),
+    (4653849,4653854),
 
-        ("TBD_R3", "EF7"),
-        ("TBD_R4", "EF7"),
+    # Cuartos -> Semis
 
-        ("EF3", "WQ3"),
-        ("EF7", "WQ3"),
+    (4653851,4653855),
+    (4653853,4653855),
 
-        # --------------------
-        # FINAL
-        # --------------------
+    (4653852,4653856),
+    (4653854,4653856),
 
-        ("WQ1", "WS1"),
-        ("WQ3", "WS2"),
+    # Semis -> Final
+
+    (4653855,4653858),
+    (4653856,4653858),
+
+    # Semis -> Bronce
+
+    (4653855,4653857),
+    (4653856,4653857),
     ]
-
 
     # =====================================================
     # FIGURA
@@ -1067,7 +870,7 @@ def create_plot_playoffs(df):
 
     for _, row in df.iterrows():
 
-        key = row["home_shortName"]
+        key = row["matchId"]
 
         if key not in layout:
             continue
