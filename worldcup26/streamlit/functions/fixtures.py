@@ -53,19 +53,30 @@ def match_status(row: pd.Series) -> str:
 
     else:
         return "scheduled"
+    
 def format_score(row):
+
+    def safe_int(value):
+        if pd.isna(value) or value is None:
+            return None
+        return int(value)
     home = int(row["homeScore"])
     away = int(row["awayScore"])
 
+    home_pen = safe_int(row.get("homePenaltyScore"))
+    away_pen = safe_int(row.get("awayPenaltyScore"))
+   
+
     # ajusta esto según tu dataset real
-    result_type = row.get("resultType") or row.get("matchResultType")
+    result_type = row.get("elapsed") or row.get("elapsed")
 
     if result_type == "PEN":
-        return f"{home}-{away} (PEN)"
-    elif result_type == "AET":
+        return f"{home}-{away} \n({home_pen}-{away_pen} PEN)"
+    elif result_type == "AET": 
         return f"{home}-{away} (AET)"
     else:
         return f"{home}-{away}"
+    
     
 def build_event(row: pd.Series) -> dict:
     """
