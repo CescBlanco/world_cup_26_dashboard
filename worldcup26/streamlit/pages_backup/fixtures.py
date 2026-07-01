@@ -65,7 +65,7 @@ def render_fixtures(df: pd.DataFrame) -> None:
         # STANDINGS SECTION
         # =========================
         option = st.segmented_control('\n\n', 
-                           ['🥇 Table groups', '⚔️ Final Stages'], default= '🥇 Table groups')
+                           ['🥇 Table groups', '⚔️ Final Stages'], default= '⚔️ Final Stages')
    
         if option == "🥇 Table groups":
             st.badge("✅ Group stage completed", color="green")
