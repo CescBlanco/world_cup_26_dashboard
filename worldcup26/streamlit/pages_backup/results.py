@@ -191,7 +191,9 @@ def render_results(df: pd.DataFrame):
                 texto_estado = f"PEN ({penalty_score_home}-{penalty_score_away})"
 
             elif estado == "AET":
-                texto_estado = f"AET ({et_score_home}-{et_score_away})"
+                home_final = int(et_score_home) if pd.notna(et_score_home) else int(homeScore)
+                away_final = int(et_score_away) if pd.notna(et_score_away) else int(awayScore)
+                texto_estado = f"AET ({home_final}-{away_final})"
 
             elif estado == "FT":
                 texto_estado = "(FT)"
