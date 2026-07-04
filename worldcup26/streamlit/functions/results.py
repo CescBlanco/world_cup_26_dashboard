@@ -1,6 +1,7 @@
 import pandas as pd
 import streamlit as st
-from dateutil import parser
+
+from datetime import datetime
 from typing import Any
 
 
@@ -246,69 +247,58 @@ def card_formations_subs( player_team: pd.DataFrame, initial_captain_id: int | s
     return first_eleven
 
 #-----------------------------------------CARD SUBSTITUTIONS TEAMS-----------------------------------------
-def card_substitutions(df: pd.DataFrame,player_team: pd.DataFrame) -> None:
+def card_substitutions(matchdict: pd.DataFrame, teams_dict_id_name,
+                         players_dict: dict) -> None:
     """
-    Render player substitution events.
-
-    This function displays all substitutions performed by a team
-    during a match, including the minute, period, substituted player,
-    and incoming player.
-
-    Args:
-        df (pd.DataFrame): Team events dataset containing substitution
-            information.
-        player_team (pd.DataFrame): Team squad dataset used to resolve
-            player identifiers into player names.
-
-    Returns:
-        None
-
-    Raises:
-        TypeError: If inputs are not pandas DataFrames.
-        KeyError: If required columns are missing.
+    Render substitution events for a team.
     """
 
-    # 🔹 Validate input types
-    if not isinstance(df, pd.DataFrame):
-        raise TypeError("df must be a pandas DataFrame")
+    if matchdict.empty:
+        st.info("No substitutions")
+        return
 
-    if not isinstance(player_team, pd.DataFrame):
-        raise TypeError("player_team must be a pandas DataFrame")
+    # Resolver nombres
+    matchdict = matchdict.copy()
+    matchdict['type'] = matchdict['type'].apply(lambda x: x['displayName'] if isinstance(x, dict) else None)
+    matchdict['period'] = matchdict['period'].apply(lambda x: x['displayName'] if isinstance(x, dict) else None)
+    matchdict['nameTeam'] = matchdict['teamId'].map(teams_dict_id_name)
+    matchdict=matchdict[['minute', 'second', 'teamId', 'period'	,'type', 'relatedPlayerId', 'nameTeam']].copy()
+
+    tipos_excluir = [ "FormationSet", "FormationChange", "Pass", "Goal", "Card"]
+    matchdict = matchdict[~matchdict["type"].isin(tipos_excluir)].reset_index(drop=True).copy()
     
-    # 🔹 Extract substitution events
-    substitutions = df[df['subbedInPlayerId'].notna()]
+    matchdict["player_name"] = matchdict["relatedPlayerId"].astype("Int64").astype(str).map(players_dict)
+    
+    # Separar ON y OFF
+    subs_off = matchdict[matchdict["type"] == "SubstitutionOff"].copy()
 
-    # 🔹 Normalize player identifiers
-    player_team["playerId"] = player_team["playerId"].astype(int)
-    player_team["subbedInPlayerId"] = player_team["subbedInPlayerId"].astype("Int64")
+    subs_on = matchdict[ matchdict["type"] == "SubstitutionOn"].copy()
 
-     # 🔹 Create player lookup dictionary
-    sub_map = player_team.copy()
-    sub_map["playerId"] = sub_map["playerId"].astype(int)
-    sub_map = sub_map.set_index("playerId")["name"]
+    # Evitar cruces cuando hay varias sustituciones simultáneas
+    subs_off["sub_idx"] =  subs_off.groupby(["minute", "second", "teamId"]).cumcount()
 
-    # 🔹 Render substitutions
-    for _, jugador in substitutions.iterrows():
+    subs_on["sub_idx"] = subs_on.groupby(["minute", "second", "teamId"]).cumcount()
+    subs = subs_off.merge( subs_on, on=["minute", "second", "teamId", "period", "sub_idx"],suffixes=("_off", "_on")
+    )
 
-        minute = int(jugador.get("subbedOutExpandedMinute"))
-        period = jugador.get("subbedOutPeriod")
-
-        sub_in_id = int(jugador["subbedInPlayerId"])
-        sub_in_name = sub_map.get(sub_in_id, "Unknown")
+    # Render
+    for _, row in subs.iterrows():
 
         st.markdown(
-                f"""
-                <div style="text-align:left; font-size:12.5px;">
-                    <span style="color:#bbb;">{minute}' ({period}): </span>
-                    <strong style="color:#fff;"> {jugador['name']} </strong>
-                    <span style="color:#ff4d4d;"> ↓ </span>
-                    |
-                    <span style="color:#4caf50;"> ↑ </span>
-                    <strong style="color:#fff;">{sub_in_name}</strong>
-                </div>
-                """,
-                unsafe_allow_html=True
-            )
+            f"""
+            <div style="text-align:left; font-size:12.5px;">
+                <span style="color:#bbb;">{row['minute']}' ({row['period']}): </span>
+                <strong style="color:#fff;">{row['player_name_on']}</strong>
+                <span style="color:#ff4d4d;"> ↓ </span>
+                |
+                <span style="color:#4caf50;"> ↑ </span>
+                <strong style="color:#fff;">{row['player_name_off']}</strong>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
+
+        
 def prepare_df_events( matchdict: dict, teams_dict_id_name: dict) -> pd.DataFrame:
     """
     Convert raw WhoScored match events into a structured DataFrame.
@@ -391,7 +381,8 @@ def create_inicidents_for_teams(matchdict: dict,teams_dict_id_name: dict,players
 
     # 🔹 Extract incident events
     df = pd.DataFrame(  matchdict[side]["incidentEvents"])
-
+    if 'cardType' not in df.columns:
+        df['cardType'] = None
     # 🔹 Map team names
     df['nameTeam'] = df['teamId'].map(teams_dict_id_name)
     df['type'] = df['type'].apply(lambda x: x['displayName'] if isinstance(x, dict) else None)
@@ -420,12 +411,18 @@ def create_inicidents_for_teams(matchdict: dict,teams_dict_id_name: dict,players
         return False
 
     # 🔹 Events not relevant for incident timeline
-    excluded_event_types = ["FormationSet","FormationChange","SubstitutionOff","SubstitutionOn","Pass","Tackle","BallTouch"]
+    excluded_event_types = ["FormationSet","FormationChange","SubstitutionOff","Error","Save",
+                            "SubstitutionOn","Pass","Tackle","BallTouch"]
 
     df = df[~df["type"].isin(excluded_event_types)].reset_index(drop=True).copy()
 
     # 🔹 Resolve player names
     df['player_name'] = df['playerId'].astype('Int64').astype(str).map(players_dict)
+
+    df = df[
+        ~((df['type'] == 'Card') & (df['player_name'].isna()))
+    ].reset_index(drop=True)
+
     df['player_name_related'] = df['relatedPlayerId'].astype('Int64').astype(str).map(players_dict)
 
     # 🔹 Detect own goals
@@ -478,7 +475,9 @@ def minute_display(row: pd.Series) -> str:
     minute = int(row['minute'])
     period = row['period']
 
-    # 🔹 First half
+    # =========================
+    # 🟢 FIRST HALF
+    # =========================
     if period == 'FirstHalf':
 
         # normal time
@@ -488,8 +487,10 @@ def minute_display(row: pd.Series) -> str:
         # added time
         return f"45+{minute - 45}"
 
-    # 🔹 Second half
-    if period == 'SecondHalf':
+    # =========================
+    # 🔴 SECOND HALF
+    # =========================
+    elif period == 'SecondHalf':
 
         # normal time
         if minute < 90:
@@ -499,6 +500,17 @@ def minute_display(row: pd.Series) -> str:
 
         # added time 
         return f"90+{minute - 90}"
+
+    elif period == 'FirstPeriodOfExtraTime':
+        if minute < 105:
+            return str(minute + 1)
+        return f"105+{minute-105}"
+
+    elif period == 'SecondPeriodOfExtraTime':
+        if minute < 120:
+            return str(minute + 1)
+        return f"120+{minute-120}"
+    return str(minute + 1)
 
 def event_category(row: pd.Series) -> str:
     """
@@ -526,11 +538,16 @@ def event_category(row: pd.Series) -> str:
         return 'shootout_penalty'
 
     # 🔹 Match penalty
+
+    if row['type'] == 'MissedShots' and row.get('is_match_penalty', False):
+        return 'missed_penalty'
+    
     if row.get('is_match_penalty', False):
         return 'match_penalty'
 
-    # 🔹 Goal
     if row['type'] == 'Goal':
+        if row.get('is_match_penalty', False):
+            return 'match_penalty'
         return 'goal'
 
     # 🔹 Card
@@ -572,6 +589,22 @@ def create_events_keys( matchdict: dict, teams_dict_id_name: dict, players_dict:
 
     # 🔹 Combine both teams
     df = pd.concat([incidents_home, incidents_away], axis=0)
+
+    # 🔹 Team used for rendering (own goals go to the opposite side)
+    team_swap = {
+        home: away,
+        away: home
+    }
+    df['render_team'] = df['nameTeam']
+
+    df.loc[
+        df['is_own_goal'],
+        'render_team'
+    ] = df.loc[
+        df['is_own_goal'],
+        'nameTeam'
+    ].map(team_swap)
+
     
     # 🔹 Split shootout events
     df_shootout = df[df['is_shootout']].copy()
@@ -681,6 +714,9 @@ def render_event( row: pd.Series,home_team: str, away_team: str) -> str:
     elif row['event_category'] == 'card':
         icon = card_icon(row['cardType'])
 
+    elif row['event_category'] == 'missed_penalty':
+        icon = "❌ (P)"
+
     elif row['event_category'] == 'match_penalty':
         icon = "⚽ (P)"
 
@@ -709,14 +745,28 @@ def card_events_key_match( df_match: pd.DataFrame, home_team: str, away_team: st
         TypeError: If df_match is not a DataFrame.
     """
 
-    # 🔹 Detect halftime transition             
-    ht_index = df_match.index[(df_match['period'].shift(1) == 'FirstHalf') &(df_match['period'] == 'SecondHalf')]
+    # 🔹 Detect parts match transition             
+    period_labels = {
+        ('FirstHalf', 'SecondHalf'): 'HT',
+        ('SecondHalf', 'FirstPeriodOfExtraTime'): 'AET',
+        ('SecondHalf', 'SecondPeriodOfExtraTime'): 'AET',
+        ('FirstPeriodOfExtraTime', 'SecondPeriodOfExtraTime'): 'AET HT',
+    }
 
     # 🔹 Render event timeline
     for i, row in df_match.iterrows():
-        # 🔥 HT LINE
-        if i in ht_index:
-            st.markdown("<p style='text-align:center; font-weight:bold; margin:10px 0;'>HT</p>", unsafe_allow_html=True)
+
+        if i > 0:
+            previous_period = df_match.loc[i-1, 'period']
+            current_period = row['period']
+
+            label = period_labels.get((previous_period, current_period))
+
+            if label:
+                st.markdown(
+                    f"<p style='text-align:center; font-weight:bold; margin:10px 0;'>{label}</p>",
+                    unsafe_allow_html=True
+                )
 
 
         icon = render_event(row, home_team, away_team)
@@ -726,13 +776,16 @@ def card_events_key_match( df_match: pd.DataFrame, home_team: str, away_team: st
         # =========================
         if row['event_category'] == 'goal':
 
-            main_text = f"{icon} {row['player_name']}"
+            if row['is_own_goal']:
+                main_text = f"{icon} {row['player_name']} (OG)"
+            else:
+                main_text = f"{icon} {row['player_name']}"
 
             assist_text = ""
             if pd.notna(row.get('player_name_related')):
                 assist_text = f"🅰️ {row['player_name_related']}"
 
-            if row['nameTeam'] == home_team:
+            if row['render_team'] == home_team:
 
                 left = f"""
                 <div style='text-align: right; line-height:1.2;font-size:13px '>
@@ -759,7 +812,7 @@ def card_events_key_match( df_match: pd.DataFrame, home_team: str, away_team: st
 
             text = f"{icon} {row['player_name']}"
 
-            if row['nameTeam'] == home_team:
+            if row['render_team'] == home_team:
                 left = f"<p style='text-align:right; font-size:13px '>{text}</p>"
                 right = ""
 
@@ -1193,8 +1246,8 @@ def formatear_fecha_segura(f: Any) -> str:
             # Supports multiple formats such as:
             # - 23-05-2025
             # - 2025-05-23
-            fecha_obj = parser.parse(f, dayfirst=True) 
-            return fecha_obj.strftime('%d/%m/%Y')
+            fecha_obj = datetime.strptime(f, "%Y-%m-%d")
+            return fecha_obj.strftime("%d/%m/%Y")
         
         except Exception:
             # Return original value when parsing fails
@@ -1239,38 +1292,52 @@ def results_filtres(df: pd.DataFrame) -> tuple[pd.DataFrame, str, str | None, An
             raise TypeError("df must be a pandas DataFrame")
         col0, col1, col2 = st.columns([1,1,1])
         
-        stages = sorted(df['matchround'].dropna().unique().tolist())
-        if not stages:
-         raise ValueError("No stages available in dataframe")
-        
         with st.container():
             # ---------------------------
             # Stage filter
             # ---------------------------
-
             with col0:
-                stage_selected = st.selectbox( "🏆 Select stage",stages, index=len(stages) - 1)
+                from zoneinfo import ZoneInfo
+
+                hoy = pd.Timestamp.now(tz=ZoneInfo("Europe/Madrid")).normalize().tz_localize(None)
+                stages = sorted(df['matchround'].dropna().unique().tolist())
+                if not stages:
+                    raise ValueError("No stages available in dataframe")
+                
+                 # Buscar stage que contiene la fecha de hoy
+                stage_por_defecto = stages[0]
+
+                for stage in stages:
+                    fechas_stage = pd.to_datetime(
+                        df.loc[df["matchround"] == stage, "match_date"]
+                    ).dt.normalize()
+                    
+                    if hoy in fechas_stage.values:
+                        stage_por_defecto = stage
+                        break
+
+                indice_stage = stages.index(stage_por_defecto)
+                
+                stage_selected = st.selectbox( "🏆 Select stage",stages, index=indice_stage)
+                df_filtered_stage_selected = df[df["matchround"] == stage_selected]
 
             # NOTE:
             # The current implementation stores the selected stage
             # but does not directly filter the dataframe using it.
 
-            # Filtrar DF por stage
-            #df_stage = df[df["matchround"] == stage_selected]
-            #id_stage= df["stageName"].iloc[0] if not df.empty else None
-            id_stage= df["round_id"].iloc[0]
+            id_stage= df_filtered_stage_selected["round_id"].iloc[0]
             # ---------------------------
             # Group filter
             # ---------------------------
             use_group_filter = st.checkbox("🔁 Filter by group")
-            groups = sorted(df['stageName'].dropna().unique().tolist())
+            groups = sorted(df_filtered_stage_selected['stageName'].dropna().unique().tolist())
             group_selected = None
-            df_filtered = df
+            df_filtered = df_filtered_stage_selected
 
             with col1:
                 if use_group_filter:
                     group_selected = st.selectbox( "🔁 Select group", groups, index=len(groups) - 1 if len(groups) > 0 else 0 )
-                    df_filtered = df[df["stageName"] == group_selected]
+                    df_filtered = df_filtered[df_filtered["stageName"] == group_selected]
                 else:
                     st.info("Group filter disabled")
             
@@ -1278,13 +1345,14 @@ def results_filtres(df: pd.DataFrame) -> tuple[pd.DataFrame, str, str | None, An
             # Date filter
             # --------------------------- 
             fechas = sorted(df_filtered['match_date'].dropna().unique().tolist())
-            fechas_formateadas = [formatear_fecha_segura(f) for f in fechas]
-
+            fechas_formateadas = [formatear_fecha_segura(f) for f in fechas]       
 
             with col2:
                 fecha_elegida = None
                 if len(fechas) > 0:
-                    fecha_label = st.selectbox("📆 Select date", fechas_formateadas )
+                    
+                    indice_hoy = min( range(len(fechas)), key=lambda i: abs(pd.Timestamp(fechas[i]).normalize() - hoy))
+                    fecha_label = st.selectbox("📆 Select date", fechas_formateadas, index=indice_hoy)
 
                     idx = fechas_formateadas.index(fecha_label)
                     fecha_elegida = fechas[idx]
@@ -1296,6 +1364,14 @@ def results_filtres(df: pd.DataFrame) -> tuple[pd.DataFrame, str, str | None, An
 
             if fecha_elegida:
                 partidos = partidos[partidos["match_date"] == fecha_elegida]
+
+            partidos["match_datetime_sort"] = pd.to_datetime(
+                partidos["match_date"].astype(str) + " " + partidos["match_time"].astype(str),
+                errors="coerce"
+            )
+
+            partidos = partidos.sort_values("match_datetime_sort", ascending=True)
+            
             return partidos, stage_selected, group_selected, fecha_elegida, id_stage
         
 def match_list_post_filter(partidos: pd.DataFrame,stage_selected: str,group_selected: str | None,fecha_elegida: Any,id_stage : str) -> None:
@@ -1334,16 +1410,38 @@ def match_list_post_filter(partidos: pd.DataFrame,stage_selected: str,group_sele
     """
     if not isinstance(partidos, pd.DataFrame):
         raise TypeError( "partidos must be a pandas DataFrame")
-
+    # Mostrar nombre del stage
+    if int(id_stage) <= 3:
+        stage_display = id_stage
+    else:
+        stage_display = stage_selected
     # Display filter summary
     if not partidos.empty:
         st.markdown(f"""
             <h3 style='margin-top: 1em; color: #999;'>
-                ⚽ Stage: <span style='color:white;'>{id_stage} ,</span>
+                ⚽ Stage: <span style='color:white;'>{stage_display} ,</span>
                 {f" Group: <span style='color:white;'>{group_selected}, </span>" if group_selected else "All groups, "}
                 {f" Matches from <span style='color:white;'>{formatear_fecha_segura(fecha_elegida)}</span>" if fecha_elegida else ""}
             </h3>
         """, unsafe_allow_html=True)
+    # ------------------------------------
+    # Autoabrir si solo hay 1 partido jugado
+    # ------------------------------------
+    partidos_finalizados = partidos[ partidos["status"] == 6]
+
+    if len(partidos_finalizados) == 1:
+
+        url_unica = partidos_finalizados.iloc[0]["url_match"]
+
+        if  st.session_state.get("partido_mostrado") != url_unica:
+            st.session_state["partido_mostrado"] = url_unica
+
+    elif len(partidos_finalizados) > 1:
+
+        partido_actual = st.session_state.get("partido_mostrado")
+
+        if ( partido_actual is not None and partido_actual not in partidos["url_match"].values):
+            st.session_state.pop("partido_mostrado", None )     
 
     for _, row in partidos.iterrows():
         with st.container():
@@ -1364,17 +1462,20 @@ def match_list_post_filter(partidos: pd.DataFrame,stage_selected: str,group_sele
             # ---------------------------
             # Match status
             # ---------------------------
-            estado = f"🕒 {hora_str}"
-            if pd.notna(row.get('elapsed')):
+            if row.get('status')==6:
                 estado = "✅ Completed"
+
+            elif row.get('status')==3:
+                estado= "🔴 Live"
             else :
-                estado = "Not started"
+                estado = f"🕒 Scheduled ({hora_str})"
             
             # ---------------------------
             # Match score
             # ---------------------------
-            resultado = ( f"{row.get('homeScore')}-{row.get('awayScore')}"if pd.notna(row.get('homeScore'))
-                            and pd.notna(row.get('awayScore'))else "vs")
+            resultado = ("vs" if row.get("status") == 3 else ( f"{int(row.get('homeScore'))}-{int(row.get('awayScore'))}"
+                    if pd.notna(row.get('homeScore')) and pd.notna(row.get('awayScore')) else "vs"))
+            
             home_team = row.get('homeTeamName', '')
             away_team = row.get('awayTeamName', '')
             homeTeamPhoto = row.get('homeTeamPhoto', '')
@@ -1388,15 +1489,38 @@ def match_list_post_filter(partidos: pd.DataFrame,stage_selected: str,group_sele
             col1, col2 = st.columns([0.70, 0.35])
 
             with col1:
+                partido_abierto = (
+                    st.session_state.get("partido_mostrado")
+                    == partido_url
+                )
+
+                card_border = (
+                    "2px solid #4CAF50"
+                    if partido_abierto
+                    else "1px solid #e0e0e0"
+                )
+
+                card_shadow = (
+                    "0 0 12px rgba(76,175,80,0.25)"
+                    if partido_abierto
+                    else "2px 2px 8px rgba(0,0,0,0.05)"
+                )
+
+                card_background = (
+                    "rgba(76,175,80,0.05)"
+                    if partido_abierto
+                    else "transparent"
+                )
+
                 partido_html = f"""
                 <div style="
-                    border: 1px solid #e0e0e0;
-                    border-radius: 15px;
-                    padding: 1.5em;
-                    margin-bottom: 1em;
-                    background-color: transparent;
-                    box-shadow: 2px 2px 8px rgba(0,0,0,0.05);
-                ">
+                        border: {card_border};
+                        border-radius: 15px;
+                        padding: 1.5em;
+                        margin-bottom: 1em;
+                        background-color: {card_background};
+                        box-shadow: {card_shadow};
+                    ">
                     <div style="display: flex; justify-content: space-between; align-items: center;">
                         <div style="font-size: 14px; color: #999;">{estado}</div>
                         <div style="text-align: center; flex: 1;">
@@ -1412,16 +1536,113 @@ def match_list_post_filter(partidos: pd.DataFrame,stage_selected: str,group_sele
                 st.markdown(partido_html, unsafe_allow_html=True)
 
             with col2:
+
+                status = row.get("status")
+                partido_jugado = status == 6
                 # Match details are only available once a winner field exists.
-                if pd.notna(row.get('winnerField')):
-                    if st.button("🔍 View match details", key=clave):
-                        if st.session_state.get("partido_mostrado") == partido_url:
-                            del st.session_state["partido_mostrado"]
+
+                if partido_jugado:
+
+                    varios_partidos = len(partidos_finalizados) > 1
+
+                    partido_abierto = st.session_state.get("partido_mostrado")== partido_url
+                
+                    if varios_partidos:
+
+                        if partido_abierto:
+
+                            if st.button(  "❌ Hide details", key=f"hide_{clave}"):
+
+                                st.session_state.pop("partido_mostrado",None) 
+                                st.rerun()
+
                         else:
-                            st.session_state["partido_mostrado"] = partido_url
-                    
+                            if st.button("🔍 View match details", key=clave):
+
+                                st.session_state[ "partido_mostrado"] = partido_url
+                                st.rerun()
+
+                    else:
+
+                        pass
+
                 else:
-                    st.markdown('<span style="color:gray">Details are not yet available.</span>', unsafe_allow_html=True)
+
+                    st.markdown(
+                        """
+                        <span style="color:gray">
+                            Details are not yet available.
+                        </span>
+                        """,
+                        unsafe_allow_html=True
+                    )
+
+def get_valid_color(team: str,current_color: str,team_colors: dict[str, Any]) -> str:
+    """
+    Return a valid team color, replacing invalid FotMob colors.
+
+    FotMob occasionally returns '#000000' as a placeholder or
+    incorrect team color. When this occurs, the function attempts
+    to retrieve a valid color from the lightMode configuration and,
+    if necessary, from the darkMode configuration.
+
+    Priority order:
+        1. current_color
+        2. lightMode[team]
+        3. darkMode[team]
+
+    Args:
+        team (str):
+            Team side identifier ('home' or 'away').
+
+        current_color (str):
+            Color obtained from the matchFacts section.
+
+        team_colors (dict[str, Any]):
+            Team color configuration from:
+            data['data']['general']['teamColors']
+
+    Returns:
+        str:
+            A valid hexadecimal color string.
+
+    Raises:
+        TypeError:
+            If team is not a string or team_colors is not a dictionary.
+
+        ValueError:
+            If team is not 'home' or 'away'.
+    """
+    if not isinstance(team, str):
+        raise TypeError("team must be a string")
+
+    if not isinstance(team_colors, dict):
+        raise TypeError("team_colors must be a dictionary")
+
+    if team not in {"home", "away"}:
+        raise ValueError("team must be either 'home' or 'away'")
+
+    invalid_colors = {'#000000', '#100f10'}
+    current_color = (current_color or '').lower()
+    
+    # Current color is valid
+    if current_color not in invalid_colors:
+        return current_color
+
+    # Try light mode
+    light_color = team_colors.get('lightMode', {}).get(team)
+
+    if light_color and light_color.lower() not in invalid_colors:
+        return light_color
+
+    # Try dark mode
+    dark_color = team_colors.get('darkMode', {}).get(team)
+
+    if dark_color and dark_color.lower() not in invalid_colors:
+        return dark_color
+
+    # Fallback
+    return current_color
 
 def prepare_data_fotmob_cache( data: dict[str, Any]) -> tuple[str,str,str,str,int,int,dict[int, str]]:
     """
@@ -1464,6 +1685,11 @@ def prepare_data_fotmob_cache( data: dict[str, Any]) -> tuple[str,str,str,str,in
     colors_teams_fotmob= pd.DataFrame(data['content']['matchFacts']['playerOfTheMatch']['teamData'])
     color_home = colors_teams_fotmob['home']['color']
     color_away = colors_teams_fotmob['away']['color']
+
+    # Replace invalid FotMob colors using team color configuration
+    team_colors = data['general']['teamColors']
+    color_home = get_valid_color('home', color_home, team_colors)
+    color_away = get_valid_color('away', color_away, team_colors)
 
     # Extract team metadata
     name_home_fotmob= pd.DataFrame(data['header']['teams'])['name'].values[0]
@@ -1524,7 +1750,7 @@ def prepare_data_whoscored_cache( url_match_preview: str) -> tuple[dict, dict, d
     # Attempt cache retrieval
     cache_data = load_match_cache_whoscored(match_id_whoscored)
     if cache_data:
-        st.badge(f"🟢 Data loaded from CACHE WHOSCORED (match {match_id_whoscored})", color="green")
+        #st.badge(f"🟢 Data loaded from CACHE WHOSCORED (match {match_id_whoscored})", color="green")
 
         formation_mappings = cache_data["formation_mappings"]
         event_types_json = cache_data["event_types_json"]
@@ -1538,6 +1764,6 @@ def prepare_data_whoscored_cache( url_match_preview: str) -> tuple[dict, dict, d
         # Save newly scraped data
         save_match_cache_whoscored( match_id_whoscored, formation_mappings, event_types_json,
                                     matchdict, players_dict)
-        st.badge(f"🔵 Cache created successfully for match {match_id_whoscored}",  color="blue")
+        #st.badge(f"🔵 Cache created successfully for match {match_id_whoscored}",  color="blue")
 
     return formation_mappings, event_types_json, matchdict, players_dict

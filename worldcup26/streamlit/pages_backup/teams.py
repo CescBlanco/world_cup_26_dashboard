@@ -1,5 +1,6 @@
 import streamlit as st
 import pandas as pd
+from st_clickable_images import clickable_images
 
 def render_teams(df: pd.DataFrame) -> None:
     """
@@ -34,41 +35,68 @@ def render_teams(df: pd.DataFrame) -> None:
 
     try:
         # 🔹 Render section title
-        st.subheader("🌍 Participating Teams")
+        st.subheader("🌍 Competing Teams")
+
+        st.info("Select a team by tapping its badge.")
 
         # 🔹 Create responsive grid layout
         cols = st.columns(4)
 
         # 🔹 Render one card per team
         for i, row in enumerate(df.to_dict("records")):
-
             with cols[i % 4]:
-
-                st.markdown(
-                    f"""
-                    <div style="
-                        border-radius: 12px;
-                        padding: 13px;
-                        background: #2e2e2e;
+                with st.container(border=True):
+                    
+                        
+                    st.markdown(
+                    """
+                    <style>
+                    .team-card {
                         text-align: center;
-                        box-shadow: 0 2px 8px rgba(0,0,0,0.25);
-                        margin-bottom: 10px;
-                    ">
-                        <img src="{row['team_photo']}"
-                             style="width:85px; border-radius:8px;"><br>
-                        <h4 style="margin:8px 0 0 0; color:white;">
-                            {row['Squad']}
-                        </h4>
-                    </div>
+                        padding: 2px;
+                    }
+                    .team-name {
+                        text-align: center;
+                        font-weight: 600;
+                        margin-top: 3px;
+                        color: white;
+                        font-size: 20px;
+                    }
+                    </style>
                     """,
-                    unsafe_allow_html=True
+                    unsafe_allow_html=True,
                 )
+            
+                    clicked = clickable_images(
+                            [row["team_photo"]],
+                            titles=[f"View {row['Squad']}"],
+                            div_style={
+                                "display": "flex",
+                                "justify-content": "center",
+                            },
+                            img_style={
+                                "width": "140px",
+                                "border-radius": "12px",
+                                "padding": "12px",
+                                "background-color": "#2e2e2e",
+                                "box-shadow": "0 2px 8px rgba(0,0,0,0.25)",
+                                "transition": "all 0.2s ease-in-out",
+                            },
+                        )
 
-                # 🔹 Navigate to the selected team page
-                if st.button( "View Team →", key=f"team_{row['team']}_{i}"):
-                    st.session_state.selected_team = row["team"]
-                    st.session_state.page = "team_detail"
-                    st.rerun()
+                    st.markdown(
+                            f"""
+                            <div class="team-card">
+                                <div class="team-name">{row['Squad'].upper()}</div>
+                            </div>
+                            """,
+                            unsafe_allow_html=True,
+                        )
+
+                    if clicked > -1:
+                        st.session_state.selected_team = row["Squad"]
+                        st.session_state.page = "team_detail"
+                        st.rerun()
 
     except Exception as e:
         raise RuntimeError( f"Failed to render teams grid: {e}")

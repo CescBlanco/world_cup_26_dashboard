@@ -47,8 +47,16 @@ from pages_backup.results import render_results
 # - Layout mode
 #
 # =============================================================================
-
 st.set_page_config(page_title="World Cup 2026", page_icon="⚽", layout="wide")
+
+st.markdown("""
+<style>
+.stApp {
+    background-color: #0e1117 !important;
+    color: #fafafa !important;
+}
+</style>
+""", unsafe_allow_html=True)
 
 # =============================================================================
 # GLOBAL STYLING
@@ -104,7 +112,7 @@ df_teams_dataset = build_teams_dataset(df_teams, df_fifa, df_elo)
 #
 # =============================================================================
 if "page" not in st.session_state:
-    st.session_state.page = "teams"
+    st.session_state.page = "match results"
 
 if "selected_team" not in st.session_state:
     st.session_state.selected_team = None
@@ -199,10 +207,10 @@ with st.sidebar:
         st.session_state.page = "venues"
 
     if st.button("📅 Match schedule"):
-        st.session_state.page = "fixtures"
+        st.session_state.page = "match schedule"
 
     if st.button("📊 Results"):
-        st.session_state.page = "results"
+        st.session_state.page = "match results"
     
     st.info(f"**Current page:** {st.session_state.page.title()}")
     st.divider()
@@ -303,7 +311,7 @@ elif st.session_state.page == "team_detail":
     
     team = st.session_state.selected_team
 
-    team_data = df_teams_dataset[df_teams_dataset["team"] == team]
+    team_data = df_teams_dataset[df_teams_dataset["Squad"] == team]
     render_team_detail(team_data)
 
 # =============================================================================
@@ -321,7 +329,7 @@ elif st.session_state.page == "team_detail":
 # =============================================================================
 elif st.session_state.page == "rosters":
 
-    selected = st.selectbox( "Select Team",sorted(df_teams_dataset["team"].dropna().unique()))
+    selected = st.selectbox( "Select Team",sorted(df_teams_dataset["Squad"].dropna().unique()))
 
     df_all_players = load_all_players_fotmob()
     players_team = df_all_players[df_all_players["team_name"] == selected]
@@ -363,7 +371,7 @@ elif st.session_state.page == "venues":
 # - Standings integration
 #
 # =============================================================================
-elif st.session_state.page == "fixtures":
+elif st.session_state.page == "match schedule":
 
     st.subheader("📅 World Cup Calendar")   
 
@@ -393,7 +401,7 @@ elif st.session_state.page == "fixtures":
 # World Cup 2026 competition data becomes available.
 #
 # =============================================================================
-elif st.session_state.page == "results":
+elif st.session_state.page == "match results":
 
     st.subheader("📊 Results")
     df_fixtures_copaam = load_fixtures_pruebas()

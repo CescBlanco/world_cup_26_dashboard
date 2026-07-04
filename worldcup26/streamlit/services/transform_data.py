@@ -1,6 +1,8 @@
 from utils.mapping import *
 import pandas as pd
+import streamlit as st
 
+@st.cache_data(ttl=3600)
 def build_teams_dataset(df_teams: pd.DataFrame,df_fifa: pd.DataFrame,df_elo: pd.DataFrame) -> pd.DataFrame:
     """
     Build a consolidated teams dataset by combining team information,

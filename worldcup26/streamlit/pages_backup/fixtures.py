@@ -43,11 +43,13 @@ def render_fixtures(df: pd.DataFrame) -> None:
         # =========================
         df = df.copy()
         df["match_datetime"] = pd.to_datetime(df["match_datetime"])
+        df["homeScore"] = pd.to_numeric(df["homeScore"], errors="coerce")
+        df["awayScore"] = pd.to_numeric(df["awayScore"], errors="coerce")
 
         # =========================
         # BUILD CALENDAR EVENTS
         # =========================
-        events = [ build_event(row) for row in df.to_dict("records")]
+        events = df.apply(build_event, axis=1).tolist()
 
         # =========================
         # CALENDAR RENDERING
@@ -62,7 +64,21 @@ def render_fixtures(df: pd.DataFrame) -> None:
         # =========================
         # STANDINGS SECTION
         # =========================
-        table_groups()
+        option = st.segmented_control('\n\n', 
+                           ['🥇 Table groups', '⚔️ Final Stages'], default= '⚔️ Final Stages')
+   
+        if option == "🥇 Table groups":
+            st.badge("✅ Group stage completed", color="green")
+            table_groups()
+
+        elif option == "⚔️ Final Stages":
+
+            df_final_playoffs = prepare_playoffs_wc26()  
+        
+            fig = create_plot_playoffs(df_final_playoffs)
+            #st.info("Knockout stage pairings are provisional and will be finalized once all group standings are confirmed.")
+
+            st.pyplot(fig, use_container_width=True)
 
     except Exception as e:
         raise RuntimeError(f"Failed to render fixtures page: {e}")

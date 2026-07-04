@@ -694,7 +694,7 @@ def squad_by_position( players_only: pd.DataFrame) -> None:
         # 🔹 Skip empty position groups
         if players.empty:
             continue
-        
+        players = players.sort_values(by="transferValue",ascending=False)
         # 🔹 Create player card layout
         st.subheader(title)
 
@@ -754,10 +754,10 @@ def squad_by_position( players_only: pd.DataFrame) -> None:
                                 f"""
                                 <div style="
                                     background:{color};
-                                    color:white;
+                                    color:black;
                                     border-radius:8px;
                                     padding:6px 10px;
-                                    text-align:right;
+                                    text-align:center;
                                     font-weight:bold;
                                 ">
                                     {float(rating):.1f}

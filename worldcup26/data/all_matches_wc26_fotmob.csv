@@ -1,33 +1,105 @@
 round,roundName,pageUrl,id,home.name,home.id,away.name,away.id
-1,1,https://www.fotmob.com/matches/canada-vs-argentina/1an224#4407860,4407860,Argentina,6706,Canada,5810
-1,1,https://www.fotmob.com/matches/peru-vs-chile/2031k6#4377170,4377170,Peru,5798,Chile,9762
-1,1,https://www.fotmob.com/matches/venezuela-vs-ecuador/1akn65#4377176,4377176,Ecuador,6707,Venezuela,5800
-1,1,https://www.fotmob.com/matches/jamaica-vs-mexico/1an228#4377175,4377175,Mexico,6710,Jamaica,5806
-1,1,https://www.fotmob.com/matches/bolivia-vs-usa/1alg4q#4377205,4377205,United States,6713,Bolivia,5797
-1,1,https://www.fotmob.com/matches/uruguay-vs-panama/14vs7r#4377204,4377204,Uruguay,5796,Panama,5922
-1,1,https://www.fotmob.com/matches/paraguay-vs-colombia/1utthz#4377210,4377210,Colombia,8258,Paraguay,6724
-1,1,https://www.fotmob.com/matches/costa-rica-vs-brazil/1un2w9#4407876,4407876,Brazil,8256,Costa Rica,6705
-2,2,https://www.fotmob.com/matches/peru-vs-canada/144a66#4407861,4407861,Peru,5798,Canada,5810
-2,2,https://www.fotmob.com/matches/argentina-vs-chile/28qplg#4377171,4377171,Chile,9762,Argentina,6706
-2,2,https://www.fotmob.com/matches/jamaica-vs-ecuador/1am938#4377177,4377177,Ecuador,6707,Jamaica,5806
-2,2,https://www.fotmob.com/matches/venezuela-vs-mexico/1alg4n#4377178,4377178,Venezuela,5800,Mexico,6710
-2,2,https://www.fotmob.com/matches/panama-vs-usa/1bj4sz#4377207,4377207,Panama,5922,United States,6713
-2,2,https://www.fotmob.com/matches/uruguay-vs-bolivia/140jw2#4377206,4377206,Uruguay,5796,Bolivia,5797
-2,2,https://www.fotmob.com/matches/costa-rica-vs-colombia/1unpzk#4407877,4407877,Colombia,8258,Costa Rica,6705
-2,2,https://www.fotmob.com/matches/paraguay-vs-brazil/1ut6dm#4377211,4377211,Paraguay,6724,Brazil,8256
-3,3,https://www.fotmob.com/matches/peru-vs-argentina/1aju7y#4377172,4377172,Argentina,6706,Peru,5798
-3,3,https://www.fotmob.com/matches/canada-vs-chile/2071p0#4407862,4407862,Canada,5810,Chile,9762
-3,3,https://www.fotmob.com/matches/venezuela-vs-jamaica/143s97#4377179,4377179,Jamaica,5806,Venezuela,5800
-3,3,https://www.fotmob.com/matches/ecuador-vs-mexico/1hlgxf#4377180,4377180,Mexico,6710,Ecuador,6707
-3,3,https://www.fotmob.com/matches/bolivia-vs-panama/14w19a#4377208,4377208,Bolivia,5797,Panama,5922
-3,3,https://www.fotmob.com/matches/uruguay-vs-usa/1al6h8#4377209,4377209,United States,6713,Uruguay,5796
-3,3,https://www.fotmob.com/matches/brazil-vs-colombia/296xs5#4377212,4377212,Brazil,8256,Colombia,8258
-3,3,https://www.fotmob.com/matches/costa-rica-vs-paraguay/1hox8b#4407878,4407878,Costa Rica,6705,Paraguay,6724
-1/4,Quarter-Finals,https://www.fotmob.com/matches/argentina-vs-ecuador/1hkbiq#4407868,4407868,Argentina,6706,Ecuador,6707
-1/4,Quarter-Finals,https://www.fotmob.com/matches/venezuela-vs-canada/144s35#4407869,4407869,Venezuela,5800,Canada,5810
-1/4,Quarter-Finals,https://www.fotmob.com/matches/panama-vs-colombia/1nv62k#4407871,4407871,Colombia,8258,Panama,5922
-1/4,Quarter-Finals,https://www.fotmob.com/matches/uruguay-vs-brazil/1msfui#4407870,4407870,Uruguay,5796,Brazil,8256
-1/2,Semi-Finals,https://www.fotmob.com/matches/canada-vs-argentina/1an224#4407872,4407872,Argentina,6706,Canada,5810
-1/2,Semi-Finals,https://www.fotmob.com/matches/uruguay-vs-colombia/1mt1jb#4407873,4407873,Uruguay,5796,Colombia,8258
-bronze,Bronze Final,https://www.fotmob.com/matches/uruguay-vs-canada/143s9b#4407874,4407874,Canada,5810,Uruguay,5796
-final,Final,https://www.fotmob.com/matches/argentina-vs-colombia/1uo1j8#4407875,4407875,Argentina,6706,Colombia,8258
+1,1,https://www.fotmob.com/matches/south-africa-vs-mexico/1einvt#4667751,4667751,Mexico,6710,South Africa,6316
+1,1,https://www.fotmob.com/matches/south-korea-vs-czechia/273opa#4667752,4667752,Korea Republic,7804,Czechia,8496
+1,1,https://www.fotmob.com/matches/canada-vs-bosnia-herzegovina/23f1qo#4667757,4667757,Canada,5810,Bosnia-Herzegovina,10106
+1,1,https://www.fotmob.com/matches/usa-vs-paraguay/1hr85j#4667771,4667771,United States,6713,Paraguay,6724
+1,1,https://www.fotmob.com/matches/qatar-vs-switzerland/1beswv#4667758,4667758,Qatar,5902,Switzerland,6717
+1,1,https://www.fotmob.com/matches/morocco-vs-brazil/1qr4gd#4667764,4667764,Brazil,8256,Morocco,6262
+1,1,https://www.fotmob.com/matches/haiti-vs-scotland/1q0g2q#4667765,4667765,Haiti,5934,Scotland,8498
+1,1,https://www.fotmob.com/matches/turkiye-vs-australia/1gr3uk#4667772,4667772,Australia,6716,Türkiye,6595
+1,1,https://www.fotmob.com/matches/germany-vs-curacao/k77fsyu#4667777,4667777,Germany,8570,Curaçao,287981
+1,1,https://www.fotmob.com/matches/netherlands-vs-japan/1hn72b#4667783,4667783,Netherlands,6708,Japan,6715
+1,1,https://www.fotmob.com/matches/ecuador-vs-ivory-coast/1hl6kp#4667778,4667778,Côte d'Ivoire,6709,Ecuador,6707
+1,1,https://www.fotmob.com/matches/tunisia-vs-sweden/1x5290#4667784,4667784,Sweden,8520,Tunisia,6719
+1,1,https://www.fotmob.com/matches/cape-verde-vs-spain/1bbtuo#4667798,4667798,Spain,6720,Cape Verde,5888
+1,1,https://www.fotmob.com/matches/belgium-vs-egypt/2u3bhg#4667790,4667790,Belgium,8263,Egypt,10255
+1,1,https://www.fotmob.com/matches/uruguay-vs-saudi-arabia/1izuvb#4667799,4667799,Saudi Arabia,7795,Uruguay,5796
+1,1,https://www.fotmob.com/matches/new-zealand-vs-iran/1ar30l#4667791,4667791,IR Iran,6711,New Zealand,5820
+1,1,https://www.fotmob.com/matches/senegal-vs-france/1f8fvo#4667804,4667804,France,6723,Senegal,6395
+1,1,https://www.fotmob.com/matches/iraq-vs-norway/1oz68o#4667805,4667805,Iraq,5819,Norway,8492
+1,1,https://www.fotmob.com/matches/algeria-vs-argentina/1ehtqa#4667812,4667812,Argentina,6706,Algeria,6317
+1,1,https://www.fotmob.com/matches/jordan-vs-austria/1my603#4667813,4667813,Austria,8255,Jordan,5816
+1,1,https://www.fotmob.com/matches/dr-congo-vs-portugal/1s6g4o#4667819,4667819,Portugal,8361,Congo DR,6321
+1,1,https://www.fotmob.com/matches/england-vs-croatia/2viayw#4667825,4667825,England,8491,Croatia,10155
+1,1,https://www.fotmob.com/matches/panama-vs-ghana/1bjek0#4667826,4667826,Ghana,6714,Panama,5922
+1,1,https://www.fotmob.com/matches/colombia-vs-uzbekistan/2dm7x9#4667820,4667820,Uzbekistan,8700,Colombia,8258
+2,2,https://www.fotmob.com/matches/south-africa-vs-czechia/1tbjja#4667753,4667753,Czechia,8496,South Africa,6316
+2,2,https://www.fotmob.com/matches/switzerland-vs-bosnia-herzegovina/2c9awx#4667759,4667759,Switzerland,6717,Bosnia-Herzegovina,10106
+2,2,https://www.fotmob.com/matches/canada-vs-qatar/14u9ym#4667760,4667760,Canada,5810,Qatar,5902
+2,2,https://www.fotmob.com/matches/mexico-vs-south-korea/1qpvav#4667754,4667754,Mexico,6710,Korea Republic,7804
+2,2,https://www.fotmob.com/matches/usa-vs-australia/1hox83#4667774,4667774,United States,6713,Australia,6716
+2,2,https://www.fotmob.com/matches/morocco-vs-scotland/1sv292#4667766,4667766,Scotland,8498,Morocco,6262
+2,2,https://www.fotmob.com/matches/haiti-vs-brazil/1ny7ix#4667767,4667767,Brazil,8256,Haiti,5934
+2,2,https://www.fotmob.com/matches/turkiye-vs-paraguay/1gte1s#4667773,4667773,Türkiye,6595,Paraguay,6724
+2,2,https://www.fotmob.com/matches/netherlands-vs-sweden/1x1gy6#4667786,4667786,Netherlands,6708,Sweden,8520
+2,2,https://www.fotmob.com/matches/ivory-coast-vs-germany/1xi59e#4667780,4667780,Germany,8570,Côte d'Ivoire,6709
+2,2,https://www.fotmob.com/matches/ecuador-vs-curacao/jy3jhs3#4667779,4667779,Ecuador,6707,Curaçao,287981
+2,2,https://www.fotmob.com/matches/japan-vs-tunisia/1hqd1q#4667785,4667785,Tunisia,6719,Japan,6715
+2,2,https://www.fotmob.com/matches/spain-vs-saudi-arabia/1qq6ht#4667801,4667801,Spain,6720,Saudi Arabia,7795
+2,2,https://www.fotmob.com/matches/iran-vs-belgium/1ur91k#4667793,4667793,Belgium,8263,IR Iran,6711
+2,2,https://www.fotmob.com/matches/uruguay-vs-cape-verde/14n97e#4667800,4667800,Uruguay,5796,Cape Verde,5888
+2,2,https://www.fotmob.com/matches/new-zealand-vs-egypt/24xk7y#4667792,4667792,New Zealand,5820,Egypt,10255
+2,2,https://www.fotmob.com/matches/argentina-vs-austria/1un2w8#4667815,4667815,Argentina,6706,Austria,8255
+2,2,https://www.fotmob.com/matches/iraq-vs-france/1au1fo#4667807,4667807,France,6723,Iraq,5819
+2,2,https://www.fotmob.com/matches/senegal-vs-norway/1tzewo#4667806,4667806,Norway,8492,Senegal,6395
+2,2,https://www.fotmob.com/matches/jordan-vs-algeria/17tvf0#4667814,4667814,Jordan,5816,Algeria,6317
+2,2,https://www.fotmob.com/matches/portugal-vs-uzbekistan/2enrsr#4667822,4667822,Portugal,8361,Uzbekistan,8700
+2,2,https://www.fotmob.com/matches/ghana-vs-england/1wtyve#4667828,4667828,England,8491,Ghana,6714
+2,2,https://www.fotmob.com/matches/panama-vs-croatia/24y93x#4667827,4667827,Panama,5922,Croatia,10155
+2,2,https://www.fotmob.com/matches/dr-congo-vs-colombia/1ra58w#4667821,4667821,Colombia,8258,Congo DR,6321
+3,3,https://www.fotmob.com/matches/qatar-vs-bosnia-herzegovina/24aiya#4667762,4667762,Bosnia-Herzegovina,10106,Qatar,5902
+3,3,https://www.fotmob.com/matches/canada-vs-switzerland/1aq0cl#4667761,4667761,Switzerland,6717,Canada,5810
+3,3,https://www.fotmob.com/matches/haiti-vs-morocco/18aaq8#4667769,4667769,Morocco,6262,Haiti,5934
+3,3,https://www.fotmob.com/matches/brazil-vs-scotland/2bkifh#4667768,4667768,Scotland,8498,Brazil,8256
+3,3,https://www.fotmob.com/matches/mexico-vs-czechia/1wualx#4667755,4667755,Czechia,8496,Mexico,6710
+3,3,https://www.fotmob.com/matches/south-africa-vs-south-korea/1ncyls#4667756,4667756,South Africa,6316,Korea Republic,7804
+3,3,https://www.fotmob.com/matches/ivory-coast-vs-curacao/jy3w4js#4667782,4667782,Curaçao,287981,Côte d'Ivoire,6709
+3,3,https://www.fotmob.com/matches/ecuador-vs-germany/1xhhol#4667781,4667781,Ecuador,6707,Germany,8570
+3,3,https://www.fotmob.com/matches/japan-vs-sweden/1x3r7y#4667788,4667788,Japan,6715,Sweden,8520
+3,3,https://www.fotmob.com/matches/netherlands-vs-tunisia/1hoci5#4667787,4667787,Tunisia,6719,Netherlands,6708
+3,3,https://www.fotmob.com/matches/australia-vs-paraguay/1hs39g#4667776,4667776,Paraguay,6724,Australia,6716
+3,3,https://www.fotmob.com/matches/turkiye-vs-usa/1gq91b#4667775,4667775,Türkiye,6595,United States,6713
+3,3,https://www.fotmob.com/matches/france-vs-norway/1wx88k#4667808,4667808,Norway,8492,France,6723
+3,3,https://www.fotmob.com/matches/iraq-vs-senegal/18f0co#4667809,4667809,Senegal,6395,Iraq,5819
+3,3,https://www.fotmob.com/matches/cape-verde-vs-saudi-arabia/1jqqyp#4667803,4667803,Cape Verde,5888,Saudi Arabia,7795
+3,3,https://www.fotmob.com/matches/uruguay-vs-spain/1an22i#4667802,4667802,Uruguay,5796,Spain,6720
+3,3,https://www.fotmob.com/matches/iran-vs-egypt/2dp33g#4667795,4667795,Egypt,10255,IR Iran,6711
+3,3,https://www.fotmob.com/matches/new-zealand-vs-belgium/1n1sct#4667794,4667794,New Zealand,5820,Belgium,8263
+3,3,https://www.fotmob.com/matches/ghana-vs-croatia/2cpwux#4667830,4667830,Croatia,10155,Ghana,6714
+3,3,https://www.fotmob.com/matches/panama-vs-england/1pukme#4667829,4667829,Panama,5922,England,8491
+3,3,https://www.fotmob.com/matches/colombia-vs-portugal/2a883f#4667823,4667823,Colombia,8258,Portugal,8361
+3,3,https://www.fotmob.com/matches/dr-congo-vs-uzbekistan/1v6daf#4667824,4667824,Congo DR,6321,Uzbekistan,8700
+3,3,https://www.fotmob.com/matches/algeria-vs-austria/1r7yil#4667817,4667817,Algeria,6317,Austria,8255
+3,3,https://www.fotmob.com/matches/jordan-vs-argentina/1aoo0p#4667816,4667816,Jordan,5816,Argentina,6706
+1/16,Round of 32,https://www.fotmob.com/matches/canada-vs-south-africa/17s1wd#4653705,4653705,South Africa,6316,Canada,5810
+1/16,Round of 32,https://www.fotmob.com/matches/japan-vs-brazil/1uqadm#4653711,4653711,Brazil,8256,Japan,6715
+1/16,Round of 32,https://www.fotmob.com/matches/paraguay-vs-germany/1xn26z#4653703,4653703,Germany,8570,Paraguay,6724
+1/16,Round of 32,https://www.fotmob.com/matches/morocco-vs-netherlands/1e327v#4653706,4653706,Netherlands,6708,Morocco,6262
+1/16,Round of 32,https://www.fotmob.com/matches/ivory-coast-vs-norway/1wsny5#4653712,4653712,Côte d'Ivoire,6709,Norway,8492
+1/16,Round of 32,https://www.fotmob.com/matches/france-vs-sweden/1x6dai#4653704,4653704,France,6723,Sweden,8520
+1/16,Round of 32,https://www.fotmob.com/matches/ecuador-vs-mexico/1hlgxf#4653713,4653713,Mexico,6710,Ecuador,6707
+1/16,Round of 32,https://www.fotmob.com/matches/dr-congo-vs-england/1tbjj5#4653714,4653714,England,8491,Congo DR,6321
+1/16,Round of 32,https://www.fotmob.com/matches/senegal-vs-belgium/1rywdm#4653710,4653710,Belgium,8263,Senegal,6395
+1/16,Round of 32,https://www.fotmob.com/matches/usa-vs-bosnia-herzegovina/2c7uzr#4653709,4653709,United States,6713,Bosnia-Herzegovina,10106
+1/16,Round of 32,https://www.fotmob.com/matches/spain-vs-austria/1urklb#4653708,4653708,Spain,6720,Austria,8255
+1/16,Round of 32,https://www.fotmob.com/matches/portugal-vs-croatia/2u2izf#4653707,4653707,Portugal,8361,Croatia,10155
+1/16,Round of 32,https://www.fotmob.com/matches/algeria-vs-switzerland/1ekwbo#4653717,4653717,Switzerland,6717,Algeria,6317
+1/16,Round of 32,https://www.fotmob.com/matches/australia-vs-egypt/2dqwke#4653716,4653716,Australia,6716,Egypt,10255
+1/16,Round of 32,https://www.fotmob.com/matches/cape-verde-vs-argentina/1b81pp#4653715,4653715,Argentina,6706,Cape Verde,5888
+1/16,Round of 32,https://www.fotmob.com/matches/ghana-vs-colombia/1uqlxk#4653718,4653718,Colombia,8258,Ghana,6714
+1/8,Round of 16,https://www.fotmob.com/matches/canada-vs-morocco/17e1pm#4653843,4653843,Canada,5810,Morocco,6262
+1/8,Round of 16,https://www.fotmob.com/matches/france-vs-paraguay/1hu3vk#4653842,4653842,Paraguay,6724,France,6723
+1/8,Round of 16,https://www.fotmob.com/matches/brazil-vs-norway/2bicve#4653846,4653846,Brazil,8256,Norway,8492
+1/8,Round of 16,https://www.fotmob.com/matches/mexico-vs-england/1wsny4#4653847,4653847,Mexico,6710,England,8491
+1/8,Round of 16,https://www.fotmob.com/matches/spain-vs-portugal/1vppuu#4653844,4653844,Portugal,8361,Spain,6720
+1/8,Round of 16,https://www.fotmob.com/matches/usa-vs-belgium/1urw5j#4653845,4653845,United States,6713,Belgium,8263
+1/8,Round of 16,https://www.fotmob.com/matches/argentina-vs-egypt/2dn9n7#4653848,4653848,Argentina,6706,Egypt,10255
+1/8,Round of 16,https://www.fotmob.com/matches/switzerland-vs-colombia/1urkle#4653849,4653849,Switzerland,6717,Colombia,8258
+1/4,Quarter-Finals,https://www.fotmob.com/matches/canadamorocco-vs-paraguayfrance/30fss1pgb#4653851,4653851,Paraguay/France,2061599,Canada/Morocco,2060953
+1/4,Quarter-Finals,https://www.fotmob.com/matches/usabelgium-vs-portugalspain/30uwrh4d9#4653853,4653853,Portugal/Spain,2066499,USA/Belgium,2064024
+1/4,Quarter-Finals,https://www.fotmob.com/matches/brazilnorway-vs-mexicoengland/30lxafm5h#4653852,4653852,Brazil/Norway,2061849,Mexico/England,2063936
+1/4,Quarter-Finals,https://www.fotmob.com/matches/switzerlandcolombia-vs-argentinaegypt/315hx9qq8#4653854,4653854,Argentina/Egypt,2068058,Switzerland/Colombia,2068041
+1/2,Semi-Finals,https://www.fotmob.com/matches/winner-qf-1-vs-winner-qf-2/4xvci#4653855,4653855,Winner QF 1,2036,Winner QF 2,2037
+1/2,Semi-Finals,https://www.fotmob.com/matches/winner-qf-3-vs-winner-qf-4/4y7xe#4653856,4653856,Winner QF 3,2038,Winner QF 4,2039
+bronze,Bronze Final,https://www.fotmob.com/matches/loser-sf-1-vs-loser-sf-2/4oe88#4653857,4653857,Loser SF 1,1981,Loser SF 2,1982
+final,Final,https://www.fotmob.com/matches/winner-sf-1-vs-winner-sf-2/4oqgw#4653858,4653858,Winner SF 1,1983,Winner SF 2,1984

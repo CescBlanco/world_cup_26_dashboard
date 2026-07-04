@@ -42,14 +42,14 @@ def extract_url_fotmob(df: pd.DataFrame,home_team_whoscored: str,away_team_whosc
     if not isinstance(away_team_whoscored, str):
         raise TypeError("away_team_whoscored must be a string")
 
-    required_columns = ["home.name", "away.name", "roundName", "pageUrl"]
+    required_columns = ["home.name", "away.name", "round", "pageUrl"]
 
     # 🔹 Validate required columns
     missing_columns = [col for col in required_columns if col not in df.columns]
     if missing_columns:
         raise KeyError(f"Missing required columns: {missing_columns}")
 
-    matches = df[(df["home.name"] == home_team_whoscored)& (df["away.name"] == away_team_whoscored)& (df["roundName"] == round)]
+    matches = df[(df["home.name"] == home_team_whoscored)& (df["away.name"] == away_team_whoscored)& (df["round"] == round)]
 
     # 🔹 Ensure a match was found
     if matches.empty:

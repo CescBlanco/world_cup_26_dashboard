@@ -218,3 +218,9 @@ __marimo__/
 .streamlit/secrets.toml
 
 venv_wc26_dashboard
+pruebas.ipynb
+
+scrapeo_partidos.ipynb
+
+worldcup26/data/fixtures_wc26_group_stages.csv
+worldcup26/data/fixtures_wc26_final_stage_jun.csv

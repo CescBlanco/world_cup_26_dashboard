@@ -1,8 +1,9 @@
 import pandas as pd
+import streamlit as st
 import os
 DATA_PATH = "worldcup26/data/"
 
-
+@st.cache_data
 def load_teams() -> pd.DataFrame:
     """
     Load national teams information dataset.
@@ -30,6 +31,7 @@ def load_teams() -> pd.DataFrame:
     except Exception as e:
         raise RuntimeError(f"Failed to load teams dataset: {e}")
 
+@st.cache_data
 def load_fifa() -> pd.DataFrame:
     """
     Load FIFA ranking dataset.
@@ -57,6 +59,7 @@ def load_fifa() -> pd.DataFrame:
     except Exception as e:
         raise RuntimeError(f"Failed to load FIFA rankings: {e}")
 
+@st.cache_data
 def load_elo() -> pd.DataFrame:
     """
     Load Elo ratings dataset.
@@ -84,6 +87,7 @@ def load_elo() -> pd.DataFrame:
     except Exception as e:
         raise RuntimeError(f"Failed to load Elo ratings: {e}")
 
+@st.cache_data
 def load_all_players_fotmob() -> pd.DataFrame:
     """
     Load FotMob players dataset.
@@ -111,6 +115,7 @@ def load_all_players_fotmob() -> pd.DataFrame:
     except Exception as e:
         raise RuntimeError(f"Failed to load players dataset: {e}")
 
+@st.cache_data
 def load_venues() -> pd.DataFrame:
     """
     Load World Cup 2026 venues dataset.
@@ -138,6 +143,7 @@ def load_venues() -> pd.DataFrame:
     except Exception as e:
         raise RuntimeError(f"Failed to load venues dataset: {e}")
 
+@st.cache_data
 def load_fixtures() -> pd.DataFrame:
     """
     Load World Cup 2026 fixtures dataset.
@@ -165,6 +171,7 @@ def load_fixtures() -> pd.DataFrame:
     except Exception as e:
         raise RuntimeError(f"Failed to load fixtures dataset: {e}")
 
+@st.cache_data
 def load_all_matches_fotmob() -> pd.DataFrame:
     """
     Load FotMob matches dataset.
@@ -192,6 +199,7 @@ def load_all_matches_fotmob() -> pd.DataFrame:
     except Exception as e:
         raise RuntimeError(f"Failed to load matches dataset: {e}")
 
+@st.cache_data
 def load_fixtures_pruebas() -> pd.DataFrame:
     """
     Load test fixtures dataset.
