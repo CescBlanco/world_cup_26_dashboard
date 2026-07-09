@@ -70,9 +70,10 @@ def render_results(df: pd.DataFrame):
             ROUND_MAPPING = {
                 '4': "1/16",
                 '5': "1/8",
-                '6': "Quarter-final",
-                '7': "Semi-final",
-                '8': "Final"
+                '6': "1/4",
+                '7': "1/2",
+                '8': "bronze",
+                '9': "final",
             }
 
             round_name_whoscored_for_fotmob = ROUND_MAPPING.get(round_name_whoscored, str(round_name_whoscored))
