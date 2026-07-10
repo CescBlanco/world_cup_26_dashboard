@@ -994,7 +994,7 @@ def titulo_team_of_week(selected_round):
                   margin:0;
                   font-size:32px;
             ">
-                  ⭐ Team of the Week
+                  ⭐ Team of the Round
             </h1>
 
             <p style="
