@@ -96,9 +96,11 @@ def render_fixtures(df: pd.DataFrame) -> None:
             titulo_team_of_week(selected_round)
             st.write(' ')
             st.write(' ')
+            st.write(' ')
+            
             html = team_of_the_week_plot(df_round)
             
-            components.html(  html,  height=520,scrolling=False)
+            components.html(  html,  height=520,scrolling=True)
 
     except Exception as e:
         raise RuntimeError(f"Failed to render fixtures page: {e}")
