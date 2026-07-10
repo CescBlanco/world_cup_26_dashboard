@@ -1,5 +1,6 @@
 import pandas as pd
 from functions.fixtures import *
+import streamlit.components.v1 as components
 
 def render_fixtures(df: pd.DataFrame) -> None:
     """
@@ -65,7 +66,7 @@ def render_fixtures(df: pd.DataFrame) -> None:
         # STANDINGS SECTION
         # =========================
         option = st.segmented_control('\n\n', 
-                           ['🥇 Table groups', '⚔️ Final Stages'], default= '⚔️ Final Stages')
+                           ['🥇 Table groups', '⚔️ Final Stages','⭐ Team of the round'], default= '⚔️ Final Stages')
    
         if option == "🥇 Table groups":
             st.badge("✅ Group stage completed", color="green")
@@ -79,6 +80,23 @@ def render_fixtures(df: pd.DataFrame) -> None:
             #st.info("Knockout stage pairings are provisional and will be finalized once all group standings are confirmed.")
 
             st.pyplot(fig, use_container_width=True)
+        
+        elif option == "⭐ Team of the round":
+            df_team_of_the_round = create_team_of_the_week_wc26()  
+            # Available rounds
+            rounds_available = sorted( df_team_of_the_round["round_name"].dropna().unique())
+
+            selected_round = st.selectbox("Select round", rounds_available)
+
+            # Filter selected round
+            df_round = df_team_of_the_round[df_team_of_the_round["round_name"] == selected_round].copy()
+
+
+            
+            titulo_team_of_week(selected_round)
+            html = team_of_the_week_plot(df_round)
+            
+            components.html(  html,  height=520,scrolling=False)
 
     except Exception as e:
         raise RuntimeError(f"Failed to render fixtures page: {e}")

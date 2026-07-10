@@ -5,6 +5,7 @@ from concurrent.futures import ThreadPoolExecutor
 import requests
 import matplotlib.pyplot as plt
 from matplotlib.patches import Rectangle
+import streamlit.components.v1 as components
 
 from utils.mapping import NAME_MAPPING2
 
@@ -974,3 +975,174 @@ def create_plot_playoffs(df):
     plt.tight_layout()
 
     return fig
+
+def titulo_team_of_week(selected_round):
+
+    # Visual title
+      st.markdown(
+         f"""
+         <div style="
+            background-color:#1e1e1e;
+            padding:20px;
+            border-radius:12px;
+            border:1px solid #333;
+            text-align:center;
+            margin-bottom:20px;
+         ">
+            <h1 style="
+                  color:#33c771;
+                  margin:0;
+                  font-size:32px;
+            ">
+                  ⭐ Team of the Week
+            </h1>
+
+            <p style="
+                  color:white;
+                  font-size:20px;
+                  margin:8px 0 0 0;
+            ">
+                  {selected_round}
+            </p>
+
+         </div>
+         """,
+         unsafe_allow_html=True
+      )
+
+def create_team_of_the_week_wc26():
+
+    rounds = {
+        'Stage 1': '1',
+        'Stage 2': '2',
+        'Stage 3': '3',
+        'Round of 32': '1/16',
+        'Round of 16': '1/8',
+        'Quarter-finals': '1/4',
+        'Semi-finals': '1/2',
+        'Final': 'F',
+    }
+
+    dfs = []
+
+    for round_name, round_id in rounds.items():
+
+        url = (
+            "https://www.fotmob.com/api/data/team-of-the-week/team"
+            f"?leagueId=77&roundId={round_id}&season=2026"
+        )
+
+        try:
+            response = requests.get(url, timeout=10)
+            response.raise_for_status()
+
+            data = response.json()
+
+            # Si la respuesta está vacía, pasar a la siguiente ronda
+            if not data:
+                print(f"{round_name}: sin datos")
+                continue
+
+            df = pd.json_normalize(data)
+            df = df.drop(columns="isTots", errors="ignore")
+            df["round_name"] = round_name
+            df["round_id"] = round_id
+
+            df['url_logo_team'] =  "https://images.fotmob.com/image_resources/logo/teamlogo/"+ df['teamId'].astype(str) + ".png"
+            df["member_photo"] = "https://images.fotmob.com/image_resources/playerimages/" + df["id"].astype(int).astype(str)+ ".png"
+            
+
+
+            dfs.append(df)
+            print(f"{round_name}: {len(df)} jugadores")
+
+        except requests.exceptions.RequestException as e:
+            print(f"{round_name}: error -> {e}")
+            continue
+
+    # Unir todos los DataFrames
+    df_all = pd.concat(dfs, ignore_index=True)
+
+    return df_all
+
+
+def team_of_the_week_plot(df, escala_posicion=80):
+
+    campo_img = "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d2/Soccer_field_illustration.svg/1200px-Soccer_field_illustration.svg.png"
+
+    html_jugadores = ""
+
+    for _, row in df.iterrows():
+        x = row['verticalLayout.x'] * escala_posicion
+        y = row['verticalLayout.y'] * escala_posicion
+        foto = row['member_photo']
+        logo = row['url_logo_team']
+        nombre = row['name.lastName']
+        rating = row['rating.num']
+        color_fondo = row['rating.bgcolor']
+
+        html_jugadores += f"""
+        <div style="
+            position:absolute;
+            left:{x}%;
+            top:{y}%;
+            transform:translate(-50%, -50%);
+            text-align:center;
+            color:white;
+            font-weight:bold;
+            font-family:Arial,sans-serif;
+        ">
+
+            <div style="position:relative; width:35px; height:35px; margin:auto;">
+
+                <img src="{foto}" width="35" height="35"
+                     style="border-radius:50%; border:2px solid white;">
+
+                <img src="{logo}" width="15" height="15"
+                     style="
+                        position:absolute;
+                        bottom:-2px;
+                        left:30px;
+                        border-radius:50%;
+                        background:white;
+                        padding:1px;
+                     ">
+
+            </div>
+
+            <div style="font-size:10px;  margin-top:8px;">{nombre}</div>
+
+            <div style="
+                background:{color_fondo};
+                color:white;
+                margin-top:6px;
+                padding:2px 6px;
+                border-radius:8px;
+                display:inline-block;
+                font-size:11px;
+            ">
+                {rating}
+            </div>
+
+        </div>
+        """
+
+    html = f"""
+    <div style="
+        position:relative;
+        width:100%;
+        max-width:700px;
+        aspect-ratio: 7 / 5;
+        margin:auto;
+        background-image:url('{campo_img}');
+        background-size:contain;
+        background-repeat:no-repeat;
+        background-position:center;
+    ">
+        {html_jugadores}
+    </div>
+    """
+
+
+    return html
+
