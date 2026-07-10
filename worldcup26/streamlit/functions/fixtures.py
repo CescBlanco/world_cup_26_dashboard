@@ -1066,7 +1066,7 @@ def create_team_of_the_week_wc26():
     return df_all
 
 
-def team_of_the_week_plot(df, escala_posicion=80):
+def team_of_the_week_plot(df, escala_posicion=100):
 
     campo_img = "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d2/Soccer_field_illustration.svg/1200px-Soccer_field_illustration.svg.png"
 
