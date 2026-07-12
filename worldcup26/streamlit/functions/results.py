@@ -750,6 +750,7 @@ def card_events_key_match( df_match: pd.DataFrame, home_team: str, away_team: st
         ('FirstHalf', 'SecondHalf'): 'HT',
         ('SecondHalf', 'FirstPeriodOfExtraTime'): 'AET',
         ('SecondHalf', 'SecondPeriodOfExtraTime'): 'AET',
+        ('FirstHalf', 'FirstPeriodOfExtraTime'): 'AET', 
         ('FirstPeriodOfExtraTime', 'SecondPeriodOfExtraTime'): 'AET HT',
     }
 
