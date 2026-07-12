@@ -657,14 +657,19 @@ def card_icon(card_type: str | None) -> str:
 
     card_type = str(card_type).lower()
 
+    if "secondyellow" in card_type or "second yellow" in card_type:
+        return "🟨🟥"
+
     if "red" in card_type and "yellow" in card_type:
         return "🟨🟥"
+
     elif "red" in card_type:
         return "🟥"
+
     elif "yellow" in card_type:
         return "🟨"
-    else:
-        return "🟨🟥"
+
+    return "🟨🟥"
 
 def minute_badge(minute_display: str) -> str:
     """
