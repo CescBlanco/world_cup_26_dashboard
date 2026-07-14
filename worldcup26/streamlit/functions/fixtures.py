@@ -1018,7 +1018,7 @@ def create_team_of_the_week_wc26():
         'Stage 3': '3',
         'Round of 32': '1/16',
         'Round of 16': '1/8',
-        'Quarter-finals': '1/4',
+        'Quarter-finals': 'Quarter+Finals',
         'Semi-finals': '1/2',
         'Final': 'F',
     }
