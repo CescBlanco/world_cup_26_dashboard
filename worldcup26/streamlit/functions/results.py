@@ -1706,9 +1706,9 @@ def prepare_data_fotmob_cache( data: dict[str, Any]) -> tuple[str,str,str,str,in
     match_id = data["general"]["matchId"]
     if match_id == '4653856':
         if name_home_fotmob == "England":
-            color_home = "#FFFFFF"
+            color_home = "#CCC3C3"
         elif name_away_fotmob == "England":
-            color_away = "#FFFFFF"
+            color_away = "#CCC3C3"
     # Create lookup dictionary
     team_dict_fotmob = {id_home_fotmob: name_home_fotmob,id_away_fotmob: name_away_fotmob}
 
