@@ -83,15 +83,25 @@ def render_fixtures(df: pd.DataFrame) -> None:
         
         elif option == "⭐ Team of the round":
             df_team_of_the_round = create_team_of_the_week_wc26()  
-            # Available rounds
-            rounds_available = sorted( df_team_of_the_round["round_name"].dropna().unique())
+            
+            # Desired display order
+            round_order = [
+                #"Final",
+                "Semi-finals",
+                "Quarter-finals",
+                "Round of 16",
+                "Round of 32",
+                "Stage 3",
+                "Stage 2",
+                "Stage 1",
+            ]
 
-            selected_round = st.selectbox("Select round", rounds_available)
+            # Keep only the rounds available in the dataframe
+            rounds_available = [r for r in round_order if r in df_team_of_the_round["round_name"].dropna().unique()]
 
-            # Filter selected round
-            df_round = df_team_of_the_round[df_team_of_the_round["round_name"] == selected_round].copy()
+            selected_round = st.selectbox( "Select round", rounds_available)
 
-
+            df_round = df_team_of_the_round[ df_team_of_the_round["round_name"] == selected_round ].copy()
             
             titulo_team_of_week(selected_round)
             st.write(' ')
