@@ -86,7 +86,9 @@ def render_fixtures(df: pd.DataFrame) -> None:
             
             # Desired display order
             round_order = [
-                #"Final",
+                "Team of the Season",
+                "Final",
+                "Bronze",
                 "Semi-finals",
                 "Quarter-finals",
                 "Round of 16",

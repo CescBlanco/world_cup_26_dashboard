@@ -1020,7 +1020,9 @@ def create_team_of_the_week_wc26():
         'Round of 16': '1/8',
         'Quarter-finals': 'Quarter+Finals',
         'Semi-finals': 'Semi+Finals',
-        'Final': 'F',
+        'Bronze': 'Bronze',
+        'Final': 'Final',
+        'Team of the Season': 'TOTS',
     }
 
     dfs = []
